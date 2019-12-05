@@ -1,0 +1,5 @@
+{
+    "directory" : "vendor/bower",
+    "strict-ssl": false,
+    "registry": "http://registry.bower.io/packages/jquery"
+}

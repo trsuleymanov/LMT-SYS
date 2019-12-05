@@ -1,0 +1,12 @@
+id звонка в CRM: 1
+id звонка в АТС (extTrackingId): 234
+id подписки в АТС (subscriptionId): qwe
+событие: input_call_created_by_client
+код события в АТС (eventID): 123
+время CRM                       : 01.01.1970 03:02:03 - 123
+время АТС(startTime/releaseTime): 01.01.1970 03:00:00 - 123
+id звонка в CRM: 1
+тип звонка: Вх.
+SIP (в АТС поле userId): SIP17386U03352@mpbx.sip.beeline.ru
+телефон клиента: +7843-207-0284
+

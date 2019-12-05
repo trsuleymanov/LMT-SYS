@@ -1,0 +1,146 @@
+
+#storage-operation-income {
+    background: #028002;
+    color: #FFFFFF;
+    border: 1px solid #028002;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#storage-operation-income:hover{
+    background: #027002;
+}
+
+/*
+.orange-day-text {
+    background: #FF9900;
+    color: #FFFFFF;
+}*/
+.modal-storage-operation-income #top-menu, .modal-storage-operation-income .modal-header{
+    background: #027002;
+    color: #FFFFFF;
+    padding: 9px 15px;
+}
+.modal-storage-operation-income * {
+    font-size: 12px;
+}
+.modal-storage-operation-income #top-menu .col-tobus-center {
+    background: #FFFFFF;
+    color: #027002;
+}
+.modal-storage-operation-income #top-menu .col-tobus-center1 {
+    background: #FFFFFF;
+    color: #027002;
+}
+
+#storage-operation-expenditure {
+    background: #DA9695;
+    color: #FFFFFF;
+    border: 1px solid #DA9695;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#storage-operation-expenditure:hover{
+    background: #CA8685;
+}
+
+.modal-storage-operation-expenditure #top-menu, .modal-storage-operation-expenditure .modal-header{
+    background: #CA8685;
+    color: #FFFFFF;
+    padding: 9px 15px;
+}
+.modal-storage-operation-expenditure * {
+    font-size: 12px;
+}
+.modal-storage-operation-expenditure #top-menu .col-tobus-center {
+    background: #FFFFFF;
+    color: #CA8685;
+}
+.modal-storage-operation-expenditure #top-menu .col-tobus-center1 {
+    background: #FFFFFF;
+    color: #CA8685;
+}
+
+.modal-storage-operation-income .elem-horizontal, .modal-storage-operation-expenditure .elem-horizontal {
+    display: inline-block;
+}
+.modal-storage-operation-income .radio, .modal-storage-operation-income .checkbox,
+.modal-storage-operation-expenditure .radio, .modal-storage-operation-expenditure .checkbox{
+    position: relative;
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.modal-storage-operation-income .checkbox, .modal-storage-operation-expenditure .checkbox {
+    display: block;
+    width: 100%;
+    height: 30px;
+    margin-top: -3px;
+    cursor: pointer;
+}
+.modal-storage-operation-expenditure .nowrap, .modal-storage-operation-income .nowrap  {
+    white-space: nowrap;
+}
+
+.modal-storage-operation-expenditure .first-col {
+    padding-left: 0;
+    padding-right: 5px;
+    padding-top: 3px;
+    text-align: right;
+}
+.modal-storage-operation-income .first-col {
+    padding-left: 0;
+    padding-right: 5px;
+    padding-top: 3px;
+    text-align: right;
+}
+
+.modal-storage-operation-expenditure .form-control, .modal-storage-operation-income .form-control {
+    height: 28px;
+}
+.sw-element[attribute-name="NomenclatureDetail[temp_name]"] {
+    width: 414px;
+}
+
+.modal .close {
+    margin-top: 3px;
+}
+
+table#storage-menu-table{
+    width: 100%;
+}
+table#storage-menu-table tr td {
+    padding: 15px 30px;
+}
+
+#create-income-form .sw-element[attribute-name="StorageOperation[driver_id]"] {
+    width: 270px;
+}
+#create-income-form .sw-element[attribute-name="StorageOperation[transport_id]"] {
+    width: 130px;
+}
+
+#create-income-form .sw-element[attribute-name="NomenclatureDetail[name]"] {
+    width: 285px;
+}
+#create-income-form .sw-element[attribute-name="DetailMeasurementValue[name]"] {
+    width: 76px;
+}
+
+#create-expenditure-form .sw-element[attribute-name="StorageOperation[transport_id]"] {
+    width: 130px;
+}
+#create-expenditure-form .sw-element[attribute-name="StorageOperation[driver_id]"] {
+    width: 230px;
+}
+#create-expenditure-form #storage_detail_id_hint {
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+#operation-page *, #storage-page * {
+    font-size: 12px;
+}

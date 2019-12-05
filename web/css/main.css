@@ -1,0 +1,272 @@
+
+/* форма с телефонами дополняющая форму заказа */
+#order-create-modal .order-phones-block{
+    width: 200px;
+    height: 800px;
+    position: fixed;
+    /*right: 200px;*/
+    top: 0;
+    background: #FFFFFF;
+    left: calc(100% - 800px);
+    z-index: 10001;
+    display: none;
+    border-right: 1px solid #AAAAAA;
+}
+#order-create-modal .order-phones-block .order-phones-block-header {
+    padding: 9px 5px 9px 15px;
+    border: solid 1px #999;
+    border-width: 0 0 1px 0;
+}
+#order-create-modal .order-phones-block .order-phones-block-body {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+#order-create-modal .order-phones-block .order-phones-block-header .order-phones-block-close {
+    float: right;
+}
+
+
+/* яндекс-карта создания заказа и яндекс-карта создания/редактирования яндекс-точки в админке */
+#order-create-modal .map-block{
+    width: 600px;
+    height: 800px;
+    position: fixed;
+    right: 600px;
+    top: 0;
+    background: #FFFFFF;
+    left: calc(100% - 1200px);
+}
+#default-modal .map-block{
+    width: 800px;
+    height: 700px;
+    background: #FFFFFF;
+    z-index: 1;
+}
+#order-create-modal .map-block .map-block-header {
+    padding: 9px 5px 9px 15px;
+    border: solid 1px #999;
+    border-width: 0 0 1px 0;
+}
+#order-create-modal .map-block .map-block-body {
+    width: 100%;
+    height: 100%;
+}
+#order-create-modal .map-block .map-block-header .map-block-close {
+    float: right;
+}
+#order-create-modal .map-block .map-block-header .map-block-title {}
+
+#order-create-modal .map-block #ya-map, #default-modal .map-block #ya-map {
+    width: 100%;
+    height: 100%;
+}
+
+#order-create-modal .map-block .map-control-block {
+    z-index:10;
+    position:absolute;
+    left: 10px;
+    top: 40px;
+}
+#default-modal .map-block .map-control-block {
+    z-index:10;
+    position:absolute;
+    left: 10px;
+    top: 10px;
+}
+#order-create-modal .map-block .placemark-balloon-content, #default-modal .map-block .placemark-balloon-content {
+    width: 300px;
+}
+#order-create-modal .map-block .placemark-balloon-content .alias,
+#default-modal .map-block .placemark-balloon-content .alias{
+    width: 100%;
+}
+#order-create-modal .map-block .placemark-balloon-content .input-placemark,
+#default-modal .map-block .placemark-balloon-content .input-placemark{
+    width: 100%;
+}
+#order-create-modal .map-block .placemark-balloon-content .input-description,
+#default-modal .map-block .placemark-balloon-content .input-description{
+    width: 100%;
+}
+
+
+#order-create-modal .map-block .search-point, #default-modal .map-block .search-point {
+    width: 260px;
+}
+
+#order-create-modal .map-block #yamap-create-point-but {}
+#order-create-modal .map-block .span-placemark, #default-modal .map-block .span-placemark {
+    text-decoration: none;
+    border-bottom: 1px dashed;
+}
+#order-create-modal .map-block .not-edit, #default-modal .map-block .not-edit {
+    border-bottom: none;
+}
+
+#order-create-modal .map-block #yamap-create-point-but.active, #default-modal .map-block #yamap-create-point-but.active {
+    border-style: inset;
+}
+#order-create-modal .map-block #yamap-save-point, #default-modal .map-block #yamap-save-point {
+    display: none;
+}
+#order-create-modal .map-block .ok-point-placemark, #default-modal .map-block .ok-point-placemark {
+    display: none;
+}
+#order-create-modal .map-block .btn-select-placemark.content-btn, #default-modal .map-block .btn-select-placemark.content-btn {
+    margin-top: 5px;
+    margin-left: -3px;
+}
+
+
+.search-result-block ul.main-list {
+    border: solid 1px #AAA;
+    max-height: 200px;
+    overflow-y: scroll;
+    padding: 0;
+    background: #ffffff;
+    opacity: 0.9;
+}
+.search-result-block ul.main-list li {
+    list-style: none;
+    padding: 0;
+}
+
+.search-result-block ul.main-list li.section-list strong {
+    background-color: #EEE;
+    padding: 4px 10px;
+    display: inline-block;
+    width: 100%;
+}
+.search-result-block ul.main-list li, .search-result-block ul.main-list li.empty-value {
+    padding: 4px 10px;
+}
+.search-result-block ul.main-list li.empty-value {
+    color: #ff0000;
+}
+.search-result-block ul.main-list li:not(.empty-value):hover {
+    background-color: #0000aa;
+    color: #ffffff;
+    cursor: pointer;
+}
+.search-result-block ul.main-list li[aria-selected="true"] {
+    background-color: #ddf5ff;
+    color: #226688;
+}
+
+.passengers-form .form-control {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.passengers-form .col-sm-1, .passengers-form .col-sm-2, .passengers-form .col-sm-3 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.passengers-form .col-sm-1 {
+    width: 9.7%;
+}
+
+#order-create-modal .edit-passengers {
+    margin-top: -7px;
+    display: inherit;
+    margin-bottom: 7px;
+}
+
+
+.passengers-form *::-webkit-input-placeholder {
+    color: #DDDDDD;
+}
+.passengers-form *::-moz-placeholder {
+    color: #DDDDDD;
+}
+
+#call-modal {
+    z-index: 1052;
+}
+/*
+.btn-operator-online {
+    background-color: #228822;
+    color: #E5E5E5;
+}
+.btn-operator-online:hover {
+    background-color: #228822;
+    color: #E5E5E5;
+}
+.btn-operator-online.active {
+    background-color: #00CC00;
+    color: #FFFFFF;
+}
+.btn-operator-break {
+    background-color: #E5E555;
+    color: #E7E7E7;
+}
+.btn-operator-break:hover {
+    background-color: #E5E555;
+    color: #E7E7E7;
+}
+.btn-operator-break.active {
+    background-color: #EEEE00;
+    color: #FFFFFF;
+}
+
+.btn-operator-offline {
+    background-color: #A00000;
+    color: #E7E7E7;
+}
+.btn-operator-offline:hover {
+    background-color: #A00000;
+    color: #E7E7E7;
+}
+.btn-operator-offline.active {
+    background-color: #EE0000;
+    color: #FFFFFF;
+}
+*/
+
+/* всплывающее окно звонков */
+#call-panel {
+    display: block;
+    width: 1090px;
+    background: #fff;
+}
+#call-panel #new-order-today, #call-panel #new-order-tomorrow, #call-panel #new-order-another-day {
+    font-size: 12px;
+}
+
+#call-panel #new-order-today {
+    margin-left: 10px;
+}
+#call-panel #new-order-tomorrow {
+    margin-left: 20px;
+}
+#call-panel #new-order-another-day {
+    margin-left: 20px;
+}
+#call-panel-left {
+    border: 1px solid #dddddd;
+    display: inline-block;
+    line-height: 30px;
+    margin: 0 0 10px 20px;
+    padding: 20px 02px 20px 10px;
+    width: 510px;
+}
+#call-panel-left .pull-left {
+    float: left;
+}
+#call-panel-left .pull-right {
+    float: right;
+}
+#call-panel-right {
+    border: 1px solid #dddddd;
+    display: inline-block;
+    line-height: 30px;
+    margin: 0 10px 10px 0;
+    padding: 20px 0;
+    width: 530px;
+    float: right;
+}
+.call-form-text {
+    margin-left: 20px;
+}

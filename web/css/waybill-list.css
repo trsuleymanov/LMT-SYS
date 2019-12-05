@@ -1,0 +1,98 @@
+
+
+.list-data-table-over {
+    position: relative;
+    overflow: hidden;
+}
+.list-data-table-inner {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    width: calc(100% - 455px);
+    margin-left: 455px;
+}
+
+#list-data-table {
+
+}
+#list-data-table * {
+    font-size: 12px;
+}
+#list-data-table thead tr td {
+    padding: 8px 3px;
+}
+
+#list-data-table tr td:nth-child(1),#list-data-table tr th:nth-child(1) {
+    position: absolute;
+    left: 0;
+    width: 34px;
+}
+#list-data-table tr td:nth-child(2),#list-data-table tr th:nth-child(2) {
+    position: absolute;
+    left: 34px;
+    width: 34px;
+}
+#list-data-table tr td:nth-child(3),#list-data-table tr th:nth-child(3) {
+    position: absolute;
+    left: 68px;
+    width: 62px;
+}
+#list-data-table tr td:nth-child(4),#list-data-table tr th:nth-child(4) {
+    position: absolute;
+    left: 130px;
+    width: 125px;
+}
+#list-data-table tr td:nth-child(5),#list-data-table tr th:nth-child(5) {
+    position: absolute;
+    left: 255px;
+    width: 100px;
+}
+#list-data-table tr td:nth-child(6),#list-data-table tr th:nth-child(6) {
+    position: absolute;
+    left: 355px;
+    width: 100px;
+}
+
+#list-data-table thead tr:nth-child(1) td {}
+#list-data-table thead tr:nth-child(1) th:nth-child(1) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#list-data-table thead tr:nth-child(1) th:nth-child(2) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#list-data-table thead tr:nth-child(1) th:nth-child(3) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#list-data-table thead tr:nth-child(1) th:nth-child(4) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#list-data-table thead tr:nth-child(1) th:nth-child(5) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#list-data-table thead tr:nth-child(1) th:nth-child(6) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#list-data-table thead tr:nth-child(2) td {}
+
+#list-data-table .filters {
+    height: 60px;
+}
+
+#list-data-table .form-control, #list-data-table .sw-element {
+    padding: 3px 6px;
+    height: 30px;
+}
+#list-data-table .sw-element .sw-delete {
+    position: absolute;
+    margin-top: 8px;
+    margin-right: 4px;
+}
+
+#list-data-table .to-hide-pl, #list-data-table .to-show-pl{
+    text-decoration: none;
+}

@@ -1,0 +1,54 @@
+.box-header .pagination-sm, .box-header .pagination-xs {
+    margin: 0 10px;
+}
+
+#default-modal #ya-map {
+    height: 700px;
+}
+
+#default-modal #ya-map .placemark-balloon-content {
+    height: 230px;
+}
+
+#active-users-list .user {
+    width: 200px;
+    border: solid 1px #C8C8C8;
+    border-width: 0 0 1px 0;
+    padding: 5px 0 5px 0;
+}
+
+.driver-update #create-driver-user, .driver-create #create-driver-user {
+    margin-top: 22px;
+    width: 260px;
+    height: 60px;
+    write-space: normal;
+    cursor: pointer;
+}
+.driver-update #create-driver-user.disabled, .driver-create #create-driver-user.disabled {
+    opacity: 0.3;
+}
+
+.online-driver-position {
+    content: "\25cf";
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #00ff11;
+}
+
+.detail-name-page .btn-edit-detail-name {
+    background: none 0;
+    border: none;
+}
+
+#driver-photo-page .thumb-img {
+    max-width: 140px;
+    max-height: 60px;
+}
+
+/* Страница "История обращений" */
+table.dockings-list {
+    width: 100%;
+}
+table.dockings-list tr td {
+    border: 1px solid #f4f4f4;
+}

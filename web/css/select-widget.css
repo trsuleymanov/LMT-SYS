@@ -1,0 +1,130 @@
+.sw-element {
+    cursor: pointer;
+    position: relative;
+    padding-top: 6px !important;
+}
+
+.sw-element .select2-selection__arrow {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: #F2F1F0 #767473 #767473 #F2F1F0;
+    border-image: none;
+    border-style: solid;
+    border-width: 2px 2px 2px 2px;
+    /*height: 28px;*/
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 16px;
+    background-color: #D6D2D0;
+}
+
+.sw-element .select2-selection__arrow b {
+    border-color: #000 transparent transparent;
+    border-style: solid;
+    border-width: 5px 4px 0;
+    height: 0;
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
+
+.sw-outer-block {
+    position: relative;
+}
+.sw-inner-block {
+    position: absolute;
+    width: 100%;
+    z-index: 3;
+    font-size: 12px;
+    background: #FFF;
+}
+.sw-outer-block .sw-select-block {
+    border: solid 1px #AAA;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.sw-outer-block .sw-select-block ul li {
+    list-style: none;
+    padding: 0;
+}
+.sw-outer-block .sw-select-block ul {
+    padding: 0;
+}
+.sw-outer-block .sw-select-block ul li.section-list strong {
+    background-color: #EEE;
+    padding: 4px 10px;
+    display: inline-block;
+    width: 100%;
+}
+.sw-outer-block .sw-select-block ul.simple-list li, .sw-outer-block .sw-select-block ul li.empty-value {
+    padding: 4px 10px;
+}
+.sw-outer-block .sw-select-block ul li.empty-value {
+    color: #ff0000;
+}
+.sw-outer-block .sw-select-block ul.simple-list li:not(.empty-value):hover {
+    background-color: #0000aa;
+    color: #ffffff;
+    cursor: pointer;
+}
+.sw-outer-block .sw-select-block ul.simple-list li[aria-selected="true"] {
+    background-color: #ddf5ff;
+    color: #226688;
+}
+
+.sw-text {
+    font-size: 12px;
+}
+
+.sw-element .sw-delete {
+    float: right;
+    right: 12px;
+    margin-top: 2px;
+    font-size: 10px;
+    color: #777777;
+}
+.sw-element:not([disabled]) .sw-delete:hover {
+    color: #ff0000;
+}
+
+.sw-element .sw-open {
+    float: right;
+    right: 15px;
+    margin-top: 2px;
+    font-size: 10px;
+    color: #777777;
+}
+
+.sw-element .sw-open:hover {
+    color: #0000FF;
+}
+
+.sw-value {
+    white-space: nowrap;
+    width: 85%;
+    display: inline-block;
+    overflow: hidden;
+    border: none 0;
+    background: #fff;
+    text-align: left;
+    padding: 0;
+}
+.sw-value:focus {
+    border: dotted 1px #AAAAAA;
+}
+
+.sw-placeholder {
+    color: #999999;
+}
+
+.empty-value #add-new-value{
+    cursor: pointer;
+}

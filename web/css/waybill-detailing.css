@@ -1,0 +1,92 @@
+
+.detailing-data-table-over {
+    position: relative;
+    overflow: hidden;
+}
+.detailing-data-table-inner {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    width: calc(100% - 455px);
+    margin-left: 455px;
+}
+
+#detailing-data-table {
+
+}
+#detailing-data-table * {
+    font-size: 12px;
+}
+#detailing-data-table thead tr td {
+    padding: 8px 3px;
+}
+
+
+#detailing-data-table tr td:nth-child(1),#detailing-data-table tr th:nth-child(1) {
+    position: absolute;
+    left: 0;
+    width: 34px;
+}
+#detailing-data-table tr td:nth-child(2),#detailing-data-table tr th:nth-child(2) {
+    position: absolute;
+    left: 34px;
+    width: 34px;
+}
+#detailing-data-table tr td:nth-child(3),#detailing-data-table tr th:nth-child(3) {
+    position: absolute;
+    left: 68px;
+    width: 62px;
+}
+#detailing-data-table tr td:nth-child(4),#detailing-data-table tr th:nth-child(4) {
+    position: absolute;
+    left: 130px;
+    width: 125px;
+}
+#detailing-data-table tr td:nth-child(5),#detailing-data-table tr th:nth-child(5) {
+    position: absolute;
+    left: 255px;
+    width: 100px;
+}
+#detailing-data-table tr td:nth-child(6),#detailing-data-table tr th:nth-child(6) {
+    position: absolute;
+    left: 355px;
+    width: 100px;
+}
+
+#detailing-data-table thead tr:nth-child(1) td {}
+#detailing-data-table thead tr:nth-child(1) th:nth-child(1) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#detailing-data-table thead tr:nth-child(1) th:nth-child(2) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#detailing-data-table thead tr:nth-child(1) th:nth-child(3) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#detailing-data-table thead tr:nth-child(1) th:nth-child(4) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#detailing-data-table thead tr:nth-child(1) th:nth-child(5) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+#detailing-data-table thead tr:nth-child(1) th:nth-child(6) {
+    border-top: 1px solid #DDDDDD;
+    margin-top: -1px;
+}
+
+
+#detailing-data-table .form-control, #detailing-data-table .sw-element {
+    padding: 3px 6px;
+    height: 30px;
+}
+#detailing-data-table .sw-element .sw-delete {
+    position: absolute;
+    margin-top: 8px;
+    margin-right: 4px;
+}
+
+

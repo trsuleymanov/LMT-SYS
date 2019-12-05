@@ -1,0 +1,105 @@
+
+.head_block {
+    font-size: 14pt;
+    font-weight: 700;
+    height: 42px;
+    margin: 10px 10px 5px;
+    padding-top: 15px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+/*
+.btn_reis_add, .btn_reis_merge {
+    color: black;
+}*/
+
+
+.bckgrnd_reis_add {
+    background-color: #ffff33;
+}
+.bckgrnd_reis_update {
+    background-color: #ecbafe;
+}
+.bckgrnd_reis_merge {
+    background-color: #ffff33;
+}
+.bckgrnd_reis {
+    background-color: #558e28;
+    color: white;
+}
+/*
+.text_black {
+    color: black;
+}*/
+
+
+
+/*info-list*/
+td.reis_name{
+    border: 1.0pt dotted black;
+    border-radius: 7px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 14.0pt;
+    font-weight: 500;
+    /*text-decoration: none;*/
+    padding: 8px 10px 8px 10px;
+    overflow: hidden;
+    position: relative;
+}
+.reis_name_content {
+    position: relative;
+    width: 60px;
+}
+a.trip_detail_link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.count_people{
+    font-size: 15.0pt;
+    width: 113px;
+    height: 52px;
+}
+.info-list{
+    border-collapse: separate;
+    width: 100%;
+    cellspacing: 2px;
+    text-align: center;
+    vertical-align: middle;
+    border-left: 1px dashed #cccccc;
+    padding: 0 10% 0 5%;
+}
+.info-list-right {
+    border-right: 1px dashed #cccccc;
+}
+
+table.info-list .points{
+    font-size: 8.0pt;
+    padding:0 5px 0 0;
+}
+table.info-list .car_reis{
+    width: 113px;
+    font-size: 10.0pt;
+}
+.empty_tr{
+    height: 18px;
+}
+.sh_route{
+    font-size: 20.0pt;
+    font-weight: 700;
+    text-align: center;
+    width: 100%;
+}
+div.row_sh_route{
+    margin-bottom: 5px;
+    height: 25px;
+    vertical-align: middle;
+}
+.sh_route_div {
+    background-color: #FEFEFE;
+    margin-bottom: 5px;
+}
+.many_orders {
+    color: red;
+}

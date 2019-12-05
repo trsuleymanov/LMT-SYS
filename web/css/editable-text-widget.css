@@ -1,0 +1,65 @@
+
+.etw-element {
+    text-decoration: none;
+    border-bottom: dashed 1px #0088cc;
+    color: #428bca;
+}
+.etw-element:hover {
+    text-decoration: none;
+    color: #586D98;
+    cursor: pointer;
+}
+
+.etw-element[disabled="1"], .etw-element[disabled="true"] {
+    border-bottom: none;
+    color: #333333;
+}
+
+.etf-clear-x {
+    background: url('../img/clear.png') center center no-repeat;
+    cursor: pointer;
+    display: block;
+    width: 13px;
+    height: 13px;
+    position: absolute;
+    opacity: 0.6;
+    z-index: 100;
+    top: 50%;
+    right: 6px;
+    margin-top: -5px;
+}
+.etf-clear-x:hover {
+    opacity: 1;
+}
+.etf-block{
+    display: block;
+    white-space: nowrap;
+    width: 100%;
+    margin-top: -3px;
+}
+.etf-input {
+    vertical-align: top;
+    display: inline-block;
+    width: calc(100% - 90px);
+    min-width: 70px;
+    white-space: normal;
+    position: relative;
+}
+.etf-input input {
+    width: 100%;
+    padding: 3px 24px 3px 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.etf-buttons {
+    display: inline-block;
+}
+.etf-buttons .btn {
+    padding: 3px 8px;
+}

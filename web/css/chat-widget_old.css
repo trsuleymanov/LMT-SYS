@@ -1,0 +1,165 @@
+/* О-чат  */
+#messages-list-block .name-section {
+    display: inline-block;
+    height: 100%;
+}
+#messages-list-block #number {
+    text-align: center;
+    width: 100%;
+    line-height: 51px;
+    font-size: 28px;
+}
+
+.chat-widget:after {
+    clear: both;
+    content: "_";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+.chat-widget {
+    position: fixed;
+    right: 0; bottom: 0;
+    padding: 0 5px 0 0;
+    border-radius: 4px 0 0 0;
+    width: 75%;
+    height: 70px;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.3);
+    background: #FFFFFF;
+    opacity: 0.9;
+    color: #0000ff;
+    font-size: 12px;
+}
+
+.chat-widget .chat-close {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    color: #770000;
+    cursor: pointer;
+}
+.chat-widget .chat-close:hover {
+    color: #990000;
+}
+
+.half-chat {
+
+}
+
+#capt  {
+    background: #000000;
+    height: 19px;
+    width: 60px;
+    padding: 2px 10px;
+    border-radius: 4px 0 0 0;
+}
+#capt .chat-name {
+    color: white;
+    font-weight: 700;
+}
+
+.chat-widget.half-chat #messages-list-block {
+    border: none 0;
+    width: 100%;
+}
+.chat-widget.half-chat{
+    width: 45%;
+}
+
+#messages-list-block {
+    display: inline-block;
+    border: 1px double #000;
+    border-width: 0 3px 0 0;
+    height: 100%;
+    width: 60%;
+    vertical-align: top;
+}
+#messages-list-block .left-message-col {
+    display: inline-block;
+    height: 100%;
+    width: calc(50% - 40px);
+    vertical-align: top;
+    border: 1px double #777;
+    border-width: 0 1px 0 0;
+}
+#messages-list-block .right-message-col {
+    display: inline-block;
+    height: 100%;
+    width: calc(50% - 40px);
+    vertical-align: top;
+}
+#messages-list-block .message {
+    font-size: 12px;
+    line-height: 1.2;
+    padding: 3px 5px 1px 5px;
+    min-height: 34px;
+}
+
+
+#message-send-form-block {
+    display: inline-block;
+    height: 100%;
+    width: calc(40% - 4px);
+}
+#message-send-form-block #buttons-block {
+    width: 100%;
+    height: 27px;
+}
+#message-send-form-block #fields-block {
+
+}
+#message-send-form-block #buttons-block * {
+    font-size: 13px;
+    line-height: 1.1;
+}
+#message-send-form-block #buttons-block .button {
+    display: inline-block;
+    border: 1px solid #000;
+    padding: 1px 5px;
+    line-height: 1;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px 5px 0 10px;
+}
+#message-send-form-block #buttons-block .button:hover {
+    border: 1px solid #0000AA;
+}
+#message-send-form-block #buttons-block .button:active {
+    border: 1px solid #FFF;
+}
+
+#message-send-form-block #fields-block textarea {
+    width: calc(100% - 120px);
+    height: 40px;
+    font-size: 13px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+#message-send-form-block #fields-block .btn-send-message {
+    display: inline-block;
+    vertical-align: bottom;
+    width: 100px;
+    margin-left: 10px;
+}
+#message-send-form-block #buttons-block input[name="color"] {
+    display: inline-block;
+    vertical-align: bottom;
+    color: #FFFFFF;
+    max-width: 50px;
+    margin-left: 20px;
+}
+#message-send-form-block #buttons-block input[name="color"]:hover {
+    cursor: pointer;
+}
+#message-send-form-block #buttons-block #lifetime {
+    width: 47px;
+    margin-left: 20px;
+}
+#message-send-form-block #buttons-block #to-begin {
+    display: inline-block;
+    vertical-align: bottom;
+    margin-left: 20px;
+}
+/* конец: О-чат  */

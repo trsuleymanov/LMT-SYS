@@ -1,0 +1,2166 @@
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#contextMenuId{
+    position: absolute;
+    background-color:#444;
+    border: 0 solid #000;
+    padding: 0;
+    margin: 0;
+}
+#contextMenuId label {
+    color: #fff;
+    padding: 2px 5px;
+    margin: 0;
+}
+#contextMenuId label:hover {
+    cursor: pointer;
+    color: #AAAAFF;
+}
+
+#page-area {
+    display: block;
+    width: 1355px;
+    white-space: nowrap;
+    clear: both;
+}
+#notification-area {
+    width: 228px;
+    display: inline-block;
+    left: 0;
+}
+#content-area {
+    width: 1120px;
+    display: inline-block;
+}
+#directions-trips-block {
+    width: 530px;
+    float: left;
+}
+#main-buttons-block {
+    width: 595px;
+    float: left;
+    padding: 0 290px 0 85px;
+}
+
+
+
+#set-of-trips-page #add-trip{
+	border: 1px solid #aaaaaa;
+    background-color:green;
+	color: #ffffff;
+	margin: 10px 0;
+	padding: 10px 15px;
+	text-align: center;
+	width: 100%;
+}
+
+#set-of-trips-page #open-transport-efficiency{
+    border: 1px solid #aaaaaa;
+    background-color: gray;
+    color: #ffffff;
+    margin: 10px 0;
+    padding: 10px 15px;
+    text-align: center;
+    width: 100%;
+}
+
+#set-of-trips-page #create-reserv-trip{
+    border: 1px solid #ff48f7;
+    background-color: #ff77ff;
+    color: #ffffff;
+    margin: 10px 0;
+    padding: 10px 15px;
+    text-align: center;
+    width: 100%;
+}
+#set-of-trips-page #create-reserv-trip:hover {
+    background-color: #ff48f7;
+}
+
+#set-of-trips-page #merge-trips {
+	border: 1px solid #aaaaaa;
+	color: #ffffff;
+	margin: 10px 0;
+	padding: 10px 15px;
+	text-align: center;
+	width: 100%;
+}
+
+#set-of-trips-page #second-transport {
+    background-color: black;
+    width: 100%;
+    padding:10px 15px;
+    margin: 10px 0;
+}
+
+#set-of-trips-page #set-commercial-trips {
+    width: 100%;
+    padding: 10px 15px;
+    margin: 10px 0;
+    color: #FFFFFF;
+    font-size: 13px;
+}
+
+#set-of-trips-page #unset-commercial-trips {
+    width: 100%;
+    padding: 10px 15px;
+    margin: 10px 0;
+    font-size: 13px;
+}
+/* всплывающее окно Объединения рейсов */
+.mergeTrips .merge-trip {
+    font-weight: bold;
+    text-decoration: underline;
+    margin-right: 5px;
+    color: #000000;
+}
+.mergeTrips .merge-trip[active=true] {
+    color: #FF0000;
+}
+
+
+
+.col-tobus-center {
+    width: 55%;
+    float: left;
+}
+.col-tobus-center1 {
+    width: 40%;
+    float: left;
+}
+.col-tobus-right {
+    width: 44%;
+    float: left;
+}
+.col-tobus-right-1, .col-tobus-right-2, .col-tobus-right-3, .col-tobus-right-4 {
+    width: 11%;
+    float: left;
+}
+.col-tobus-right-2-3 {
+    width: 22%;
+    float: left;
+}
+
+#operation-page {
+    overflow: auto;
+}
+#storage-page .col-tobus-center {
+    width: 80%;
+    float: left;
+    overflow: auto;
+}
+#storage-page .col-tobus-right-1 {
+    width: 2%;
+    float: left;
+}
+#storage-page .col-tobus-right-2-3 {
+    width: 18%;
+    float: left;
+}
+
+
+#top-menu {
+    height: 50px;
+    border: solid 1px #DDDDDD;
+    border-width: 0 0 1px 0;
+}
+
+
+
+
+#top-menu{
+    font-weight: 700;
+}
+
+
+.orange-day #top-menu, #order-create-modal.orange-day .modal-header{
+    background: #FF9900;
+    color: #FFFFFF;
+}
+.orange-day-text {
+    background: #FF9900;
+    color: #FFFFFF;
+}
+.orange-day #top-menu .col-tobus-center {
+    background: #FFFFFF;
+    color: #FF9900;
+}
+.orange-day #top-menu .col-tobus-center1 {
+    background: #FFFFFF;
+    color: #FF9900;
+}
+.purple-day #top-menu, #order-create-modal.purple-day .modal-header{
+    background: #9900FF;
+    color: #FFFFFF;
+}
+.purple-day-text {
+    background: #9900FF;
+    color: #FFFFFF;
+}
+
+.blue-day #top-menu, #order-create-modal.blue-day .modal-header{
+    background: #6FA8DC;
+    color: #FFFFFF;
+}
+.blue-day-text {
+    background: #6FA8DC;
+    color: #FFFFFF;
+}
+
+#top-menu .col-tobus-center{
+    height: 49px;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+#top-menu .col-tobus-center1{
+    height: 49px;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.purple-day #top-menu .col-tobus-center {
+    background: #FFFFFF;
+    color: #9900FF;
+}
+.blue-day #top-menu .col-tobus-center {
+    background: #FFFFFF;
+    color: #6FA8DC;
+}
+
+
+.purple-day #top-menu .col-tobus-center1 {
+    background: #FFFFFF;
+    color: #9900FF;
+}
+.blue-day #top-menu .col-tobus-center1 {
+    background: #FFFFFF;
+    color: #6FA8DC;
+}
+
+
+#top-menu .col-tobus-right-1, #top-menu .col-tobus-right-2, #top-menu .col-tobus-right-3 {
+    padding: 15px 0;
+    font-size: 18px;
+    line-height: 20px;
+    text-align: center;
+}
+#top-menu .col-tobus-right-4 {
+    padding: 15px 0;
+    line-height: 20px;
+    text-align: center;
+}
+#top-menu .col-tobus-right-4 a{
+    font-size: 24px;
+    color: #FFFFFF;
+}
+#top-menu .col-tobus-right-4 a:hover, #top-menu .col-tobus-right-4 a:active, #top-menu .col-tobus-right-4 a:focus{
+    text-decoration: none;
+    color: #EEEEFF;
+}
+
+#top-menu .col-tobus-right-5 {
+    padding: 7px 0 7px 15px;
+    font-size: 12px;
+    text-align: left;
+    float: left;
+}
+
+#goto-today, #goto-tomorrow, #goto-another-day {
+    color: #FFFFFF;
+}
+
+a#goto-today:hover, a#goto-today:active, a#goto-today:focus,
+a#goto-tomorrow:hover, a#goto-tomorrow:active, a#goto-tomorrow:focus,
+#goto-another-day:hover, #goto-another-day:active, #goto-another-day:focus {
+    cursor: pointer;
+    text-decoration: none;
+    color: #EEEEFF;
+}
+
+.col-tobus-center-left, .col-tobus-center-right {
+    width: 50%;
+    float: left;
+}
+
+#new-order-today {
+    background: #FF9900;
+    color: #FFFFFF;
+    border: 1px solid #FF9900;
+}
+#new-order-tomorrow {
+    background: #9900FF;
+    color: #FFFFFF;
+    border: 1px solid #9900FF;
+}
+#new-order-another-day {
+    background: #6FA8DC;
+    color: #FFFFFF;
+    border: 1px solid #6FA8DC;
+}
+.create-order {
+    color: #FFFFFF;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+#main-page .btn-create-subscription, #main-page .btn-delete-subscription {
+    width: 100%;
+}
+#main-page .btn-delete-subscription {
+    margin-bottom: 10px;
+}
+#main-page .occupied-subscription {
+    color: #9b2d30;
+}
+
+
+#main-page #main-buttons-block #subscriptions-list {
+    width: 100%;
+    margin-bottom: 10px;
+}
+#main-page #main-buttons-block #subscriptions-list button {
+    width: 100%;
+    background-color: #FFFFFF;
+    white-space: normal;
+}
+#main-page #subscriptions-list .dropdown-menu {
+    width: 100%;
+}
+#main-page #subscriptions-list .dropdown-menu > li{
+    white-space: normal;
+    padding: 5px 10px;
+}
+#main-page #subscriptions-list .dropdown-menu > li:hover{
+    background: #F5F5F5;
+    cursor: pointer;
+}
+
+.btn-operator-online {
+    width: 100%;
+    margin: 5px 0;
+    color: #444;
+    background-color: #f4f4f4;
+    border-color: #ddd;
+}
+.btn-operator-offline {
+    width: 100%;
+    margin: 3px 0;
+}
+
+/* мигающая кнопка */
+.blink {
+    animation-name: blinker;
+    animation-iteration-count: infinite;
+    animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+    animation-duration: 2s;
+    -webkit-animation-name: blinker;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+    -webkit-animation-duration: 2s;
+}
+@keyframes blinker {
+    from { opacity: 1.0; }
+    to { opacity: 0.0; }
+}
+@-webkit-keyframes blinker {
+    from { opacity: 1.0; }
+    to { opacity: 0.0; }
+}
+
+
+a#new-order-today:hover{
+    background: #F99300;
+}
+a#new-order-tomorrow:hover{
+    background: #8000F5;
+}
+a#new-order-another-day:hover{
+    background: #63A0D0;
+}
+
+
+#top-menu .another-day-item {
+    height: 50px;
+    position: relative;
+    overflow: hidden;
+}
+#another-day {
+    position: absolute;
+    margin-left:-50px;
+    width: 1px;
+}
+#top-menu .today-item.active {
+    background: #FFFFFF;
+    color: #000000;
+    border-bottom: 1px solid #DDDDDD;
+    border-left: 1px solid #DDDDDD;
+    height: 50px;
+}
+#top-menu .today-item.active * {
+    color: #000000;
+}
+
+#top-menu .tomorrow-item.active {
+    background: #FFFFFF;
+    color: #000000;
+    border-bottom: 1px solid #DDDDDD;
+    height: 50px;
+}
+#top-menu .tomorrow-item.active * {
+    color: #000000;
+}
+
+#top-menu .another-day-item.active {
+    background: #FFFFFF;
+    color: #000000;
+    border-bottom: 1px solid #DDDDDD;
+    height: 50px;
+}
+#top-menu .another-day-item.active *{
+    color: #000000;
+}
+
+
+#edit-trip {
+    background: #F6B26B;
+    color: #000000;
+    border: 1px solid #000000;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+#day-report {
+    background: #F9F9F9;
+    color: #000000;
+    border: 1px solid #000000;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+#calculations {
+    background: #F9F9F9;
+    color: #000000;
+    border: 1px solid #000000;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+#ejsv {
+    background: #F9F9F9;
+    color: #000000;
+    border: 1px solid #000000;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#edit-trip:hover, a#day-report:hover, a#calculations:hover{
+     color: #444444;
+}
+#print-trip-orders {
+    background: #F9F9F9;
+    color: #FF0000;
+    border: 1px solid #000000;
+    text-align: center;
+}
+#export-to-csv{
+    margin-right: 10px;
+}
+
+
+#admin-panel {
+    background: #000000;
+    color: #FFFFFF;
+    border: 1px solid #AAAAAA;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#admin-panel:hover {
+    color: #EEEEEE;
+}
+
+#open-chat {
+    border: 1px solid #00AAAA;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#open-chat:hover {}
+
+#client-search {
+    color: #555555;
+    border: 1px solid #000000;
+    width: 100%;
+    padding: 5px 15px;
+    margin: 10px 0;
+}
+
+
+#account-block .user-logout{
+    font-size: 12px;
+    color: #555;
+}
+#account-block a.user-logout:hover{
+    font-size: 12px;
+    color: #333;
+}
+
+
+/* форма создания заказа - записи клиента */
+#order-create-modal {
+    z-index: 1046;
+    padding: 0;
+    /*overflow-y: auto;*/
+    overflow-y: auto;
+}
+#order-create-modal.modal {
+    left: calc(100% - 600px);
+    position: fixed;
+    /*overflow-x: visible;
+    overflow-y: visible;*/
+}
+/*
+#order-create-modal.open-phones-block{
+    left: calc(100% - 800px);
+}
+#order-create-modal.open-phones-block .modal-dialog{
+    width: 100%;
+}
+#order-create-modal.open-phones-block .order-form {
+    margin-left: 200px;
+}*/
+#order-create-modal.modal *{
+    font-size: 12px;
+}
+#order-create-modal .modal-dialog {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#order-create-modal .modal-header {
+    padding: 9px 15px;
+}
+
+#order-create-modal .modal-header .close {
+    margin-top: 2px;
+    font-size: 16px;
+    padding-right: 5px;
+}
+
+#order-create-modal .yellow-line {
+    margin: 0px -15px 5px -15px;
+    background: #FFFF00;
+    padding: 2px 15px;
+}
+
+#order-create-modal .row {
+    margin: 0 0 0 0;
+}
+
+#order-create-modal .order-form .first-col {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: right;
+}
+
+#order-create-modal .order-form .checkbox {
+    display:block;
+    width: 100%;
+    height: 30px;
+    margin-top: -3px;
+    cursor:pointer;
+}
+
+#order-create-modal .order-form .input-text {
+    display:block;
+    width: 100%;
+}
+
+#order-create-modal .order-form .mini-side-padding {
+    padding-left: 5px;
+    padding-right: 0;
+}
+
+#order-create-modal .order-form .nowrap {
+    white-space: nowrap;
+}
+
+#order-create-modal .order-form .label-horizontal {
+    display: inline-block;
+    vertical-align: middle;
+    margin-top:5px;
+    line-height: 1;
+    font-weight: normal;
+}
+
+#order-create-modal .order-form .label-vertical {
+    margin-bottom: 0;
+    margin-top: 3px;
+    font-weight: normal;
+    white-space:nowrap;
+}
+
+.order-phones-block .label-vertical {
+    margin-bottom: 2px;
+}
+
+#order-create-modal .order-form .elem-horizontal {
+    display: inline-block;
+}
+
+#order-create-modal .order-form .form-group {
+    margin-bottom: 0;
+}
+
+
+/* TimePicker */
+#order-create-modal .order-form .bootstrap-timepicker-widget {
+    min-width: 90px;
+}
+#order-create-modal .order-form .bootstrap-timepicker-widget td{
+    height: 6px;
+}
+#order-create-modal .order-form .bootstrap-timepicker .form-control {
+    padding: 3px 6px;
+    height: 28px;
+}
+#order-create-modal .order-form .form-control {
+    padding: 3px 6px;
+    height: 28px;
+}
+
+#order-create-modal .order-form .disabled {
+    color: grey;
+}
+
+.add_order_plus {
+    position: absolute;
+    left: auto;
+    bottom: -14px;
+    width: 23px;
+    height: 23px;
+    margin-left: 0;
+    right: -11px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#order-create-modal #order-forced {
+    margin-left: 25px;
+    vertical-align: bottom;
+}
+
+#order-create-modal #edit-by-hand {
+    margin-top: 20px;
+    background: #000000;
+    color: #FFF;
+    border-color: #555555;
+}
+
+#order-create-modal #info-window {
+    margin-top: 20px;
+    background: #FFFFFF;
+    color: #FF0000;
+    border-color: #FF0000;
+    padding: 3px 4px;
+}
+
+/* конец: форма создания заказа - записи клиента */
+
+
+
+
+/* окно с количеством заказов клиента за послдение 2 дня */
+#client-last-orders-modal {
+    z-index: 10000;
+}
+#client-last-orders-modal .modal-dialog {
+    margin-left: calc(100% - 1140px);
+}
+#client-last-orders-modal .modal-body {
+    padding-bottom: 0;
+}
+#client-last-orders-modal .modal-header {
+    background-color: #FF5555;
+    color: #FFFFFF;
+    padding: 9px 15px;
+}
+#client-last-orders-modal #modal-footer {
+    background-color: #F2F2F2;
+    border: solid 1px #EEEEEE;
+    border-width: 1px 0 0 0;
+    padding: 15px 0 0 0;
+    margin-top: 15px;
+}
+#client-last-orders-modal .button-close {
+    background-color: #FFFFFF;
+}
+
+/* Всплывающее в форме создания заказа окошко с последними заказами клиента */
+#client-last-orders-list.table > tbody > tr > td {
+    padding: 2px 8px;
+}
+#client-last-orders-list.table a {
+    color: #AAFFAA;
+}
+#client-last-orders-list.table a:hover {
+    color: #AADDAA;
+}
+
+/* Главная страница - направления с рейсами (второй новый вариант верстки) */
+
+#directions-block {
+    display: block;
+    white-space: nowrap;
+    overflow-x: auto;
+    border-color: #EEE;
+    border-style: solid;
+    border-width: 0 1px 0 0;
+}
+#directions-block .direction {
+    width: 249px;
+    display: inline-block;
+    border: 1px dotted #EEE;
+    border-width: 0 0 0 0;
+    margin-top: 10px;
+}
+#set-of-trips-page #directions-block .direction {
+    width: 242px;
+}
+
+#directions-block .direction-name-block {
+    font-size: 20.0pt;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 10px;
+}
+/*
+#set-of-trips-page #directions-block .direction-name-block {
+    padding-left: 74px;
+}*/
+#directions-block .direction .direction-name-block .direction-name {
+    padding: 0 5px;
+}
+
+/* "коммерческие" рейсы на Нлавной странице и на странице "Расстановка" */
+#directions-block .direction .trip[commercial="1"] .reis a{
+    color: red;
+    font-weight: 700;
+}
+#set-of-trips-page .info-list .trip[commercial="1"] .reis_name a.trip_detail_link{
+    color: red;
+    font-weight: 700;
+}
+
+/* направление в состояние "коммерческое" на странице Расстановка */
+#set-of-trips-page .sh_route .direction-name {
+    padding: 0 5px;
+}
+
+
+
+#directions-block .direction .trip {
+    display: table;
+    position: relative;
+    width: 202px;
+    margin-bottom: 17px;
+    border-bottom: 1px dotted #AAAAAA;
+}
+#set-of-trips-page #directions-block .direction .trip {
+    width: 222px;
+}
+#directions-block .direction .trip-top{
+    width: 100%;
+    background-color: #F2F2F2;
+    font-size: 8.0pt;
+    height: 15px;
+    padding: 1px 0 1px 3px;
+}
+
+
+#directions-block .direction .trip-top .trip-top-left{
+    float: left;
+    width: 142px;
+}
+#directions-block .direction .trip-top .trip-top-right{
+    float: right;
+    font-weight: bold;
+    width: 47px;
+    margin-right: 3px;
+    text-align: right;
+}
+#directions-block .direction .trip .trip-checkbox {
+    width: 20px;
+    height: 27px;
+    float: left;
+    clear: both;
+}
+
+#directions-block .direction .trip .reis{
+    border-bottom: 1.0pt dotted black;
+    border-radius: 0;
+    color: black;
+    font-size: 14.0pt;
+    font-weight: 500;
+    padding: 4px 7px 4px 7px;
+    float: left;
+    margin-top: -1px;
+    width: 68px;
+    /*background: #EFEFEF;*/
+}
+
+/*
+#directions-block .direction .trip[is-start-sending="1"] .reis, #set-of-trips-page .trip[is-start-sending="1"] .reis_name {
+    background: #ffe321;
+} */
+#directions-block .direction .trip[status="sended"] .reis, #set-of-trips-page .trip[status="sended"] .reis_name {
+    background: #AFEEEE;
+}
+#directions-block .direction .trip[status="issued_by_operator"][has-free-places="0"] .reis {
+    background: #953735;
+    color: #FFFFFF;
+}
+#directions-block .direction .trip[status="issued_by_operator"][has-free-places="1"] .reis {
+    background: #B3A2C7;
+    color: #FFFFFF;
+}
+#directions-block .direction .trip[status="start_sending"] .reis {
+    background: #ffe321;
+}
+#directions-block .direction .trip[is-reserv="1"] .reis {
+    background: #ff77ff;
+}
+/*
+#directions-block .direction .trip[is-sended="1"] .reis, #set-of-trips-page .trip[is-sended="1"] .reis_name {
+    background: #AFEEEE;
+}*/
+
+#directions-block .direction .trip .transports-places {
+    vertical-align: middle;
+    padding: 0;
+    float: right;
+    width: auto;
+    /*min-width: 32px;*/
+    margin-right: 3px;
+}
+#set-of-trips-page #directions-block .direction .trip .transports-places {}
+#directions-block .direction .trip .transports-places .place{
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+    line-height: 1.38;
+    text-align: right;
+}
+#directions-block .direction .trip .transports-places .place:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+/*
+#directions-block .direction .trip .transports-places[status="success"] {
+    color: grey;
+}
+#directions-block .direction .trip .transports-places[status="error"] {
+    color: red;
+}*/
+#directions-block .direction .trip .transports-places[status="success"] .place-col-1 span:nth-child(1){
+    color: #404040;
+    font-size: 15px;
+}
+#directions-block .direction .trip .transports-places[status="error"] .place-col-1 span:nth-child(1){
+    color: red;
+    font-size: 15px;
+}
+#directions-block .direction .trip .transports-places[status="success"] .place-col-1 span:nth-child(2){
+    color: grey;
+}
+#directions-block .direction .trip .transports-places[status="error"] .place-col-1 span:nth-child(2){
+    color: red;
+}
+
+#directions-block .direction .trip .transports-places .place.place-col-2 span:nth-child(1){
+    color: #00AA01;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+#directions-block .direction .trip .transports-places[status="success"] .place-col-2 span:nth-child(2){
+    /*color: #00AA01;*/
+    color: #777777;
+    font-weight: 800;
+    font-size: 17px;
+}
+#directions-block .direction .trip .transports-places[status="error"] .place-col-2 span:nth-child(2){
+    /*color: #00AA01;*/
+    color: red;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+
+/*
+.transports-places[status="success"] {
+    color: grey;
+}
+.transports-places[status="error"] {
+    color: red;
+}*/
+
+#directions-block .direction .trip .transports-names {
+    float: left;
+    vertical-align: middle;
+    margin-left: 7px;
+    margin-right: 7px;
+    /*width: 65px;*/
+}
+
+
+#directions-block .direction .trip[status=""] .reis a,
+#directions-block .direction .trip[status="start_sending"] .reis a,
+#directions-block .direction .trip[status="sended"] .reis a {
+    color: #007fff;
+    white-space: pre-wrap;
+    max-width: 60px;
+    text-decoration: underline;
+    display: inline-block;
+    word-wrap: break-word;
+    font-weight: 600;
+}
+#directions-block .direction .trip[status="issued_by_operator"] .reis a {
+    color: #FFFFFF;
+    white-space: pre-wrap;
+    max-width: 60px;
+    text-decoration: underline;
+    display: inline-block;
+    word-wrap: break-word;
+    font-weight: 600;
+}
+
+#directions-block .direction .trip .reis .add-order-plus, #set-of-trips-page .trip .add_transport_plus {
+    position: absolute;
+    left: auto;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    margin-left: 0;
+    right: -2px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+#directions-block .direction .trip .transports-names .transport-name {
+    font-size: 9pt;
+    margin: 0 0 2px 0;
+    padding: 0 2px;
+    cursor: pointer;
+}
+#set-of-trips-page .trip_transport {
+    cursor: pointer;
+    /*border-bottom: 1px dashed;*/
+    margin-top:4px;
+    margin-left:7px;
+}
+#set-of-trips-page .trip_transport span {
+    /*border-bottom: 1px dashed;*/
+}
+#trip-orders-page .trip_transport {
+    border-bottom: 1px dashed;
+}
+
+#trip-orders-page #trip-yandex-map {
+    /*margin-left: 20px;*/
+    margin-left: 10px;
+}
+#trips-map {
+    width: 800px;
+    height: 600px;
+}
+#transport-map {
+    width: 800px;
+    height: 600px;
+}
+
+/* неподтвержденная машина - серый/черный шрифт на жёлтом фоне с пунктирным подчеркиванием  */
+#directions-block .direction .trip .transports-names .transport-name.unconfirmed, #set-of-trips-page .trip_transport.unconfirmed {
+    color: #333;
+    background-color: #FFF9B4;
+    text-decoration: none;
+    border-bottom: dashed 1px #0088cc;
+    font-size: 12px;
+    line-height: 1.3;
+}
+/* подтвержденная - серый/черный шрифт на зелёном фоне */
+#directions-block .direction .trip .transports-names .transport-name.confirmed, #set-of-trips-page .trip_transport.confirmed {
+    color: #333;
+    background-color: #E6FFE6;
+}
+/* отправленная - белый шрифт на лазурном фоне (как овал отправленного рейса) */
+/*
+#directions-block .direction .trip .transports-names .transport-name.sended, #set-of-trips-page .trip_transport.sended {
+    color: #FFFFFF;
+    background-color: #AFEEEE;
+}*/
+
+/*
+#directions-block .direction .trip[status=""] .transports-names .transport-name.sended,
+#directions-block .direction .trip[status="start_sending"] .transports-names .transport-name.sended,
+#set-of-trips-page .trip[status=""] .trip_transport.sended,
+#set-of-trips-page .trip[status="start_sending"] .trip_transport.sended {
+    color: #FFFFFF;
+    background-color: #AFEEEE;
+}
+#directions-block .direction .trip[status="issued_by_operator"][has-free-places="1"] .transports-names .transport-name.sended,
+#set-of-trips-page .trip[status="issued_by_operator"][has-free-places="1"] .trip_transport.sended{
+    background: #B3A2C7;
+    color: #FFFFFF;
+}
+#directions-block .direction .trip[status="issued_by_operator"][has-free-places="0"] .transports-names .transport-name.sended,
+#set-of-trips-page .trip[status="issued_by_operator"][has-free-places="0"] .trip_transport.sended{
+    background: #953735;
+    color: #FFFFFF;
+}
+#directions-block .direction .trip[status="sended"] .transports-names .transport-name.sended,
+#set-of-trips-page .trip[status="sended"] .trip_transport.sended{
+    background: #A2EBEA;
+    color: #FFFFFF;
+}
+*/
+#directions-block .direction .trip[status=""] .transports-names .transport-name.sended,
+#directions-block .direction .trip[status="start_sending"] .transports-names .transport-name.sended,
+#set-of-trips-page .trip[status=""] .trip_transport.sended,
+#set-of-trips-page .trip[status="start_sending"] .trip_transport.sended {
+    color: #FFFFFF;
+    background-color: #AFEEEE;
+}
+#directions-block .direction .trip[status="issued_by_operator"] .transports-names .transport-name.sended_with_free_places,
+#directions-block .direction .trip[status="start_sending"] .transports-names .transport-name.sended_with_free_places,
+#set-of-trips-page .trip[status="issued_by_operator"] .trip_transport.sended_with_free_places{
+    background: #B3A2C7;
+    color: #FFFFFF;
+}
+#directions-block .direction .trip[status="issued_by_operator"] .transports-names .transport-name.sended_without_free_places,
+#directions-block .direction .trip[status="start_sending"] .transports-names .transport-name.sended_without_free_places,
+#set-of-trips-page .trip[status="issued_by_operator"] .trip_transport.sended_without_free_places{
+    background: #953735;
+    color: #FFFFFF;
+}
+
+#directions-block .direction .trip[status="sended"] .transports-names .transport-name,
+#set-of-trips-page .trip[status="sended"] .trip_transport{
+    background: #A2EBEA;
+    color: #FFFFFF;
+}
+/*
+#directions-block .direction .trip[status="sended"] .transports-names .transport-name.sended,
+#set-of-trips-page .trip[status="sended"] .trip_transport.sended{
+    background: #A2EBEA;
+    color: #FFFFFF;
+}*/
+
+
+
+/* дубликат - красный без фона */
+#directions-block .direction .trip .transports-names .transport-name.duplicate, #set-of-trips-page .trip_transport.duplicate {
+    color: #FF0000;
+}
+/* транспорт второго рейса при первом вхождении - белый шрифт на красном фоне */
+#directions-block .direction .trip .transports-names .transport-name.second-transport, #set-of-trips-page .trip_transport.second-transport {
+    color: #FFFFFF;
+    background-color: #FF0000;
+}
+/* дубликат машины второго рейса - как обычный дубликат */
+#directions-block .direction .trip .transports-names .transport-name.duplicate-second-transport, #set-of-trips-page .trip_transport.duplicate-second-transport {
+    color: #FF0000;
+}
+
+#directions-trips-block #directions-menu .selected a{
+    font-weight: bold;
+}
+#directions-trips-block #directions-menu li a {
+    cursor: pointer;
+}
+
+/* конец: Главная страница - направления с рейсами (второй новый вариант верстки) */
+
+
+
+/* Страница "Состав рейса" */
+
+
+
+#reis-panel-left .places-count {
+    float: right;
+}
+#reis-panel-left #add-trip-transport-car {
+    margin-left: 5px;
+    float: right;
+}
+
+#reis-panel {
+    display: block;
+    position: fixed;
+    top: 70px;
+    /*width: 1170px;*/
+    width: 1120px;
+    background: #fff;
+    opacity: 0.91;
+    z-index: 1;
+}
+#reis-panel-left {
+    border: 1px solid #dddddd;
+    /*display: inline-block;*/
+    float: left;
+    line-height: 30px;
+    margin: -10px 0 10px 0;
+    padding: 20px 20px;
+    width: calc(50% - 2px);
+}
+#reis-panel-left .pull-left {
+    float: left;
+}
+#reis-panel-left .pull-right {
+    float: right;
+}
+#reis-panel-right {
+    border: 1px solid #dddddd;
+    display: inline-block;
+    line-height: 30px;
+    margin: -10px 0 10px 15px;
+    padding: 20px;
+    width: calc(48% - 2px);
+}
+#reis-panel-right #new-order-today {
+    display: inline-block;
+    margin-right: 38px;
+}
+#reis-panel-right #new-order-tomorrow{
+    display: inline-block;
+}
+#reis-panel-right #new-order-another-day {
+    float: right;
+}
+
+
+.places-count {
+    font-size: 18px;
+    /*padding-right: 20px;*/
+    padding-right: 10px;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+.legend {
+    margin-bottom: 10px;
+    display: block;
+}
+.legend .l-title {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 10px;
+}
+.legend .l-text {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: -3px;
+    line-height: 20px;
+    vertical-align: top;
+}
+.legend .mark {
+    height: 16px;
+    width: 16px;
+    border: 2px solid #dddddd;
+    display: inline-block;
+}
+.legend .expects {
+    background-color: #FFF9B4;
+}
+.legend .sended {
+    background-color: #E6FFE6;
+}
+.legend .cancel {
+    background-color: #FFDBDB;
+}
+
+body {
+    overflow-x: auto;
+}
+#orders-grid {
+    display: inline-block;
+}
+#orders-grid-container{
+    font-size: 12px;
+    display: inline-block;
+    overflow-x: visible;
+}
+
+#orders-grid td[column-name="time-confirm-sort"] {
+    display: block;
+    white-space: nowrap;
+}
+#orders-grid .time-confirm-sort-minus {
+    display: inline-block;
+    border: 0 none;
+    background: #8ed4db none repeat scroll 0 0;
+    border-radius: 5px;
+    margin-right: 2px;
+}
+#orders-grid .time-confirm-sort-plus {
+    display: inline-block;
+    border: 0 none;
+    background: #8ed4db none repeat scroll 0 0;
+    border-radius: 5px;
+    margin-left: 2px;
+}
+#orders-grid .time-confirm-sort {
+    display: inline-block;
+}
+
+#trip-orders-page .to-confirm[disabled], #trip-orders-page .put-into-transport[disabled] {
+    opacity: 0.3;
+}
+
+#trip-orders-page #bottom-navigation, #client-view-page #bottom-navigation {
+    position: absolute;
+    width: 100%;
+    padding: 20px 0;
+    left: 0;
+    margin: 20px 0;
+    background: #EEEEEE;
+}
+
+#trip-orders-page #start-sending-reis, #trip-orders-page #send-reis, #trip-orders-page #recount-orders-prices {
+    margin-left: 10px;
+}
+
+#trip-orders-page #orders-buttons-block {
+    border: 1px solid #dddddd;
+    display: table;
+    line-height: 30px;
+    margin: 10px 0;
+    padding: 20px;
+    width: 100%;
+}
+#trip-orders-page .confirm-selected-transport {
+    padding: 6px 10px;
+    background: #F0CD38;
+}
+#trip-orders-page .confirm-selected-transport i {
+    font-size: 16px;
+    background: #F0CD38;
+}
+#trip-orders-page .confirm-selected-transport.btn[disabled] {
+    opacity: 0.4;
+    background: #F0CD38;
+}
+#trip-orders-page #trip-price {
+    font-size: 13px;
+    /*margin-left: 15px;*/
+    margin-left: 7px;
+}
+/* конец: Страница "Состав рейса" */
+
+.height-margin {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.no-left-padding {
+    padding-left: 0;
+}
+
+/* Всплывающая форма "Информация об автомобиле" */
+#car-info-form .btn {
+    width: 148px;
+}
+
+/* Окно с заявками слева */
+/*
+.clientext-widget {
+    position: fixed;
+    left: 0;
+    top: 20%;
+    padding: 5px 4px 0 0;
+    border-radius: 0 4px 0 0;
+    width: 35px;
+    height: 156px;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.7);
+    background: #FFFFFF;
+    opacity: 0.9;
+    color: #ff006a;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.clientext-widget .number {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.clientext-widget .title{
+    color: #77003d;
+    font-size: 15px;
+    white-space: pre;
+    margin: 10px 0 0 0;
+    text-align: center;
+    line-height: 1.2;
+}
+
+#clientext-modal .modal-dialog {
+    position: fixed;
+    left: 50px;
+}
+#clientext-list{
+    height: 480px;
+    overflow: auto;
+}
+#clientext-list .clientext {
+    margin-bottom: 5px;
+}
+#clientext-list .selected {
+    background-color: #e8e8e8;
+}
+*/
+
+#incoming-orders-widget {
+    position: fixed;
+    left: 0;
+    top: 13%;
+    padding: 5px 12px 0 12px;
+    border-radius: 0 4px 0 0;
+    width: 120px;
+    height: auto;
+    box-shadow: 0 0 7px #cccccc;
+    background: #FFFFFF;
+    opacity: 0.9;
+    color: #ff006a;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 1053;
+    /*text-align: center;*/
+}
+#incoming-orders-widget .incoming-orders-block {
+
+}
+#incoming-orders-widget #directions {
+    border-bottom: 1px solid #EAEAEA;
+    padding: 3px 0 8px 0;
+    display: table;
+    width: 100%;
+}
+#incoming-orders-widget .incoming-orders-block .direction-1 {
+    color: #FFE500;
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+    display: table-cell;
+}
+
+#incoming-orders-widget #indicator-block{
+    margin-top: 8px;
+}
+#incoming-orders-widget .incoming-orders-block .direction-1 .orders-count {
+    line-height: 16px;
+}
+#incoming-orders-widget .incoming-orders-block .direction-2 {
+    color: #FFE500;
+    text-align: right;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 5px;
+    display: table-cell;
+    margin-left: 4px;
+}
+#incoming-orders-widget .incoming-orders-block .red {
+    color: red;
+}
+#incoming-orders-widget .incoming-orders-block .direction-2 .orders-count {
+    line-height: 16px;
+}
+
+#incoming-orders-widget .incoming-orders-count {
+    background: #ff8602;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0 0 0;
+    padding: 1px 0 0 0;
+    width: 26px;
+    font-size: 11px;
+    /*display: inline-block;*/
+    float: left;
+}
+#incoming-orders-widget .arrow-tube-img {
+    width: 28px;
+    height: 28px;
+}
+#incoming-orders-widget .missed-calls-count {
+    font-size: 11px;
+    color: #555555;
+    margin-top: -7px;
+    margin-bottom: 5px;
+}
+#incoming-orders-widget #missed-calls {
+    display: none;
+    text-align: center;
+    float: left;
+    margin-left: 10px;
+}
+#incoming-orders-widget #missed-calls.active {
+    /*display: inline-block;*/
+    float: left;
+    display: block;
+    text-align: center;
+}
+
+#missed-call-list .missed-call.disable {
+    background-color: #AAAAAA;
+}
+
+
+/* зеленый кружок входящего звонка */
+#incoming-orders-widget #incoming-call {
+    margin: 8px 0 10px 10px;
+    width: 22px;
+    height: 22px;
+    background: #6DCD38;
+    border-radius: 50%;
+    float: left;
+    text-align: center;
+}
+#incoming-orders-widget #incoming-call #incoming-calls-count {
+    display: none;
+    margin-top: 3px;
+    margin-left: 0;
+    font-weight: bold;
+}
+
+#incoming-orders-widget #incoming-call.active {
+    display: inline-block;
+    background: #ff0010;
+    color: #FFFFFF;
+}
+#incoming-orders-widget #incoming-call.active #incoming-calls-count {
+    display: block;
+}
+
+/* красный кружок - наличия соединения на линии */
+#incoming-orders-widget .but-online {
+    border: 1px solid red;
+    border-radius: 5px;
+    width: 100%;
+    height: 32px;
+    color: red;
+    background: #FFFFFF;
+    clear: both;
+    text-align: center;
+    padding-top: 7px;
+    margin: 16px 0 16px 0;
+    display: none;
+}
+#incoming-orders-widget .but-online.active {
+    display: inline-block;
+}
+
+
+
+
+#active-trips-modal {
+    position: fixed;
+    left: 124px;
+    top: 13%;
+    border-radius: 4px 4px 0 0;
+    width: auto;
+    height: auto;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.7);
+    background: #FFFFFF;
+    opacity: 0.9;
+    font-size: 12px;
+    /*overflow: hidden;*/
+}
+#active-trips-modal .modal-title {
+    width: 100%;
+    background: #ffe321;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 1px 0 1px 8px;
+}
+#active-trips-modal .modal-body {
+    font-size: 14px;
+    padding: 12px 15px;
+}
+#active-trips-modal .modal-body .direction2-trips {
+    margin-top: 7px;
+}
+#active-trips-modal .modal-close {
+    font-size: 12px;
+    font-weight: bold;
+    color: #FFFFFF;
+    float: right;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 8px 7px 5px 5px;
+    line-height: 1px;
+}
+#active-trips-modal .active-trip {
+    display: block;
+}
+#active-trips-modal .active-trip a {
+    color: #000000;
+    font-size: 14px;
+}
+#active-trips-modal .active-trip a.bad {
+    color: red;
+}
+#active-trips-modal .active-trip a:hover {
+    color: #018ba8;
+}
+
+
+#incoming-clientext-orders-modal {
+    position: fixed;
+    left: 124px;
+    top: calc(13% + 1px);
+    border-radius: 4px 4px 0 0;
+    width: auto;
+    height: auto;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.7);
+    background: #FFFFFF;
+    opacity: 0.9;
+    font-size: 12px;
+    z-index: 1;
+}
+#incoming-clientext-orders-modal .modal-title {
+    width: 100%;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 1px 0 1px 8px;
+    border: solid #C8C8C8;
+    border-width: 0 0 1px 0;
+}
+#incoming-clientext-orders-modal .modal-body {
+    font-size: 14px;
+    padding: 12px 15px;
+    height: 450px;
+    overflow-y: auto;
+}
+#incoming-clientext-orders-modal .modal-close {
+    font-size: 12px;
+    font-weight: bold;
+    float: right;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 8px 7px 5px 5px;
+    line-height: 1px;
+}
+#incoming-clientext-orders-modal .clientext {
+    margin-bottom: 5px;
+}
+#incoming-clientext-orders-modal .selected {
+    background-color: #e8e8e8;
+}
+
+
+
+#incoming-request-orders-modal {
+    position: fixed;
+    left: 124px;
+    top: calc(13% + 100px);
+    border-radius: 4px 4px 0 0;
+    width: auto;
+    height: auto;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.7);
+    background: #FFFFFF;
+    opacity: 0.9;
+    font-size: 12px;
+    z-index: 1;
+}
+#incoming-request-orders-modal .modal-title {
+    width: 100%;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 1px 0 1px 8px;
+    border: solid #C8C8C8;
+    border-width: 0 0 1px 0;
+}
+#incoming-request-orders-modal .modal-body {
+    font-size: 14px;
+    padding: 12px 15px;
+    overflow-y: auto;
+    max-height: 400px;
+}
+#incoming-request-orders-modal .call-phone-button {
+    font-size: 12px;
+}
+#incoming-request-orders-modal .request{
+    white-space: nowrap;
+}
+#incoming-request-orders-modal .modal-close {
+    font-size: 12px;
+    font-weight: bold;
+    float: right;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 8px 7px 5px 5px;
+    line-height: 1px;
+}
+#incoming-request-orders-modal .clientext {
+    margin-bottom: 5px;
+}
+#incoming-request-orders-modal .selected {
+    background-color: #e8e8e8;
+}
+
+
+#day-report-arrow-left, #day-report-arrow-right {
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#efficiency-table * {
+    font-size: 11px;
+}
+
+#efficiency-table, #efficiency-table td, #efficiency-table th {
+    border: 1px solid #CCCCCC;
+}
+#efficiency-table td, #efficiency-table th {
+    padding: 3px 5px;
+}
+
+/* Страница печать состава рейса */
+#print-trip-orders-page {
+    padding: 20px;
+}
+#print-trip-orders-page-title {
+    font-size: 16px;
+}
+
+.time_points * {
+    font-size: 14px;
+}
+.time_points td:nth-child(1) {
+    width: 200px;
+    text-align: right;
+    font-weight: bold;
+    padding-right: 20px;
+}
+.time_points td:nth-child(2) * {
+    width: 82px;
+}
+.time_points td:nth-child(3) * {
+    width: 82px;
+}
+.time_points td:nth-child(4) * {
+    width: 82px;
+}
+#trip-start_time {
+    width: 70px;
+}
+#trip-mid_time {
+    width: 70px;
+}
+#trip-end_time {
+    width: 70px;
+}
+.time_points tr {
+    height: 40px;
+}
+.time_points .reis-name {
+    vertical-align: top;
+    padding-top: 5px;
+}
+.time_points .points-name {
+    vertical-align: top;
+    padding-top: 5px;
+}
+.time_points .commercial-name {
+    vertical-align: top;
+    padding-top: 5px;
+}
+
+#start-sending-reis-form #select-choice span:hover {
+    cursor: pointer;
+    border-bottom: 1px dashed #000080;
+}
+
+span.call-phone, div.call-phone {
+    cursor: pointer;
+    display: inline-block;
+    border: dotted;
+    border-width: 0 0 1px 0;
+    color: #000077;
+}
+.call-phone:hover {
+    color: #4609af;
+}
+.call-phone-button {
+    /*cursor: url('/img/hand_tube.png'), pointer;*/
+    cursor: pointer;
+    display: inline-block;
+    border: dotted;
+    border-width: 0 0 1px 0;
+    color: #000077;
+}
+
+.phone-tube {
+    display: none;
+    position: absolute;
+    margin-top: -35px;
+    margin-left: 110px;
+    z-index: 2;
+    cursor: pointer;
+}
+#calls-window {
+    padding: 10px 15px 15px 15px;
+}
+#trip-orders-page .time-confirm-auto {
+    text-decoration: none;
+    /*border-bottom: dashed 1px #0088cc;*/
+    /*color: #428bca;*/
+    color: #AAAAAA;
+    font-size: 11px;
+    border-bottom: dashed 1px #AAAAAA;
+    font-style: italic;
+}
+
+
+/* окно Сообщение от водителя */
+.msg-from-driver {
+    position: fixed;
+    left: 124px;
+    top: 13%;
+    border-radius: 4px 4px 0 0;
+    width: auto;
+    height: auto;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.7);
+    background: #FFFFFF;
+    opacity: 0.9;
+    font-size: 12px;
+    z-index: 2;
+}
+.msg-from-driver .modal-title {
+    width: 100%;
+    background: #222222;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 1px 0 1px 8px;
+}
+.msg-from-driver .modal-body {
+    font-size: 14px;
+    padding: 12px 15px;
+}
+.msg-from-driver .modal-body .direction2-trips {
+    margin-top: 7px;
+}
+.msg-from-driver .modal-close {
+    font-size: 12px;
+    font-weight: bold;
+    color: #FFFFFF;
+    float: right;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 8px 7px 5px 5px;
+    line-height: 1px;
+}
+
+
+/* Встроенное окно звонка (заказов клиента) */
+#inner-call-window {
+    position: fixed;
+    left: 20px;
+    top: calc(13% + 160px);
+    border-radius: 4px 4px 0 0;
+    width: calc(100% - 640px);
+    height: calc(87% - 170px);
+    overflow-y: hidden;
+    /*overflow-y: auto;*/
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.7);
+    background: #FFFFFF;
+    opacity: 0.9;
+    font-size: 12px;
+    z-index: 10000;
+}
+#inner-call-window .modal-title {
+    width: 100%;
+    /*font-size: 14px;
+    font-weight: bold;
+    padding: 1px 0 1px 8px;
+    border: solid #C8C8C8;
+    border-width: 0 0 1px 0;*/
+}
+#inner-call-window .modal-body {
+    font-size: 14px;
+    padding: 0 0 12px 0;
+    /*overflow-y: auto;*/
+    max-height: 400px;
+    margin-right: 3px;
+    /*height: calc(87% - 180px);*/
+    width: 100%;
+    overflow-y: auto;
+}
+#inner-call-window .modal-close {
+    font-size: 12px;
+    font-weight: bold;
+    float: right;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    margin-top: 5px;
+    padding: 8px 7px 5px 5px;
+    line-height: 1px;
+}
+
+#inner-call-window #call-page {
+    margin-top: -15px;
+}
+
+#passengers-modal {
+    z-index: 10001;
+}
+
+/*  Bootstrap-деление страницы на 12 заебало, поделю на 100 */
+.col-v-1 {
+    width: 1%;
+}
+.col-v-2 {
+    width: 2%;
+}
+.col-v-3 {
+    width: 3%;
+}
+.col-v-4 {
+    width: 4%;
+}
+.col-v-5 {
+    width: 5%;
+}
+.col-v-6 {
+    width: 6%;
+}
+.col-v-7 {
+    width: 7%;
+}
+.col-v-8 {
+    width: 8%;
+}
+.col-v-9 {
+    width: 9%;
+}
+.col-v-10 {
+    width: 10%;
+}
+.col-v-11 {
+    width: 11%;
+}
+.col-v-12 {
+    width: 12%;
+}
+.col-v-13 {
+    width: 13%;
+}
+.col-v-14 {
+    width: 14%;
+}
+.col-v-15 {
+    width: 15%;
+}
+.col-v-16 {
+    width: 16%;
+}
+.col-v-17 {
+    width: 17%;
+}
+.col-v-18 {
+    width: 18%;
+}
+.col-v-19 {
+    width: 19%;
+}
+.col-v-20 {
+    width: 20%;
+}
+.col-v-21 {
+    width: 21%;
+}
+.col-v-22 {
+    width: 22%;
+}
+.col-v-23 {
+    width: 23%;
+}
+.col-v-24 {
+    width: 24%;
+}
+.col-v-25 {
+    width: 25%;
+}
+.col-v-26 {
+    width: 26%;
+}
+.col-v-27 {
+    width: 27%;
+}
+.col-v-28 {
+    width: 28%;
+}
+.col-v-29 {
+    width: 29%;
+}
+.col-v-30 {
+    width: 30%;
+}
+.col-v-31 {
+    width: 31%;
+}
+.col-v-32 {
+    width: 32%;
+}
+.col-v-33 {
+    width: 33%;
+}
+.col-v-34 {
+    width: 34%;
+}
+.col-v-35 {
+    width: 35%;
+}
+.col-v-36 {
+    width: 36%;
+}
+.col-v-37 {
+    width: 37%;
+}
+.col-v-38 {
+    width: 38%;
+}
+.col-v-39 {
+    width: 39%;
+}
+.col-v-40 {
+    width: 40%;
+}
+.col-v-41 {
+    width: 41%;
+}
+.col-v-42 {
+    width: 42%;
+}
+.col-v-43 {
+    width: 43%;
+}
+.col-v-44 {
+    width: 44%;
+}
+.col-v-45 {
+    width: 45%;
+}
+.col-v-46 {
+    width: 46%;
+}
+.col-v-47 {
+    width: 47%;
+}
+.col-v-48 {
+    width: 48%;
+}
+.col-v-49 {
+    width: 49%;
+}
+.col-v-50 {
+    width: 50%;
+}
+.col-v-51 {
+    width: 51%;
+}
+.col-v-52 {
+    width: 52%;
+}
+.col-v-53 {
+    width: 53%;
+}
+.col-v-54 {
+    width: 54%;
+}
+.col-v-55 {
+    width: 55%;
+}
+.col-v-56 {
+    width: 56%;
+}
+.col-v-57 {
+    width: 57%;
+}
+.col-v-58 {
+    width: 58%;
+}
+.col-v-59 {
+    width: 59%;
+}
+.col-v-60 {
+    width: 60%;
+}
+.col-v-61 {
+    width: 61%;
+}
+.col-v-62 {
+    width: 62%;
+}
+.col-v-63 {
+    width: 63%;
+}
+.col-v-64 {
+    width: 64%;
+}
+.col-v-65 {
+    width: 65%;
+}
+.col-v-66 {
+    width: 66%;
+}
+.col-v-67 {
+    width: 67%;
+}
+.col-v-68 {
+    width: 68%;
+}
+.col-v-69 {
+    width: 69%;
+}
+.col-v-70 {
+    width: 70%;
+}
+.col-v-71 {
+    width: 71%;
+}
+.col-v-72 {
+    width: 72%;
+}
+.col-v-73 {
+    width: 73%;
+}
+.col-v-74 {
+    width: 74%;
+}
+.col-v-75 {
+    width: 75%;
+}
+.col-v-76 {
+    width: 76%;
+}
+.col-v-77 {
+    width: 77%;
+}
+.col-v-78 {
+    width: 78%;
+}
+.col-v-79 {
+    width: 79%;
+}
+.col-v-80 {
+    width: 80%;
+}
+.col-v-81 {
+    width: 81%;
+}
+.col-v-82 {
+    width: 82%;
+}
+.col-v-83 {
+    width: 83%;
+}
+.col-v-84 {
+    width: 84%;
+}
+.col-v-85 {
+    width: 85%;
+}
+.col-v-86 {
+    width: 86%;
+}
+.col-v-87 {
+    width: 87%;
+}
+.col-v-88 {
+    width: 88%;
+}
+.col-v-89 {
+    width: 89%;
+}
+.col-v-90 {
+    width: 90%;
+}
+.col-v-91 {
+    width: 91%;
+}
+.col-v-92 {
+    width: 92%;
+}
+.col-v-93 {
+    width: 93%;
+}
+.col-v-94 {
+    width: 94%;
+}
+.col-v-95 {
+    width: 95%;
+}
+.col-v-96 {
+    width: 96%;
+}
+.col-v-97 {
+    width: 97%;
+}
+.col-v-98 {
+    width: 98%;
+}
+.col-v-99 {
+    width: 99%;
+}
+.col-v-100 {
+    width: 100%;
+}
+.col-v-1, .col-v-2, .col-v-3, .col-v-4, .col-v-5, .col-v-6, .col-v-7, .col-v-8, .col-v-9, .col-v-10,
+.col-v-11, .col-v-12, .col-v-13, .col-v-14, .col-v-15, .col-v-16, .col-v-17, .col-v-18, .col-v-19, .col-v-20,
+.col-v-21, .col-v-22, .col-v-23, .col-v-24, .col-v-25, .col-v-26, .col-v-27, .col-v-28, .col-v-29, .col-v-30,
+.col-v-31, .col-v-32, .col-v-33, .col-v-34, .col-v-35, .col-v-36, .col-v-37, .col-v-38, .col-v-39, .col-v-40,
+.col-v-41, .col-v-42, .col-v-43, .col-v-44, .col-v-45, .col-v-46, .col-v-47, .col-v-48, .col-v-49, .col-v-50,
+.col-v-51, .col-v-52, .col-v-53, .col-v-54, .col-v-55, .col-v-56, .col-v-57, .col-v-58, .col-v-59, .col-v-60,
+.col-v-61, .col-v-62, .col-v-63, .col-v-64, .col-v-65, .col-v-66, .col-v-67, .col-v-68, .col-v-69, .col-v-70,
+.col-v-71, .col-v-72, .col-v-73, .col-v-74, .col-v-75, .col-v-76, .col-v-77, .col-v-78, .col-v-79, .col-v-80,
+.col-v-81, .col-v-82, .col-v-83, .col-v-84, .col-v-85, .col-v-86, .col-v-87, .col-v-88, .col-v-89, .col-v-90,
+.col-v-91, .col-v-92, .col-v-93, .col-v-94, .col-v-95, .col-v-96, .col-v-97, .col-v-98, .col-v-99, .col-v-100 {
+    float: left;
+    padding: 0 15px;
+}
+
+/*
+#ejsv-form .today-date {
+    background-color: #fcff00;
+}*/

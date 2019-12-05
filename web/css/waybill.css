@@ -1,0 +1,283 @@
+
+.waybill-block .waybill-title {
+    display: inline-block;
+    font-size: 20px;
+    font-weight: 400;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.waybill-arrow {
+    font-size: 14px;
+    cursor: pointer;
+}
+.waybill-vertical-title {
+    margin-top: 3px;
+}
+
+
+.transport-expenses-detailing-table {
+    table-layout: fixed;
+    width: 100%;
+}
+.transport-expenses-detailing-table tr td:first-child {
+    width: 50px;
+}
+.transport-expenses-detailing-table tr td:nth-child(2) {
+    width: 500px;
+}
+.transport-expenses-detailing-table tr td:last-child {
+    width: 40px;
+}
+.transport-expenses-table *, .transport-expenses-table-fixed * {
+    font-size: 12px;
+}
+.transport-expenses-table .form-control, .transport-expenses-table-fixed .form-control, .transport-expenses-detailing-table .form-control {
+    height: 30px;
+}
+.transport-expenses-table .sw-element, .transport-expenses-table-fixed .sw-element {
+    padding: 0 5px;
+}
+.transport-expenses-table td, .transport-expenses-table-fixed td, .transport-expenses-detailing-table td {
+    padding: 0 5px;
+}
+.transport-expenses-table .form-group, .transport-expenses-table-fixed .form-group, .transport-expenses-detailing-table .form-group {
+    margin-top: 20px;
+}
+.transport-expenses-table .form-group input, .transport-expenses-table-fixed .form-group input, .transport-expenses-detailing-table .form-group input, #detailing-title-form input {
+    padding: 0 5px;
+}
+.transport-expenses-table .form-group select, .transport-expenses-table-fixed .form-group select, .transport-expenses-detailing-table .form-group select, #detailing-title-form select {
+    padding: 0 5px;
+}
+.transport-expenses-table tr td, .transport-expenses-table-fixed tr td, .transport-expenses-detailing-table tr td {
+    border: 1px solid #AAAAAA;
+}
+.transport-waybill-form .add-transport-expenses,  .add-transport-expenses-detailing {
+    margin: 5px 0 0 0;
+    padding: 2px 6px;
+}
+.transport-waybill-form .delete-transport-expenses, .delete-transport-expenses-detailing {
+    margin-top: 5px;
+    padding: 2px 6px;
+}
+.open-transport-expenses-detailing {
+    font-size: 12px;
+}
+
+.waybill-trips-results-table, .waybill-results-table {
+    width: 100%;
+}
+.waybill-trips-results-table td, .waybill-trips-results-table th, .waybill-results-table td, .waybill-results-table th{
+    padding: 3px 5px;
+}
+.waybill-trips-results-table th {
+    color: #207acd;
+}
+.waybill-trips-results-table tr td, .waybill-trips-results-table tr th {
+    border: 1px solid #EEEEEE;
+}
+
+#waybill-result-yellow-block {
+    background-color: #FBFAA0;
+    padding: 5px 10px;
+}
+#total-failure-to-pay {
+    font-size: 28px;
+    color: red;
+}
+#waybill-result-turquoise-block {
+    background-color: #ADEADA;
+    padding: 35px 100px 35px 75px;
+    font-size: 18px;
+}
+
+.transport-expenses-table .allotted, .transport-expenses-table-fixed .allotted {
+    color:#000;
+    font-weight: 700;
+}
+.transport-expenses-table .green-allotted, .transport-expenses-table-fixed .green-allotted {
+    color: #00aa00;
+    font-weight: 700;
+}
+
+
+
+#detailing-title-form .form-control {
+    height: 30px;
+}
+.transport-expenses-table .expenses_seller_type_id_col, .transport-expenses-table-fixed .expenses_seller_type_id_col{
+    width: 120px;
+}
+.transport-expenses-table .transportexpenses-count {
+
+}
+.transport-expenses-table .expenses_seller_id_col {
+    width: 118px;
+}
+.transport-expenses-table .count_col {
+    width: 86px;
+}
+.transport-expenses-table .price_col {
+    width: 86px;
+}
+.transport-expenses-table .points_col {
+    width: 86px;
+}
+.transport-expenses-table .expenses_doc_type_id_col {
+    width: 118px;
+}
+.transport-expenses-table .expenses_type_id_col {
+    width: 118px;
+}
+.transport-expenses-table .doc_number_col {
+    width: 118px;
+}
+.transport-expenses-table .need_pay_date_col {
+    width: 86px;
+}
+.transport-expenses-table .check_attached_col {
+    width: 32px;
+}
+.transport-expenses-table .expenses_is_taken_col {
+    width: 32px;
+}
+.transport-expenses-table .expenses_is_taken_comment_col {
+    width: 182px;
+}
+.transport-expenses-table .payment_date_col {
+    width: 86px;
+}
+.transport-expenses-table .payment_method_id_col {
+    width: 118px;
+}
+.transport-expenses-table .transport_expenses_paymenter_id_col {
+    width: 118px;
+}
+.transport-expenses-table .payment_comment_col {
+    width: 182px;
+}
+
+table#waybill-menu-table{
+    width: 100%;
+}
+table#waybill-menu-table tr td {
+    padding: 15px 30px;
+}
+#waybill-create {
+    background: #028002;
+    color: #FFFFFF;
+    border: 1px solid #028002;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#waybill-create:hover{
+    background: #027002;
+}
+
+#exploitation-data {
+    background: #DA9695;
+    color: #FFFFFF;
+    border: 1px solid #DA9695;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#exploitation-data:hover{
+    background: #CA8685;
+}
+
+#waybill-expenses {
+    background: #ff0006;
+    color: #FFFFFF;
+    border: 1px solid #ff0006;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#waybill-expenses:hover {
+    background: #ef0000;
+}
+
+#waybill-detailing {
+    background: #AAAAAA;
+    color: #FFFFFF;
+    border: 1px solid #AAAAAA;
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+a#waybill-detailing:hover{
+    background: #9A9A9A;
+}
+
+.transport-expenses-table tr td:first-child {
+    position: absolute;
+    left: 0;
+    width: 100px;
+    height: 36px;
+    padding: 8px 5px 0 5px;
+    margin-top: -1px;
+}
+
+.transport-expenses-table tr td:first-child .sw-element {
+    margin-top: 20px;
+}
+
+/*
+.transport-expenses-table-cover-outer {
+    white-space: nowrap;
+}
+.transport-expenses-table-cover-inner {
+    width: 100%;
+    overflow-x: scroll;
+    display: inline-block;
+}
+
+.transport-expenses-table-fixed {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+.transport-expenses-table {
+    width: 1800px;
+    display: inline-block;
+}
+*/
+.transport-expenses-table {
+    width: 2040px;
+}
+
+
+.expenses-table-over {
+    position: relative;
+    overflow: visible;
+}
+.expenses-table-inner {
+    overflow-x: scroll;
+    /*overflow-y: hidden;*/
+    overflow-y: visible;
+    width: 100%;
+    margin-left: 100px;
+}
+/*
+.transport-expenses-table .sw-outer-block, .transport-expenses-table-fixed .sw-outer-block {
+    position: absolute;
+    width: 200px;
+}*/
+
+.waybill-share-comment {
+    cursor: pointer;
+}
+.waybill-comment {
+    display: none;
+}
+
+
+#move-expense-to-another-pl-modal.modal .modal-dialog {
+    margin-left: 140px;
+}

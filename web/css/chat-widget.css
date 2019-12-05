@@ -1,0 +1,294 @@
+/* О-чат  */
+#messages-list-block .name-section {
+    display: inline-block;
+    height: 100%;
+}
+#messages-list-block #number {
+    text-align: center;
+    width: 100%;
+    line-height: 51px;
+    font-size: 28px;
+}
+
+.chat-widget:after {
+    clear: both;
+    content: "_";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+.chat-widget {
+    position: fixed;
+    left: 0;
+    top: calc(13% + 150px);
+    border-radius: 0 4px 0 0;
+    width: 210px;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.3);
+    background: #FFFFFF;
+    opacity: 0.9;
+    color: #0000ff;
+    font-size: 12px;
+    z-index: 2;
+    height: auto;
+    /*max-height: 300px;*/
+    /*overflow-y: hidden;
+    overflow-x: hidden;*/
+}
+.chat-block .name-section {
+    width: 210px;
+}
+.chat-widget .message-send-form-block .answer-name-section {
+    display: inline-block;
+    width: 100%;
+}
+
+.chat-widget .chat-close {
+    position: absolute;
+    right: 4px;
+    top: 5px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 7px;
+}
+.answer-close {
+    position: absolute;
+    left: 166px;
+    top: 4px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 8px;
+}
+.chat-widget .chat-close:hover, .chat-block .answer-close:hover {
+    color: #EEEEEE;
+}
+
+.half-chat {
+
+}
+
+#capt  {
+    background: #000000;
+    height: 19px;
+    /*width: 60px;*/
+    width: 100%;
+    padding: 2px 10px;
+    border-radius: 0 4px 0 0;
+}
+.answer-capt  {
+    background: #555555;
+    height: 19px;
+    width: 100%;
+    padding: 2px 10px;
+    border-radius: 0 4px 0 0;
+    position: relative;
+}
+#capt .chat-name {
+    color: white;
+    font-weight: 700;
+}
+.answer-capt .chat-name {
+    color: white;
+    font-weight: 700;
+}
+
+.chat-widget #messages-list-block {
+    padding: 0 5px 0 10px;
+    margin-top: 5px;
+    width: 210px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#messages-list-block .message {
+    font-size: 12px;
+    line-height: 1.2;
+    padding: 5px 0 1px 0;
+    /*min-height: 34px;*/
+    display: block;
+}
+#messages-list-block hr {
+    margin: 5px 0 0 0;
+    border-color: #E0E0E0;
+}
+
+#chat-message {
+    width: 100%;
+    min-height: 40px;
+    height: auto;
+    margin: 0 0 8px 0;
+    display: inline-block;
+    background: #EEE;
+}
+#chat-message * {
+    background: #EEE;
+}
+
+.chat-message-answer {
+    width: 100%;
+    min-height: 40px;
+    height: auto;
+    margin: 0 0 8px 0;
+    display: inline-block;
+    background: #EEE;
+    color: #555555;
+}
+.chat-message-answer * {
+    background: #EEE;
+}
+
+/*
+.group-messages {
+    position: relative;
+}*/
+
+.message-send-form-block {
+    display: inline-block;
+    position: absolute;
+    height: 105px;
+    width: 180px;
+    /*left: 223px;*/
+    /*margin: -5px 0 0 -13px;*/
+    /*top: 0;*/
+    background: #FFFFFF;
+    color: #0000ff;
+    font-size: 12px;
+    border-radius: 0 4px 0 0;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.3);
+    opacity: 0.9;
+}
+/*
+.message-send-form-block * {
+    background: #FFFFFF;
+}*/
+#admin-message-send-form-block {
+    padding: 5px 5px 0 10px;
+}
+#admin-message-send-form-block #buttons-block {
+    width: 100%;
+    height: 27px;
+    white-space: nowrap;
+}
+#admin-message-send-form-block #fields-block {
+    margin: 2px 0 10px 0;
+    height: 80px;
+    background: #FFFFFF;
+}
+#admin-message-send-form-block #buttons-block * {
+    font-size: 12px;
+    line-height: 1.1;
+}
+#admin-message-send-form-block #buttons-block .button {
+    display: inline-block;
+    border: 1px solid #000;
+    padding: 1px 3px;
+    line-height: 1;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px 0 0 0;
+}
+#admin-message-send-form-block #buttons-block .button:hover {
+    border: 1px solid #0000AA;
+}
+#admin-message-send-form-block #buttons-block .button:active {
+    border: 1px solid #FFF;
+}
+
+.message-send-form-block #fields-block textarea {
+    width: calc(100% - 120px);
+    height: 40px;
+    font-size: 13px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+#admin-message-send-form-block #fields-block .btn-send-message {
+    width: 76px;
+    padding: 3px 7px;
+    font-size: 12px;
+    margin-left: 35px;
+}
+.message-send-form-block #fields-block .btn-send-message-answer {
+    width: 76px;
+    padding: 3px 7px;
+    font-size: 12px;
+    margin-left: 35px;
+    background: #efefef;
+    color: #000000;
+}
+
+#admin-message-send-form-block #buttons-block #button-b,
+#admin-message-send-form-block #buttons-block #button-i,
+#admin-message-send-form-block #buttons-block #button-u {
+    width: 14px;
+    margin: 0 4px 0 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+#admin-message-send-form-block #buttons-block input[name="color"] {
+    display: inline-block;
+    vertical-align: middle;
+    color: #FFFFFF;
+    max-width: 34px;
+    height: 22px;
+    /* float: right; */
+    margin-right: 9px;
+    margin-top: 1px;
+    margin-left: 20px;
+}
+#admin-message-send-form-block #buttons-block input[name="color"]:hover {
+    cursor: pointer;
+}
+#admin-message-send-form-block #lifetime-title {
+    color: #000000;
+    margin-left: 0;
+}
+#admin-message-send-form-block #lifetime {
+    width: 40px;
+    font-size: 10px;
+    margin-left: 5px;
+}
+#admin-message-send-form-block #buttons-block #to-begin {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+}
+#admin-message-send-form-block #buttons-block #to-begin input {
+    margin: 0;
+    height: 22px;
+    vertical-align: middle;
+    display: inline-block;
+}
+#admin-message-send-form-block #buttons-block #to-begin span {
+    vertical-align: middle;
+    margin: 0 0 0 3px;
+    line-height: 22px;
+    display: inline-block;
+}
+#admin-message-send-form-block #chat-bottom-block-outer {
+    position: relative;
+}
+#admin-message-send-form-block #chat-bottom-block-inner {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.first-fio {
+    color: #1818ff;
+    font-weight: bold;
+}
+.first-message {
+    color: #1818ff;
+}
+.n-fio {
+    color: #6464ff;
+}
+.n-message {
+    color: #6464ff;
+}
+
+/* конец: О-чат  */

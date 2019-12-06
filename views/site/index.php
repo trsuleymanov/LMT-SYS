@@ -21,7 +21,7 @@ $setting = Setting::find()->where(['id' => 1])->one();
 
 //echo "aDirections:<pre>"; print_r($aDirections); echo "</pre>";
 ?>
-<div id="main-page" class="row" test="134">
+<div id="main-page" class="row" test="555">
     <!--<div class="col-tobus-left">&nbsp;</div>-->
 
     <div id="directions-trips-block"  class="col-tobus-center__">

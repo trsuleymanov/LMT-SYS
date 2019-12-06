@@ -43,7 +43,7 @@ class YandexPoint extends \yii\db\ActiveRecord
             [['alias'], 'string', 'max' => 10],
             [['name'], 'unique'],
             [['lat', /*'long'*/], 'checkLatLong', 'skipOnEmpty' => false],
-            [['critical_point', 'point_of_arrival'], 'boolean'],
+            [['critical_point', 'point_of_arrival', 'popular_departure_point', 'popular_arrival_point'], 'boolean'],
             [['time_to_get_together_short', 'time_to_get_together_long'], 'safe']
         ];
     }
@@ -139,6 +139,8 @@ class YandexPoint extends \yii\db\ActiveRecord
             'point_of_arrival' => 'Является точкой прибытия',
             'critical_point' => 'Критическая точка',
             'super_tariff_used' => 'Применяется супер тариф',
+            'popular_departure_point' => 'Популярная точка отправления',
+            'popular_arrival_point' => 'Популярная точка прибытия',
             'alias' => 'Доп.поле означающее принадлежность точки к чему-либо, например к аэропорту',
             'description' => 'Описание',
             'time_to_get_together_short' => 'Относительное время от ВРПТ до конечной базовой точки рейса коротких рейсов',

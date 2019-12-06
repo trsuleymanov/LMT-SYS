@@ -284,6 +284,8 @@ $(document).ready(function()
                             point_of_arrival: yandex_point.point_of_arrival,
                             super_tariff_used: yandex_point.super_tariff_used,
                             critical_point: yandex_point.critical_point,
+                            popular_departure_point: yandex_point.popular_departure_point,
+                            popular_arrival_point: yandex_point.popular_arrival_point,
                             alias: yandex_point.alias
                         };
                         var placemark = createPlacemark(create_placemark_params);
@@ -305,6 +307,8 @@ $(document).ready(function()
                                 point_of_arrival: yandex_point.point_of_arrival,
                                 super_tariff_used: yandex_point.super_tariff_used,
                                 critical_point: yandex_point.critical_point,
+                                popular_departure_point: yandex_point.popular_departure_point,
+                                popular_arrival_point: yandex_point.popular_arrival_point,
                                 alias: yandex_point.alias,
                                 draggable: getDraggable(yandex_point.id),
                                 is_allowed_edit: true
@@ -381,6 +385,8 @@ $(document).ready(function()
                                         point_of_arrival: yandex_point.point_of_arrival,
                                         super_tariff_used: yandex_point.super_tariff_used,
                                         critical_point: yandex_point.critical_point,
+                                        popular_departure_point: yandex_point.popular_departure_point,
+                                        popular_arrival_point: yandex_point.popular_arrival_point,
                                         alias: yandex_point.alias
                                     };
                                     var placemark = createPlacemark(create_placemark_params);
@@ -397,6 +403,8 @@ $(document).ready(function()
                                         point_of_arrival: yandex_point.point_of_arrival,
                                         super_tariff_used: yandex_point.super_tariff_used,
                                         critical_point: yandex_point.critical_point,
+                                        popular_departure_point: yandex_point.popular_departure_point,
+                                        popular_arrival_point: yandex_point.popular_arrival_point,
                                         alias: yandex_point.alias,
                                         draggable: getDraggable(yandex_point.id),
                                         is_allowed_edit: true

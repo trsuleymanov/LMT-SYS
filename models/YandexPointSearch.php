@@ -20,7 +20,8 @@ class YandexPointSearch extends YandexPoint
             [['id', 'city_id', 'critical_point', 'external_use', 'super_tariff_used'], 'integer'],
             [['lat', 'long'], 'double'],
             [['name', 'description'], 'string', 'max' => 255],
-            [['created_at', 'updated_at', 'creator_id', 'updater_id', 'point_of_arrival', 'sync_date'], 'safe'],
+            [['created_at', 'updated_at', 'creator_id', 'updater_id', 'point_of_arrival', 'sync_date',
+                'popular_departure_point', 'popular_arrival_point'], 'safe'],
         ];
     }
 
@@ -56,6 +57,8 @@ class YandexPointSearch extends YandexPoint
             'point_of_arrival' => $this->point_of_arrival,
             'critical_point' => $this->critical_point,
             'super_tariff_used' => $this->super_tariff_used,
+            'popular_departure_point' => $this->popular_departure_point,
+            'popular_arrival_point' => $this->popular_arrival_point,
             'external_use' => $this->external_use,
         ]);
 

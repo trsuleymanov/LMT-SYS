@@ -159,6 +159,30 @@ if(!$model->isNewRecord)
                     ],
                     'name',
                     [
+                        'attribute' => 'popular_departure_point',
+                        'content' => function($model) {
+                            return $model->popular_departure_point == true ? 'да' : 'нет';
+                        },
+                        'filter' => Html::activeDropDownList(
+                            $yandexPointSearchModel,
+                            'popular_departure_point',
+                            ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                            ['class' => "form-control"]
+                        )
+                    ],
+                    [
+                        'attribute' => 'popular_arrival_point',
+                        'content' => function($model) {
+                            return $model->popular_arrival_point == true ? 'да' : 'нет';
+                        },
+                        'filter' => Html::activeDropDownList(
+                            $yandexPointSearchModel,
+                            'popular_arrival_point',
+                            ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                            ['class' => "form-control"]
+                        )
+                    ],
+                    [
                         'attribute' => 'city_id',
                         'content' => function($model) {
                             return $model->city->name;

@@ -41,6 +41,8 @@ class GetYandexPointsAction extends \yii\rest\Action
                 'long' => $yandex_point->long,
                 'point_of_arrival' => $yandex_point->point_of_arrival,
                 'critical_point' => $yandex_point->critical_point,
+                'popular_departure_point' => $yandex_point->popular_departure_point,
+                'popular_arrival_point' => $yandex_point->popular_arrival_point,
                 'super_tariff_used' => $yandex_point->super_tariff_used,
                 'alias' => $yandex_point->alias,
                 'time_to_get_together_short' => $yandex_point->time_to_get_together_short,

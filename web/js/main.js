@@ -1,3 +1,4 @@
+/* jshint strict: false */
 /* js-код используемый и на сайте, и в админке */
 
 MAP_SEARCH_SCALE = 16;
@@ -8,9 +9,7 @@ current_page_is_active = true;
 calls = [];
 
 
-//var minutes = new Date().getMinutes();
 var seconds = new Date().getSeconds();
-//alert('seconds=' + seconds);
 setInterval(function()
 {
     var now = new Date();
@@ -21,7 +20,7 @@ setInterval(function()
         seconds = now_seconds;
         //console.log('now_seconds='+now_seconds);
         $('#calls-window .time[active="true"]').each(function() {
-            var sec = parseInt(0 + $(this).text());
+            var sec = parseInt(0);
             sec++;
             if(sec < 10) {
                 sec = '0' + sec;
@@ -32,44 +31,6 @@ setInterval(function()
 }, 200); // погрешность (каждые 200 мл.секунды проверяем не прошла ли секунда)
 
 
-// эта функция устарела, теперь нужно ее заменить на обновление целиком окна звонков.
-/*
-function updateCallClientForm(client_phone, get_call_data) {
-
-    if(client_phone == undefined) {
-        var client_phone = $('.call-block').attr('client-phone');
-    }
-    if(client_phone == undefined || client_phone == null || client_phone == 'null' || client_phone == undefined) {
-        return false;
-    }
-
-
-    $.ajax({
-        url: '/call/ajax-get-client-last-orders?client_phone=' + client_phone,
-        type: 'post',
-        //data: data,
-        data: {},
-        success: function (response) {
-            $('#call-client-form').html(response.client_data_html);
-        },
-        error: function (data, textStatus, jqXHR) {
-            if (textStatus == 'error' && data != undefined) {
-                if (void 0 !== data.responseJSON) {
-                    if (data.responseJSON.message.length > 0) {
-                        alert(data.responseJSON.message);
-                    }
-                } else {
-                    if (data.responseText.length > 0) {
-                        alert(data.responseText);
-                    }
-                }
-            }else {
-                handlingAjaxError(data, textStatus, jqXHR);
-            }
-        }
-    });
-}
-*/
 
 function updateCallModal() {
 
@@ -80,15 +41,16 @@ function updateCallModal() {
     }
 
     var call_id = $('#calls-window').attr('call-id');
+    var url = '';
     if(call_id > 0) {
-        var url = '/call/get-call-window?call_id=' + call_id; // + "&without_json=1";
+        url = '/call/get-call-window?call_id=' + call_id; // + "&without_json=1";
     }else {
         var operand_phone = $('#client-mobile_phone').val();
         if(operand_phone == '') {
             alert('Нельзя обновить окно заказов, нет id звонка и нет номера телефона');
             return false;
         }
-        var url = '/call/get-call-window?operand_phone=' + operand_phone;// + "&without_json=1";
+        url = '/call/get-call-window?operand_phone=' + operand_phone;// + "&without_json=1";
     }
 
     $.ajax({
@@ -121,93 +83,6 @@ function updateCallModal() {
     });
 }
 
-// временно не используется
-/*
-var call_window = null;
-function _openCallWindow(url, html) {
-    console.log('_openCallWindow');
-    call_window = window.open(url, "Окно звонка", "width=1000,height=800");
-    call_window.document.write(html);
-    call_window.document.close();
-}
-
-// отображается окно только при появлении статусов is_creating_call или is_incoming_call
-var show_call_modal_is_active = false;
-function showCallModal(call_id, operand_phone) {// звонок начат в 15:30:21
-
-    console.log('showCallModal call_id=' + call_id + ' operand_phone=' + operand_phone);
-    if(show_call_modal_is_active == true) {
-        console.log('не выполняем');
-        return false;
-    }
-
-
-    show_call_modal_is_active = true;
-
-    //var now = new Date();
-    //var s = now.getSeconds();
-    //var ms = now.getMilliseconds();
-    //console.log('before load s=' + s + ' ms=' + ms);
-    var url = '';
-    if(void 0 !== operand_phone && operand_phone != undefined) {
-        url = "/call/get-call-window?operand_phone=" + operand_phone;
-    }else {
-        url = "/call/get-call-window?call_id=" + call_id;
-    }
-
-    //call_window = window.open(url, "Окно звонка", "width=1000,height=800");
-    //winref.addEventListener('load', function() {
-    //
-    //    var now2 = new Date();
-    //    var s2 = now2.getSeconds();
-    //    var ms2 = now2.getMilliseconds();
-    //    console.log('after load s=' + now.getSeconds() + ' ms=' + now.getMilliseconds());
-    //    console.log('after load s=' + s2 + ' ms=' + ms2);
-    //
-    //}, false);
-
-    $.ajax({
-        //url: '/call/ajax-get-call-window?id=' + call_id,
-        url: url,
-        type: 'post',
-        //data: data,
-        data: {},
-        success: function (response) {
-
-            if(response.success == true) {
-
-                console.log('openCallWindow new'); // по непонятным причинам лог не выводиться в окно браузера
-                //call_window = window.open(url, "Окно звонка", "width=1000,height=800");
-                //call_window.document.write(response.html);
-                //call_window.document.close();
-                _openCallWindow(url, response.html);
-                show_call_modal_is_active = false;
-            }
-
-        },
-        error: function (data, textStatus, jqXHR) {
-
-            show_call_modal_is_active = false;
-
-            if (textStatus == 'error' && data != undefined) {
-                if (void 0 !== data.responseJSON) {
-                    if (data.responseJSON.message.length > 0) {
-                        alert(data.responseJSON.message);
-                    }
-                } else {
-                    if (data.responseText.length > 0) {
-                        alert(data.responseText);
-                    }
-                }
-            }else {
-                handlingAjaxError(data, textStatus, jqXHR);
-            }
-        }
-    });
-
-    return false;
-}
-*/
 
 function showInnerCallModal(call_id, operand_phone) {
 
@@ -296,82 +171,6 @@ function activateMissedCall(operand, call_status) {
     }
 }
 
-// не используется больше, позже удалить (от 7 апреля)
-function addStatusToCall(data) {
-/*
-    var status_code = '';
-    var status_text = '';
-
-
-    switch(data.event_name) {
-
-        case 'output_call_accepted_by_client':
-
-            status_text = 'Клиент взял трубку. Время разговора: <span class="time" active="true">00 сек</span>';
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-            break;
-
-
-        case 'output_call_cancelled_by_ats':
-
-            status_text = 'АТС не дождолась оператора и сбросила вызов';
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-            break;
-
-        case 'output_call_dial_to_client':
-
-            status_text = 'Оператор взял трубку. Дозвон до клиента «' + data.client_phone + '»: <span class="time" active="true">00 сек</span>';
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-
-            if(void 0 !== data.client_phone) {
-
-                // здесь надо бы как-то установить параметр client-phone в окно и вызвать подгрузку данных клиента с заказами
-                $('.call-block[call-id="' + data.call_id + '"]').attr('client-phone', data.client_phone);
-
-                console.log('браузер запрашивает информацию о клиенте');
-                //updateCallClientForm(data.client_phone);
-
-                // берем html + js из данных от сокет-демона с сервера
-                var html = '<div id="calls-window">' + $('#calls-window').html() + '</div><hr />' + data.client_data_html;
-                $('#call-modal').find('.modal-body').html(html);
-            }
-
-            break;
-
-
-        case 'output_call_cancelled_by_client':
-
-            status_text = 'Клиент положил трубку. Звонок окончен в ' + data.created_at;
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-            break;
-
-        case 'output_call_cancelled_by_operator':
-
-            status_text = 'Оператор отменил вызов. Звонок окончен в ' + data.created_at;
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-            break;
-
-        case 'call_finished_by_operator':
-
-            status_text = 'Оператор положил трубку. Звонок окончен в ' + data.created_at;
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-            break;
-
-        case 'call_finished_by_client':
-
-            status_text = 'Клиент положил трубку. Звонок окончен в ' + data.created_at;
-            var status_html = '<div class="status" status-code="' + data.event_name + '">' + status_text + '</div>';
-            break;
-    }
-
-
-    if($('#calls-window').length > 0 && $('#calls-window').is(':visible')) {
-        //console.log('вставляем call_id=' + data.call_id + ' status_html='+status_html);
-        $('.call-block[call-id="' + data.call_id + '"] .time').attr('active', "false");
-        $('.call-block[call-id="' + data.call_id + '"]').find('.status:last').after(status_html);
-    }
-    */
-}
 
 //console.log('WebSocket бущет вызван');
 //var user = '85ae20ab477977a9d3772b0e64f24538';
@@ -615,9 +414,6 @@ ws.onmessage = function(evt) {
                 case 'output_call_accepted_by_client': // Был принят клиентом исходящий вызов, начат разговор
                     console.log('Был принят клиентом исходящий вызов, начат разговор');
 
-                    // здесь нужно поменять статус...
-                    addStatusToCall(data);
-
                     // появление красной точки
                     $('#is-calling').addClass('active');
                     $('#is-calling').attr('client_phone', data.client_phone);
@@ -638,8 +434,6 @@ ws.onmessage = function(evt) {
 
                     console.log('Отменен клиентом входящий вызов (свой вызов отменил)');
 
-                    addStatusToCall(data);
-
                     calls.pop(data.call_id);
                     //incomingCalls.pop(data.call_id);
                     //setIncomingCallsCount(incomingCalls.length);
@@ -652,8 +446,6 @@ ws.onmessage = function(evt) {
                 case 'output_call_cancelled_by_operator': // Сброшен/отменен оператором исходящий вызов (свой вызов прервал)
                     console.log('Сброшен/отменен оператором исходящий вызов (свой вызов прервал)');
 
-                    addStatusToCall(data);
-
                     calls.pop(data.call_id);
                     closeCallModalWithDelay();
                     activateMissedCall(data.client_phone, data.call_status);
@@ -662,8 +454,6 @@ ws.onmessage = function(evt) {
 
                 case 'output_call_cancelled_by_client': // Сброшен/отменен клиентом исходящий вызов  (оператора вызов прервал)
                     console.log('Сброшен/отменен клиентом исходящий вызов  (свой вызов прервал)');
-
-                    addStatusToCall(data);
 
                     calls.pop(data.call_id);
                     closeCallModalWithDelay();
@@ -678,7 +468,6 @@ ws.onmessage = function(evt) {
                     $('#is-calling').removeClass('active');
                     $('#is-calling').removeAttr('client_phone');
 
-                    addStatusToCall(data);
                     calls.pop(data.call_id);
                     closeCallModalWithDelay();
                     activateMissedCall(data.client_phone, data.call_status);
@@ -696,7 +485,6 @@ ws.onmessage = function(evt) {
                     $('#is-calling').removeClass('active');
                     $('#is-calling').removeAttr('client_phone');
 
-                    addStatusToCall(data);
                     calls.pop(data.call_id);
 
                     closeCallModalWithDelay();
@@ -748,16 +536,11 @@ ws.onmessage = function(evt) {
 
                 case 'output_call_dial_to_client': // Был принят оператором исходящий вызов от АТС, начался дозвон до клиента
                     console.log('Был принят оператором исходящий вызов');
-
-                    // здесь нужно поменять статус звонка...
-                    addStatusToCall(data);
-
                     break;
 
                 case 'output_call_cancelled_by_ats': // АТС не дождолась оператора и сбросила исходящий вызов
                     console.log('АТС не дождолась оператора и сбросила исходящий вызов');
 
-                    addStatusToCall(data);
                     calls.pop(data.call_id);
 
                     closeCallModalWithDelay();
@@ -767,9 +550,7 @@ ws.onmessage = function(evt) {
                 case 'server_failure': // Ошибка на сервере в АТС или АТС сбросила соединение
                     console.log('server_failure - АТС сбросила соединение');
 
-                    addStatusToCall(data);
                     calls.pop(data.call_id);
-
                     closeCallModalWithDelay();
                     activateMissedCall(data.client_phone, data.call_status);
                     break;
@@ -1057,6 +838,12 @@ function getPlacemarketTemplate(params) {
     if(params['critical_point'] != 1) {
         params['critical_point'] = 0;
     }
+    if(params['popular_departure_point'] != 1) {
+        params['popular_departure_point'] = 0;
+    }
+    if(params['popular_arrival_point'] != 1) {
+        params['popular_arrival_point'] = 0;
+    }
     if(params['external_use'] != 1) {
         params['external_use'] = 0;
     }
@@ -1114,6 +901,8 @@ function getPlacemarketTemplate(params) {
                         '<input class="point-of-arrival" type="checkbox" ' + (params['point_of_arrival'] == true ? "checked" : "") + ' /> является точкой прибытия <br />' +
                         '<input class="super-tariff-used" type="checkbox" ' + (params['super_tariff_used'] == true ? "checked" : "") + ' /> применяется супер тариф <br />' +
                         '<input class="critical-point" type="checkbox" ' + (params['critical_point'] == true ? "checked" : "") + ' /> критическая точка <br />' +
+                        '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
+                        '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
                         '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="airport" /><br />';
         }
         content +=
@@ -1133,6 +922,8 @@ function getPlacemarketTemplate(params) {
                             '<input class="point-of-arrival" type="checkbox" ' + (params['point_of_arrival'] == true ? "checked" : "") + ' /> является точкой прибытия <br />' +
                             '<input class="super-tariff-used" type="checkbox" ' + (params['super_tariff_used'] == true ? "checked" : "") + ' /> применяется супер тариф <br />' +
                             '<input class="critical-point" type="checkbox" ' + (params['critical_point'] == true ? "checked" : "") + ' /> критическая точка <br />' +
+                            '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
+                            '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
                             '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="airport" /><br />';
             }
 
@@ -1284,6 +1075,12 @@ function createPlacemark(params) {
     if(params['critical_point'] != 1) {
         params['critical_point'] = 0;
     }
+    if(params['popular_departure_point'] != 1) {
+        params['popular_departure_point'] = 0;
+    }
+    if(params['popular_arrival_point'] != 1) {
+        params['popular_arrival_point'] = 0;
+    }
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
@@ -1306,6 +1103,8 @@ function createPlacemark(params) {
         point_of_arrival: params['point_of_arrival'],
         super_tariff_used: params['super_tariff_used'],
         critical_point: params['critical_point'],
+        popular_departure_point: params['popular_departure_point'],
+        popular_arrival_point: params['popular_arrival_point'],
         alias: params['alias'],
         create_new_point: params['create_new_point'],
         is_editing: params['is_editing'],
@@ -1431,6 +1230,12 @@ function selectPointPlacemark(params) {
     if(params['critical_point'] != 1) {
         params['critical_point'] = 0;
     }
+    if(params['popular_departure_point'] != 1) {
+        params['popular_departure_point'] = 0;
+    }
+    if(params['popular_arrival_point'] != 1) {
+        params['popular_arrival_point'] = 0;
+    }
     if(params['external_use'] != 1) {
         params['external_use'] = 0;
     }
@@ -1476,6 +1281,8 @@ function selectPointPlacemark(params) {
         index: params['index'],
         point_id: params['point_id'],
         critical_point: params['critical_point'],
+        popular_departure_point: params['popular_departure_point'],
+        popular_arrival_point: params['popular_arrival_point'],
         external_use: params['external_use'],
         point_of_arrival: params['point_of_arrival'],
         super_tariff_used: params['super_tariff_used'],
@@ -1631,6 +1438,12 @@ function createYandexPoint(placemark, params) {
     if(params['critical_point'] != 1) {
         params['critical_point'] = 0;
     }
+    if(params['popular_departure_point'] != 1) {
+        params['popular_departure_point'] = 0;
+    }
+    if(params['popular_arrival_point'] != 1) {
+        params['popular_arrival_point'] = 0;
+    }
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
@@ -1654,6 +1467,8 @@ function createYandexPoint(placemark, params) {
         data.external_use = params['external_use'];
         data.point_of_arrival = params['point_of_arrival'];
         data.critical_point = params['critical_point'];
+        data.popular_departure_point = params['popular_departure_point'];
+        data.popular_arrival_point = params['popular_arrival_point'];
         data.alias = params['alias'];
     }
 
@@ -1787,6 +1602,12 @@ function updateYandexPoint(params) {
     if(params['critical_point'] != 1) {
         params['critical_point'] = 0;
     }
+    if(params['popular_departure_point'] != 1) {
+        params['popular_departure_point'] = 0;
+    }
+    if(params['popular_arrival_point'] != 1) {
+        params['popular_arrival_point'] = 0;
+    }
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
@@ -1808,7 +1629,9 @@ function updateYandexPoint(params) {
 
     if(params['can_change_params'] == true) {
         data.critical_point = params['critical_point'];
-        data.external_use = params['external_use'],
+        data.popular_departure_point = params['popular_departure_point'];
+        data.popular_arrival_point = params['popular_arrival_point'];
+        data.external_use = params['external_use'];
         data.point_of_arrival = params['point_of_arrival'];
         data.super_tariff_used = params['super_tariff_used'];
         data.alias = params['alias'];
@@ -1836,6 +1659,8 @@ function updateYandexPoint(params) {
                         external_use: params['external_use'],
                         point_of_arrival: params['point_of_arrival'],
                         critical_point: params['critical_point'],
+                        popular_departure_point: params['popular_departure_point'],
+                        popular_arrival_point: params['popular_arrival_point'],
                         alias: params['alias']
                         //draggable: draggable,
                         //is_allowed_edit: is_allowed_edit
@@ -2090,6 +1915,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             var external_use = ($(this).parent().find('.external-use').is(':checked') == true ? 1 : 0);
             var point_of_arrival = ($(this).parent().find('.point-of-arrival').is(':checked') == true ? 1 : 0);
             var critical_point = ($(this).parent().find('.critical-point').is(':checked') == true ? 1 : 0);
+            var popular_departure_point = ($(this).parent().find('.popular-departure-point').is(':checked') == true ? 1 : 0);
+            var popular_arrival_point = ($(this).parent().find('.popular-arrival-point').is(':checked') == true ? 1 : 0);
             var super_tariff_used = ($(this).parent().find('.super-tariff-used').is(':checked') == true ? 1 : 0);
             var alias = $(this).parent().find('.alias').val();
         }else {
@@ -2098,6 +1925,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             var point_of_arrival = 0;
             var super_tariff_used = 0;
             var critical_point = 0;
+            var popular_departure_point = 0;
+            var popular_arrival_point = 0;
             var alias = '';
         }
 
@@ -2114,6 +1943,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             create_new_point: false,
             can_change_params: can_change_params,
             critical_point: critical_point,
+            popular_departure_point: popular_departure_point,
+            popular_arrival_point: popular_arrival_point,
             external_use: external_use,
             point_of_arrival: point_of_arrival,
             super_tariff_used: super_tariff_used,
@@ -2147,6 +1978,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                 point_of_arrival: point_of_arrival,
                 super_tariff_used: super_tariff_used,
                 critical_point: critical_point,
+                popular_departure_point: popular_departure_point,
+                popular_arrival_point: popular_arrival_point,
                 alias: alias
             };
             updateYandexPoint(update_yandex_point_params);
@@ -2163,6 +1996,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                     point_of_arrival: point_of_arrival,
                     super_tariff_used: super_tariff_used,
                     critical_point: critical_point,
+                    popular_departure_point: popular_departure_point,
+                    popular_arrival_point: popular_arrival_point,
                     alias: alias
                 };
                 createYandexPoint(placemark, create_yandex_point_params);
@@ -2188,6 +2023,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                         point_of_arrival: point_of_arrival,
                         super_tariff_used: super_tariff_used,
                         critical_point: critical_point,
+                        popular_departure_point: popular_departure_point,
+                        popular_arrival_point: popular_arrival_point,
                         alias: alias,
                         draggable: getDraggable(yandex_point_id)
                         //is_allowed_edit: is_allowed_edit

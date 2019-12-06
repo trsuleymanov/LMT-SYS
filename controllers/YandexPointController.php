@@ -148,6 +148,8 @@ class YandexPointController extends Controller
         $yandex_point->point_of_arrival = Yii::$app->getRequest()->post('point_of_arrival', $yandex_point->point_of_arrival);
         $yandex_point->super_tariff_used = Yii::$app->getRequest()->post('super_tariff_used', 0);
         $yandex_point->critical_point = Yii::$app->getRequest()->post('critical_point', $yandex_point->critical_point);
+        $yandex_point->popular_departure_point = Yii::$app->getRequest()->post('popular_departure_point', $yandex_point->popular_departure_point);
+        $yandex_point->popular_arrival_point = Yii::$app->getRequest()->post('popular_arrival_point', $yandex_point->popular_arrival_point);
         $yandex_point->alias = Yii::$app->getRequest()->post('alias', $yandex_point->alias);
 
         if(!$yandex_point->save()) {

@@ -3,8 +3,6 @@
 namespace app\modules\serverapi\actions\setting;
 
 use app\models\City;
-use app\models\Client;
-use app\models\Setting;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;

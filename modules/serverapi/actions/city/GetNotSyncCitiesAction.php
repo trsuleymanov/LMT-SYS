@@ -12,6 +12,7 @@ class GetNotSyncCitiesAction extends \yii\rest\Action
     /**
      * Возвращаются города, если они не синхронизированны
      *
+     * * запрос с кодом доступа: curl -i -H "Authorization: SecretKey lsaeu5jERTffd_7" "Accept:application/json" -H "Content-Type:application/json" -XPOST http://tobus-yii2.ru/serverapi/city/get-not-sync-cities
      */
     public function run()
     {

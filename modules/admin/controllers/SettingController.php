@@ -31,25 +31,6 @@ class SettingController extends Controller
     }
 
 
-//    public function actionCreateOrdersYesterday()
-//    {
-//        $model = Setting::find()->where(['id' => 1])->one();
-//        if($model == null) {
-//            $model = new Setting();
-//        }
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            Yii::$app->session->setFlash('success', 'Запись сохранена');
-//            return $this->render('_form', [
-//                'model' => $model,
-//            ]);
-//        } else {
-//            return $this->render('_form', [
-//                'model' => $model,
-//            ]);
-//        }
-//    }
-
     public function actionDisplay() {
 
         $model = Setting::find()->where(['id' => 1])->one();
@@ -169,6 +150,26 @@ class SettingController extends Controller
             ]);
         } else {
             return $this->render('vrpt', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+
+    public function actionCallAuth() {
+
+        $model = Setting::find()->where(['id' => 1])->one();
+        if($model == null) {
+            $model = new Setting();
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Запись сохранена');
+            return $this->render('call-auth', [
+                'model' => $model,
+            ]);
+        } else {
+            return $this->render('call-auth', [
                 'model' => $model,
             ]);
         }

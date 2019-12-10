@@ -39,6 +39,7 @@ class Setting extends \yii\db\ActiveRecord
             [['missed_calls_close_interval', 'ya_point_p_AK', 'ya_point_p_KA', 'max_time_short_trip_AK',
                 'max_time_short_trip_KA', 'min_talk_time_to_perform_request',
                 'count_hours_before_trip_to_cancel_order', 'interval_to_close_trip', 'sync_date'], 'integer'],
+            [['phone_to_confirm_user'], 'safe']
         ];
     }
 
@@ -65,6 +66,7 @@ class Setting extends \yii\db\ActiveRecord
             'interval_to_close_trip' => 'Количество минут после последней точки рейса для закрытия рейса',
             'use_mobile_app_by_default' => 'Использовать интерактивный режим отправки рейса по умолчанию',
             'show_passenger_button_in_trip_orders_page' => 'Показывать кнопку редактирования паспортных данных',
+            'phone_to_confirm_user' => 'Телефон в АТС куда переадресуется звонок для подтверждения пользователя во время регистрации',
             'sync_date' => 'Время когда была синхронизация с клиентским сайтом',
         ];
     }

@@ -273,7 +273,7 @@ $cookie = Yii::$app->getRequest()->getCookies();
 
 //            echo "current_module=$current_module <br />";
 //            echo "current_controller=$current_controller <br />";
-//            echo "current_route=$current_route <br />";
+            echo "current_route=$current_route <br />";
             ?>
 
             <!-- Sidebar Menu -->
@@ -384,7 +384,7 @@ $cookie = Yii::$app->getRequest()->getCookies();
                 <?php } ?>
 
                 <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
-                    <li class="treeview <?= (in_array($current_controller, ['operator-subscription', 'call-case', ]) || ($current_route == 'admin/call/index')) ? 'active' : '' ?>">
+                    <li class="treeview <?= (in_array($current_controller, ['operator-subscription', 'call-case', ]) || in_array($current_route, ['admin/call/index', 'admin/setting/call-auth']) ? 'active' : '') ?>">
                         <a href="#">
                             <i class="glyphicon glyphicon-headphones"></i> <span>Call-центр</span>
                             <span class="pull-right-container">
@@ -400,6 +400,9 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             </li>
                             <li<?= $current_route == 'admin/call/index' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="glyphicon glyphicon-headphones"></i> <span>История звонков</span>', '/admin/call/index?sort=-id'); ?>
+                            </li>
+                            <li<?= $current_route == 'admin/setting/call-auth' ? ' class="active"' : '' ?>>
+                                <?= Html::a('<i class="glyphicon glyphicon-headphones"></i> <span>CALL-авторизация</span>', '/admin/setting/call-auth'); ?>
                             </li>
                         </ul>
                     </li>

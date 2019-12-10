@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\serverapi\actions\setting;
+namespace app\modules\serverapi\actions\city;
 
 use app\models\City;
 use Yii;

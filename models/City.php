@@ -29,7 +29,8 @@ class City extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_at', 'updated_at', 'map_scale', 'search_scale', 'point_focusing_scale', 'all_points_show_scale'], 'integer'],
+            [['created_at', 'updated_at', 'map_scale', 'search_scale', 'point_focusing_scale', 'all_points_show_scale',
+                'extended_external_use', 'sync_date'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['center_lat', 'center_long'], 'double'],
         ];
@@ -43,6 +44,7 @@ class City extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Название',
+            'extended_external_use' => 'Расширенное внешнее использование',
             'created_at' => 'Время создания',
             'updated_at' => 'Время изменения',
             'center_lat' => 'Широта',
@@ -50,7 +52,8 @@ class City extends \yii\db\ActiveRecord
             'map_scale' => 'Масштаб яндекс-карты',
             'search_scale' => 'Приближение карты при поиске',
             'point_focusing_scale' => 'Масштаб фокусировки точки',
-            'all_points_show_scale' => 'Масштаб отображения опорных точек'
+            'all_points_show_scale' => 'Масштаб отображения опорных точек',
+            'sync_date' => 'Дата синхронизации с клиенским сервером',
         ];
     }
 
@@ -61,6 +64,8 @@ class City extends \yii\db\ActiveRecord
         }else {
             $this->updated_at = time();
         }
+
+        $this->sync_date = null;
 
         return parent::beforeSave($insert);
     }

@@ -36,6 +36,14 @@ $this->registerJsFile('https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=5c7acdc
     </div>
 
     <div class="box-body">
+
+        <br />
+        <div class="row">
+            <div class="col-sm-4 form-group form-group-sm">
+                <?= $form->field($model, 'extended_external_use')->checkbox() ?>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-sm-4 form-group form-group-sm">
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

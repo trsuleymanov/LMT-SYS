@@ -36,6 +36,18 @@ $this->registerJsFile('js/admin/pages.js', ['depends' => 'app\assets\AdminAsset'
                 ['class' => 'yii\grid\SerialColumn'],
 
                 'name',
+                [
+                    'attribute' => 'extended_external_use',
+                    'content' => function ($model) {
+                        return $model->extended_external_use == 1 ? 'да' : 'нет';
+                    },
+                    'filter' => Html::activeDropDownList(
+                        $searchModel,
+                        'extended_external_use',
+                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                        ['class' => "form-control"]
+                    )
+                ],
                 'center_lat',
                 'center_long',
                 'map_scale',

@@ -18,7 +18,8 @@ class CitySearch extends City
     public function rules()
     {
         return [
-            [['id', 'map_scale', 'search_scale', 'point_focusing_scale', 'all_points_show_scale'], 'integer'],
+            [['id', 'map_scale', 'search_scale', 'point_focusing_scale', 'all_points_show_scale',
+                'extended_external_use'], 'integer'],
             [['center_lat', 'center_long'], 'number'],
             [['name', 'created_at', 'updated_at'], 'safe'],
         ];
@@ -60,6 +61,7 @@ class CitySearch extends City
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'extended_external_use' => $this->extended_external_use,
             'center_lat' => $this->center_lat,
             'center_long' => $this->center_long,
             'map_scale' => $this->map_scale,

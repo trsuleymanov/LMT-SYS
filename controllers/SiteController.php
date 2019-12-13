@@ -1014,6 +1014,7 @@ class SiteController extends Controller
         echo "<pre>"; print_r($result); echo "</pre>";
         */
 
+        /*
         $pl_number = 512091;
         $date = '05.12.2018';
         $transport_id = 2;
@@ -1063,7 +1064,13 @@ class SiteController extends Controller
         }
 
         echo "aStartTripsNames:<pre>"; print_r($aStartTripsNames); echo "</pre>";
+        */
 
+        $diff = -38249;
+
+        $hours = intval(abs($diff)/3600);
+        $mins = intval((abs($diff) - 3600*$hours)/60);
+        echo '-'.$hours.':'.$mins;
     }
 
     public function actionTest2()

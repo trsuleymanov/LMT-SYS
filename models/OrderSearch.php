@@ -41,7 +41,7 @@ class OrderSearch extends Order
             ], 'integer'],
             [['price', 'paid_summ', 'paid_time', 'accrual_cash_back', 'used_cash_back', 'penalty_cash_back', 'cash_received_time'], 'number'],
             [['comment', 'additional_phone_1', 'additional_phone_2', 'additional_phone_3',
-                'date', 'time_confirm', 'is_confirmed', 'time_sat', 'confirmed_time_sat', 'created_at',
+                'date', 'time_confirm', 'time_confirm_diff', 'time_confirm_delta', 'is_confirmed', 'time_sat', 'confirmed_time_sat', 'created_at',
                 'updated_at', 'client_id', 'trip_id',
                 // 'time_vpz',
                 'client_name_phone', 'client_name', 'fact_transport_id', 'plan_transport_id',

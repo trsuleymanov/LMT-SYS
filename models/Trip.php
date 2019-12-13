@@ -604,6 +604,11 @@ class Trip extends \yii\db\ActiveRecord
 					$order->setField('price', $price);
 				}
 
+                if($order->time_confirm > 0) {
+                    $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
+                    $order->setField('time_confirm_diff', $time_confirm_diff);
+                }
+
 //				if($order->status_id == 2) { // canceled
 //
 //					$penalty_cash_back = $order->getCalculatePenaltyCashBack($price);
@@ -1985,9 +1990,12 @@ class Trip extends \yii\db\ActiveRecord
 		return true; // если не произошло прерывание, то вернется true
 	}
 
+	/*
+	 *
+	 */
 	public function updateOrders() {
 
-		// если в функции canUpdateOrders прерывания не произошло, то всем заказам (созданным или отменным)
+		// если в функции canUpdateOrders прерывания не произошло, то всем заказам (созданным или отмененным)
 		// переписываем цену и сбрасываем ряд полей
 		$trip_orders = $this->orders;
 		if(count($trip_orders) > 0) {
@@ -1997,6 +2005,11 @@ class Trip extends \yii\db\ActiveRecord
 				if($order->price != $price) {
 					$order->setField('price', $price); // сохранили в базу
 				}
+
+                if($order->time_confirm > 0) {
+                    $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
+                    $order->setField('time_confirm_diff', $time_confirm_diff);
+                }
 
 //				$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
 //				if($order->accrual_cash_back != $accrual_cash_back) {
@@ -2053,6 +2066,11 @@ class Trip extends \yii\db\ActiveRecord
 				if($order->price != $price) {
 					$order->setField('price', $price);
 				}
+
+				if($order->time_confirm > 0) {
+                    $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
+                    $order->setField('time_confirm_diff', $time_confirm_diff);
+                }
 
 //				$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
 //				if($accrual_cash_back != $order->accrual_cash_back) {
@@ -2120,6 +2138,11 @@ class Trip extends \yii\db\ActiveRecord
 				if($price != $order->price) {
 					$order->setField('price', $price);
 				}
+
+                if($order->time_confirm > 0) {
+                    $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
+                    $order->setField('time_confirm_diff', $time_confirm_diff);
+                }
 
 //				$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
 //				if($accrual_cash_back != $order->accrual_cash_back) {

@@ -656,7 +656,7 @@ $columns = ArrayHelper::merge($columns, [
     [
         'attribute' => 'comment',
         'label' => 'Примечания',
-        'content' => function($model) use($canceled_order_status_id) {
+        'content' => function($model) use($canceled_order_status_id, $trip) {
             $str = '';
 
             if(!empty($model->comment)) {
@@ -687,8 +687,8 @@ $columns = ArrayHelper::merge($columns, [
             }
 
             // если заказ не оплачен, то оператор может отметить оплату с выдачей чека
-            if($model->is_paid == false) {
-                //$str .= ' <button class="but-pay-and-make-check" title="Заказ становиться оплаченным и выдается чек" style="margin: 0; padding: 0; line-height: 10px;"><i class="glyphicon glyphicon-piggy-bank"></i></button>';
+            if($trip->date_start_sending > 0 && $model->is_paid == false) {
+                $str .= ' <button class="but-pay-and-make-check" title="Заказ становиться оплаченным и выдается чек" style="margin: 0; padding: 0; line-height: 10px;"><i class="glyphicon glyphicon-piggy-bank"></i></button>';
             }
 
             return $str;

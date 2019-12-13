@@ -1233,12 +1233,24 @@ class OrderController extends Controller
                         return ['output' => date('H:i', $time_confirm), 'message' => ''];
                     }
 
+                    // если устанавливается ВРПТ взамен старому ВРПТ, то считается разница между ВРПТ
+                    if($order->time_confirm_sort > 0) {
+                        $time_sort = $order->time_confirm_sort/10;
+                        $hours = intval($time_sort/100);
+                        $mins = $time_sort - 100*$hours;
+
+                        $old_time_confirm = $order->date + 3600*$hours + 60*$mins;
+                        $order->time_confirm_delta = $old_time_confirm - $time_confirm;
+                        $order->setField('time_confirm_delta', $order->time_confirm_delta);
+                    }
+
                     //$order->scenario = 'confirm_button_click';
                     $order->scenario = 'writedown_button_update';
                     $order->time_confirm = $time_confirm;
                     $order->time_confirm_sort = 1000*intval($hours_minutes[0]) + 10*intval($hours_minutes[1]);
 
                     if($order->validate()) {
+
                         $order->setField('time_confirm', $order->time_confirm);
                         $order->setField('time_confirm_sort', $order->time_confirm_sort);
                         $order->setField('is_confirmed', false);

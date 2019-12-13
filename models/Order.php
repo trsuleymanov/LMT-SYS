@@ -223,6 +223,7 @@ class Order extends \yii\db\ActiveRecord
                 'sync_date',
                 'penalty_time', 'penalty_author_id', 'first_opened_form_time', 'first_opened_form_user_id',
                 //'date_sended'
+                'time_confirm_diff', 'time_confirm_delta'
             ], 'integer'],
             //[['additional_phone_1', 'additional_phone_2', 'additional_phone_3'], 'string', 'max' => 20],
             [['additional_phone_1', 'additional_phone_2', 'additional_phone_3'], 'checkPhone'],
@@ -381,6 +382,8 @@ class Order extends \yii\db\ActiveRecord
             'time_confirm',
             'time_confirm_auto',
             'time_confirm_sort',
+            'time_confirm_diff',
+            'time_confirm_delta',
             //'time_vpz',
             'is_confirmed',
             'comment',
@@ -462,6 +465,8 @@ class Order extends \yii\db\ActiveRecord
             'time_confirm',
             'time_confirm_auto',
             'time_confirm_sort',
+            'time_confirm_diff',
+            'time_confirm_delta',
             // 'time_vpz',
             'is_confirmed',
             'comment',
@@ -687,6 +692,8 @@ class Order extends \yii\db\ActiveRecord
             'time_confirm' => 'Время подтверждения',
             'time_confirm_auto' => 'Автоматическое время подтверждения',
             'time_confirm_sort' => 'Поле сортировки времени подтвеждения',
+            'time_confirm_diff' => 'Разница между прежним ВРПТ и временем изменения/объединения рейса',
+            'time_confirm_delta' => 'Разница ВРПТ прежнего и нового, сек',
             // 'time_vpz' => 'ВПЗ', // Время первичной записи - редактируемое поле которое определяет приоритет внимания к заказу на рейсе
             'is_confirmed' => 'Подтвержден',
             'comment' => 'Пожелания',

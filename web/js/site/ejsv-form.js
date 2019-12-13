@@ -790,7 +790,7 @@ $(document).on('click', '#submit-password-with-bb-data', function() {
     hand_over_bb = hand_over_bb.replace(/\s/g, '');
 
     var exist_b1 = ($('#exist-b1').attr('is-exist') == "true" ? true : false);
-    var exist_b2 = ($('#exist-b2').attr('is-exist') == "true" ? true : false);
+    // var exist_b2 = ($('#exist-b2').attr('is-exist') == "true" ? true : false);
     if(exist_b1 == false) {
         // data.hand_over_b1_data = new_date;
         data.hand_over_b1 = hand_over_bb;

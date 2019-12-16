@@ -4,10 +4,10 @@ namespace app\models;
 
 use app\components\Helper;
 use app\models\core\QueryWithSave;
+use app\models\Order;
 use app\widgets\IncomingOrdersWidget;
 use Yii;
 use app\models\Direction;
-use app\models\Order;
 use app\models\OrderStatus;
 use app\models\ScheduleTrip;
 use yii\db\Query;
@@ -578,6 +578,16 @@ class Trip extends \yii\db\ActiveRecord
 			$resetTripTransports = TripTransport::find()->where(['IN', 'trip_id', ArrayHelper::map($resetTrips, 'id', 'id')])->all();
 		}
 
+		// перед сбрасыванием ряда показателей в $resetOrders, вначале пропишем для заказов time_confirm_diff
+        $all_orders = Order::find()->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])->all();
+        if(count($all_orders) > 0) {
+            foreach($all_orders as $order) {
+                if($order->time_confirm > 0) {
+                    $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
+                    $order->setField('time_confirm_diff', $time_confirm_diff);
+                }
+            }
+        }
 		if(count($resetOrders) > 0) {
 			Order::resetOrders(ArrayHelper::map($resetOrders, 'id', 'id'));
 		}
@@ -590,7 +600,6 @@ class Trip extends \yii\db\ActiveRecord
 
 
 		// Привязка всех транспортов(trip_transports) и заказов к текущему рейсу.
-		$all_orders = Order::find()->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])->all();
 		$all_trip_transports = TripTransport::find()->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])->all();
 		if(count($all_orders) > 0) {
 			$aAllOrders = ArrayHelper::map($all_orders, 'id', 'id');
@@ -604,10 +613,6 @@ class Trip extends \yii\db\ActiveRecord
 					$order->setField('price', $price);
 				}
 
-                if($order->time_confirm > 0) {
-                    $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
-                    $order->setField('time_confirm_diff', $time_confirm_diff);
-                }
 
 //				if($order->status_id == 2) { // canceled
 //

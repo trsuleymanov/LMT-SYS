@@ -47,6 +47,7 @@ class GetYandexPointsAction extends \yii\rest\Action
                 'alias' => $yandex_point->alias,
                 'time_to_get_together_short' => $yandex_point->time_to_get_together_short,
                 'time_to_get_together_long' => $yandex_point->time_to_get_together_long,
+                'description' => $yandex_point->description,
             ];
         }
 

@@ -683,7 +683,8 @@ class ClientServerController extends Controller
         // $order->status_setting_time = time();
         $order->status_setting_time = $server_client_ext['trip_id'];
         $order->cancellation_click_time = $server_client_ext['cancellation_click_time'];
-        $order->cancellation_clicker_id = $server_client_ext['cancellation_clicker_id'];
+        // id пользователя на клиентском сайте не соответствует id клиента в CRM
+        //$order->cancellation_clicker_id = $server_client_ext['cancellation_clicker_id'];
 
 
         $order->canceled_by = '';

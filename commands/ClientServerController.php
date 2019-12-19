@@ -374,6 +374,9 @@ class ClientServerController extends Controller
 
                 if(count($oldClientextsWithoutExternalId) > 0) {
                     foreach($aClientOrdersWithoutExternalId as $order_id => $order) {
+                        if(!isset($oldClientextsWithoutExternalId[$order_id])) {
+                            continue;
+                        }
                         $client_ext = $oldClientextsWithoutExternalId[$order_id];
                         if (in_array($client_ext['status'], ['canceled_by_client', 'canceled_by_operator', 'canceled_auto'])) {
 

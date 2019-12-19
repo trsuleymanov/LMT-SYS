@@ -247,6 +247,8 @@ class ClientServerController extends Controller
                             throw new ErrorException('Не сохранить заказ');
                         }
 
+                        $order->setPay(false);
+
                         // если пришел сигнал об оплате, то отправляем на litebox сервер операцию "Приход" для фискализации
 //                        if($order->paid_time > 0) {
 //                            // $order->setPay(); - не стоит вызывать, так как paidSumm и другие поля заказа уже записаны
@@ -743,7 +745,7 @@ class ClientServerController extends Controller
             $order->is_paid = false;
             $order->paid_time = 0;
         }
-        $order->setPay(false);
+        // $order->setPay(false);
 
 
         if($server_client_ext['source_type'] == 'application') {

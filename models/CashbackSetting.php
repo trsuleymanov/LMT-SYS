@@ -30,7 +30,9 @@ class CashbackSetting extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['order_accrual_percent', 'order_penalty_percent', 'hours_before_start_trip_for_penalty',
+            [['order_accrual_percent', /*'order_penalty_percent', 'hours_before_start_trip_for_penalty',*/
+                'red_penalty_max_time', 'order_red_penalty_percent', 'yellow_penalty_max_time',
+                'order_yellow_penalty_percent', 'max_time_confirm_diff', 'max_time_confirm_delta',
                 'with_commercial_trips', 'has_cashback_for_prepayment', 'has_cashback_for_nonprepayment'], 'integer'],
             [['start_date'], 'safe']
         ];
@@ -47,8 +49,17 @@ class CashbackSetting extends \yii\db\ActiveRecord
             'has_cashback_for_prepayment' => 'Кэш-бэк предоплаты',
             'has_cashback_for_nonprepayment' => 'Обычный кэш-бэк',
             'order_accrual_percent' => 'Процент начисления за заказ (от 0 до 100)',
-            'order_penalty_percent' => 'Процент штрафа с заказа (от 0 до 100)',
-            'hours_before_start_trip_for_penalty' => 'Количество часов до начала рейса являющиеся условием начисления штрафа',
+            // 'order_penalty_percent' => 'Процент штрафа с заказа (от 0 до 100)',
+            // 'hours_before_start_trip_for_penalty' => 'Количество часов до начала рейса являющиеся условием начисления штрафа',
+
+            'red_penalty_max_time' => 'Максимальное время красной зоны, сек',
+            'order_red_penalty_percent' => 'Процент штрафа от стоимости заказа для красной зоны',
+            'yellow_penalty_max_time' => 'Максимальное время желтой зоны, сек',
+            'order_yellow_penalty_percent' => 'Процент штрафа от стоимости заказа для желтой зоны',
+            //'max_time_confirm_diff' => 'Максимальное время разницы между прежним ВРПТ и временем изменения/объединения рейса при которой штрафные зоны работают',
+            'max_time_confirm_diff' => 'Допустимое время действия по заказу, сек',
+            //'max_time_confirm_delta' => 'Максимальное время разницы между ВРПТ при которой штрафные зоны работают',
+            'max_time_confirm_delta' => 'Допустимое колебание ВРПТ (гамма), сек',
             'with_commercial_trips' => 'Накапливать кэш-бэк во время коммерческих рейсов',
         ];
     }

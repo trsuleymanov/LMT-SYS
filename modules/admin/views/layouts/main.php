@@ -486,7 +486,7 @@ $cookie = Yii::$app->getRequest()->getCookies();
 
 
                 <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
-                    <li<?= ($current_module == 'admin' && in_array($current_controller, ['tariff', 'cashback-setting', 'formula', 'day-report-transport-circle', 'do-tariff', 'transport-waybill-report', 'notaccountability-transport-report']) ? ' class="active"' : '') ?>>
+                    <li<?= (in_array($current_controller, ['tariff', 'cashback-setting', 'formula', 'day-report-transport-circle', 'do-tariff', 'transport-waybill-report', 'notaccountability-transport-report']) || in_array($current_route, ['admin/setting/loyalty-switch'])  ? ' class="active"' : '') ?>>
                         <a href="#">
                             <i class="glyphicon glyphicon-piggy-bank"></i> <span>Финансы</span>
                             <span class="pull-right-container">
@@ -514,6 +514,9 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             </li>
                             <li<?= $current_controller == 'notaccountability-transport-report' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="fa fa-truck"></i> <span>Сдача процентов</span>', '/admin/notaccountability-transport-report/index'); ?>
+                            </li>
+                            <li<?= $current_route == 'admin/setting/loyalty-switch' ? ' class="active"' : '' ?>>
+                                <?= Html::a('<i class="glyphicon glyphicon-cog"></i> <span>Переключатель лояльности</span>', '/admin/setting/loyalty-switch/'); ?>
                             </li>
                         </ul>
                     </li>

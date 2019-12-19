@@ -1402,16 +1402,13 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'last_confirm_clicker_id']);
     }
 
-//    public function getClientExt() {
-//        return $this->hasOne(ClientExt::className(), ['id' => 'client_ext_id']);
-//    }
-
 
     public function getPrizeTripCount()
     {
-//        if($this->use_fix_price == true) {
-//            return 0;
-//        }
+        $setting = Setting::find()->where(['id' => 1])->one();
+        if($setting->loyalty_switch == 'cash_back_on') {
+            return 0;
+        }
 
         if($this->trip != null && $this->trip->commercial == 1) {
             return 0;
@@ -1512,10 +1509,8 @@ class Order extends \yii\db\ActiveRecord
 
 
         if($do_tariff != null && $do_tariff->use_fix_price == true) {
-            //$this->setField('use_fix_price', true);
             $this->use_fix_price = true;
         }else {
-            //$this->setField('use_fix_price', false);
             $this->use_fix_price = false;
         }
 
@@ -1527,13 +1522,11 @@ class Order extends \yii\db\ActiveRecord
 
         }else {
 
-
             $P = intval($this->places_count); // количество мест в текущем заказе
             $S = intval($this->student_count); // количество студентов в текущем заказе
             $B = intval($this->child_count); // количество детей в текущем заказе
 
             $prize_count = $this->prizeTripCount; // количество призовых поездок в текущем заказе
-            // echo "prize_count=$prize_count <br />";
 
             if (preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/i', $this->date)) {
                 $this->date = strtotime($this->date);
@@ -1567,9 +1560,7 @@ class Order extends \yii\db\ActiveRecord
             if ($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
                 $COST = 10;
             } elseif ($this->is_not_places == 1) {
-                //$COST = $T_PARCEL;
                 $COST = ($do_tariff != null ? $do_tariff->changePlacePrice($T_PARCEL, $this) : $T_PARCEL);
-
             } elseif (
                 ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
                 || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
@@ -1583,24 +1574,6 @@ class Order extends \yii\db\ActiveRecord
                 }
 
             } else {
-
-
-                //$COST = ($P - $prize_count - $S - $B)*$T_COMMON + $S*$T_STUDENT + $B*$T_BABY + $prize_count*$T_LOYAL;
-
-                // Призовой тариф в заказе, где есть разные категории пассажиров (общий, дети, студенты), применяется к пассажиру с наименьшим тарифом
-
-                // если $T_COMMON > $T_STUDENT и $T_COMMON > $T_BABY и $T_COMMON > $T_LOYAL
-                //$COST = $P*$T_COMMON - $S*($T_COMMON - $T_STUDENT) - $B*($T_COMMON - $T_BABY)
-
-                // т.е. по формуле логика должна быть такая:
-                // беруться все типы мест помноженные на тарифы, из них вычитаюся кол-во призовых мест и складываются с призовыми местами умноженными на призовой тариф.
-                // а должно быть
-
-                // есть места обычные, студенческие, детсики. И призы отдельно считаются.
-                // 0. чистая формула без призов:  $COST = ($P - $S - $B)*$T_COMMON + $S*$T_STUDENT + $B*$T_BABY
-                // 1. составляется массив всех мест (общих, студенческих, детских), отсортированных по возрастанию цены за каждый.
-                // 2. кол-во первых массив соответствующего кол-во призовых мест заменяется ценой $T_LOYAL
-                // 3. суммируются цены за места и получается общая цена
 
                 // составляется массив всех цен за места (общих, студенческих, детских)
                 $aPlacesPrice = [];
@@ -1620,7 +1593,6 @@ class Order extends \yii\db\ActiveRecord
                 for ($i = 0; $i < $prize_count; $i++) {
                     $aPlacesPrice[$i] = $T_LOYAL;
                 }
-                // echo "aPlacesPrice:<pre>"; print_r($aPlacesPrice); echo "</pre>";
 
                 // суммируются цены за места и получается общая цена заказа
                 foreach ($aPlacesPrice as $placePrise) {
@@ -1641,6 +1613,7 @@ class Order extends \yii\db\ActiveRecord
 
         return $COST;
     }
+
 
     public function getCalculateAccrualCashBack($price)
     {
@@ -1686,9 +1659,10 @@ class Order extends \yii\db\ActiveRecord
             return 0;
         }
 
+        $setting = Setting::find()->where(['id' => 1])->one();
+
         $cashback_setting = CashbackSetting::find()
             ->where(['<=', 'start_date', $trip->date])
-            //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
             ->orderBy(['start_date' => SORT_DESC])
             ->one();
         if($cashback_setting == null) {
@@ -1696,14 +1670,41 @@ class Order extends \yii\db\ActiveRecord
         }
 
         // происходит ли отмена менее чем за hours_before_start_trip_for_penalty часов до начала рейса
-        $hour_minute = explode(':', $trip->start_time);
-        $start_trip = $trip->date + intval($hour_minute[0])*3600 + intval($hour_minute[1])*60;
+//        $hour_minute = explode(':', $trip->start_time);
+//        $start_trip = $trip->date + intval($hour_minute[0])*3600 + intval($hour_minute[1])*60;
+//
+//        if(time() + 3600*$cashback_setting->hours_before_start_trip_for_penalty >= $start_trip) {
+//            // может быть проблема что в заказе цена пересчиталась, внутри модели заказа осталась старая цена, поэтому
+//            // в функцию явно передается $price, а не береться из параметра $this->price
+//            return $price*$cashback_setting->order_penalty_percent/100;
+//        }else {
+//            return 0;
+//        }
 
-        if(time() + 3600*$cashback_setting->hours_before_start_trip_for_penalty >= $start_trip) {
-            // может быть проблема что в заказе цена пересчиталась, внутри модели заказа осталась старая цена, поэтому
-            // в функцию явно передается $price, а не береться из параметра $this->price
-            return $price*$cashback_setting->order_penalty_percent/100;
-        }else {
+        // рассчитаем пенальти кэш-бэк
+        if($setting->loyalty_switch == 'cash_back_on') {
+
+            // эти зоны не будут работать, если разница ВРПТ более 30 минут
+            //   или если время изменения рейса и первичного ВРПТ более 60 минут.
+            if($this->time_confirm_delta > $cashback_setting->max_time_confirm_delta) {
+                return 0;
+            }
+            if($this->time_confirm_diff > $cashback_setting->max_time_confirm_diff) {
+                return 0;
+            }
+
+            // если время отмены заказа больше чем ВРПТ минус red_penalty_max_time, то отмена в красной зоне
+            if(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->red_penalty_max_time)) {
+
+                return $price*$cashback_setting->order_red_penalty_percent/100;
+
+            // если время отмены заказа больше чем ВРПТ минус yellow_penalty_max_time, то отмена в желтой зоне
+            }elseif(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->yellow_penalty_max_time)) {
+
+                return $price*$cashback_setting->yellow_penalty_max_time/100;
+            }
+
+        }else { // fifth_place_prize
             return 0;
         }
     }
@@ -1722,7 +1723,7 @@ class Order extends \yii\db\ActiveRecord
      * @throws ForbiddenHttpException
      * @throws \yii\db\Exception
      */
-    public function setStatus($code) {
+    public function setStatus($code, $aFields = []) {
 
         $order_status = OrderStatus::getByCode($code);
 
@@ -1742,14 +1743,16 @@ class Order extends \yii\db\ActiveRecord
 
                 $current_user = User::findOne(Yii::$app->user->id);
 
+//                time_confirm = NULL,
+//                time_confirm_sort = NULL,
                 $sql = '
                     UPDATE `' . self::tableName() . '`
                     SET
                         status_id = ' . $order_status->id . ',
-                        status_setting_time = ' . time() . ',
+                        status_setting_time = '.(isset($aFields['status_setting_time']) ? $aFields['status_setting_time'] : time()).',
                         cancellation_reason_id = ' . $this->cancellation_reason_id . ',
-                        cancellation_click_time = '.time().',
-                        canceled_by = "operator",
+                        cancellation_click_time = '.(isset($aFields['cancellation_click_time']) ? $aFields['cancellation_click_time'] : time()).',
+                        canceled_by = "'.(isset($aFields['canceled_by']) ? $aFields['canceled_by'] : 'operator').'",
                         cancellation_clicker_id = '.$current_user->id.',
                         time_sat = NULL,
                         time_satter_user_id = NULL,
@@ -1758,28 +1761,25 @@ class Order extends \yii\db\ActiveRecord
                         confirm_selected_transport = 0,
                         fact_trip_transport_id = NULL,
                         fact_trip_transport_car_reg = NULL,
-                        time_confirm = NULL,
-                        time_confirm_sort = NULL,
                         is_confirmed = 0,
                         updated_at = '.time().'
                     WHERE id = ' . $this->id;
 
             }else {
 
+//                time_confirm = NULL,
+//                time_confirm_sort = NULL,
                 $sql = '
                     UPDATE `' . self::tableName() . '`
                     SET
                         status_id = ' . $order_status->id . ',
-                        status_setting_time = ' . time() . ',
-
-                        cancellation_click_time = '.time().',
-                        canceled_by = "operator",
+                        status_setting_time = '.(isset($aFields['status_setting_time']) ? $aFields['status_setting_time'] : time()).',
+                        cancellation_click_time = '.(isset($aFields['cancellation_click_time']) ? $aFields['cancellation_click_time'] : time()).',
+                        canceled_by = "'.(isset($aFields['canceled_by']) ? $aFields['canceled_by'] : 'operator').'",
                         time_sat = NULL,
                         confirm_selected_transport = 0,
                         fact_trip_transport_id = NULL,
                         fact_trip_transport_car_reg = NULL,
-                        time_confirm = NULL,
-                        time_confirm_sort = NULL,
                         is_confirmed = 0,
                         updated_at = '.time().'
                     WHERE id = ' . $this->id;
@@ -1791,9 +1791,22 @@ class Order extends \yii\db\ActiveRecord
             $client = $this->client;
             if($client != null) {
 
-                // счетчики клиента нужно обновить
+                // счетчики клиента нужно обновить, и пересчитать кэш-бэк штрафной
                 $order = Order::find()->where(['id' => $this->id])->one();
                 $client->recountSendedCanceledReliabilityCounts($order, 0, 0, 1, $order->places_count);
+
+                $order->penalty_cash_back = $order->getCalculatePenaltyCashBack($order->price);
+                if($order->penalty_cash_back > 0) {
+                    $order->setField('penalty_cash_back', $order->penalty_cash_back);
+
+                    $client->cashback -= $order->penalty_cash_back;
+                    $client->setField('cashback', $client->cashback);
+                }
+
+                if($order->accrual_cash_back > 0) {
+                    $order->accrual_cash_back = 0;
+                    $order->setField('accrual_cash_back', $order->accrual_cash_back);
+                }
             }
 
             // отменяем оплату

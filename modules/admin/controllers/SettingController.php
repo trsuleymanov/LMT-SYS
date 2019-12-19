@@ -174,4 +174,23 @@ class SettingController extends Controller
             ]);
         }
     }
+
+    public function actionLoyaltySwitch() {
+
+        $model = Setting::find()->where(['id' => 1])->one();
+        if($model == null) {
+            $model = new Setting();
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Запись сохранена');
+            return $this->render('loyalty-switch', [
+                'model' => $model,
+            ]);
+        } else {
+            return $this->render('loyalty-switch', [
+                'model' => $model,
+            ]);
+        }
+    }
 }

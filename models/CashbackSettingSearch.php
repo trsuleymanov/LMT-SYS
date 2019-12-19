@@ -17,8 +17,10 @@ class CashbackSettingSearch extends CashbackSetting
     public function rules()
     {
         return [
-            [['id', 'start_date', 'order_accrual_percent', 'order_penalty_percent',
-                'hours_before_start_trip_for_penalty', 'with_commercial_trips',
+            [['id', 'start_date', 'order_accrual_percent', /*'order_penalty_percent',*/
+                /*'hours_before_start_trip_for_penalty',*/ 'with_commercial_trips',
+                'red_penalty_max_time', 'order_red_penalty_percent', 'yellow_penalty_max_time',
+                'order_yellow_penalty_percent', 'max_time_confirm_diff', 'max_time_confirm_delta',
                 'has_cashback_for_prepayment', 'has_cashback_for_nonprepayment'
             ], 'integer'],
         ];
@@ -63,8 +65,16 @@ class CashbackSettingSearch extends CashbackSetting
             'id' => $this->id,
             'start_date' => $this->start_date,
             'order_accrual_percent' => $this->order_accrual_percent,
-            'order_penalty_percent' => $this->order_penalty_percent,
-            'hours_before_start_trip_for_penalty' => $this->hours_before_start_trip_for_penalty,
+            //'order_penalty_percent' => $this->order_penalty_percent,
+            //'hours_before_start_trip_for_penalty' => $this->hours_before_start_trip_for_penalty,
+
+            'red_penalty_max_time' => $this->red_penalty_max_time,
+            'order_red_penalty_percent' => $this->order_red_penalty_percent,
+            'yellow_penalty_max_time' => $this->yellow_penalty_max_time,
+            'order_yellow_penalty_percent' => $this->order_yellow_penalty_percent,
+            'max_time_confirm_diff' => $this->max_time_confirm_diff,
+            'max_time_confirm_delta' => $this->max_time_confirm_delta,
+
             'with_commercial_trips' => $this->with_commercial_trips,
             'has_cashback_for_prepayment' => $this->has_cashback_for_prepayment,
             'has_cashback_for_nonprepayment' => $this->has_cashback_for_nonprepayment,

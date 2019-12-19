@@ -229,6 +229,7 @@ class ClientController extends Controller
      * Пересчет кэш-бэков клиентов по отправленным за последние сутки рейсам
      * команда: php yii client/recount-cashback
      */
+    /*
     public function actionRecountCashback()
     {
         // по всем рейсам отправленным за последние сутки идет пересчет кэш-бэков клиентов
@@ -279,5 +280,5 @@ class ClientController extends Controller
         }
 
         echo "готово. Пересчитано $clients_recount_count клиентов.\n";
-    }
+    }*/
 }

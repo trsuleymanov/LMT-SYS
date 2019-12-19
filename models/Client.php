@@ -201,12 +201,6 @@ class Client extends \yii\db\ActiveRecord
 
     public function recountSendedCanceledReliabilityCounts($order, $add_sended_orders_count = 0, $add_sended_places_count = 0, $add_canceled_orders_count = 0, $add_canceled_places_count = 0) {
 
-        // для клиента найдем актуальные данные
-        //$client = Client::find()->where(['id' => $client_id])->one();
-        //if($client == null) {
-        //    throw new ForbiddenHttpException('Клиент не найден');
-        //}
-
 
         if($add_sended_orders_count != 0) {
             $this->current_year_sended_orders += $add_sended_orders_count;
@@ -223,25 +217,9 @@ class Client extends \yii\db\ActiveRecord
 
 
 
-        //$total_orders = $this->current_year_sended_orders + $this->current_year_canceled_orders;
-        //$total_places = $this->current_year_sended_places + $this->current_year_canceled_places;
-
-        //if($total_orders > 0) {
-            //$client->current_year_orders_reliability = round(100*$client->current_year_sended_orders / $total_orders, 2);
-        //}
-
-        //if($total_places > 0) {
-            //$client->current_year_places_reliability = round(100*$client->current_year_sended_places / $total_places, 2);
-        //}
-
         $trip = $order->trip;
         if($trip != null && $add_canceled_orders_count != 0 && $order->cancellation_click_time > 0) {
 
-
-            //exit('пересчет');
-
-            //list($trip_minutes, $trip_seconds) = explode(':', $trip->start_time);
-            //$trip_start_time = $trip->date + 60*$trip_minutes + $trip_seconds;
             list($trip_hours, $trip_mins) = explode(':', $trip->start_time);
             $trip_start_time = $trip->date + 3600*intval($trip_hours) + 60*intval($trip_mins);
 
@@ -253,8 +231,6 @@ class Client extends \yii\db\ActiveRecord
             }
 
             // количество отмененных заказов менее чем за 12 часов до последней точки рейса
-            //list($trip_minutes, $trip_seconds) = explode(':', $trip->end_time);
-            //$trip_end_time = $trip->date + 60*$trip_minutes + $trip_seconds;
             list($trip_hours, $trip_mins) = explode(':', $trip->end_time);
             $trip_end_time = $trip->date + 3600*intval($trip_hours) + 60*intval($trip_mins);
 
@@ -263,14 +239,7 @@ class Client extends \yii\db\ActiveRecord
             }
         }
 
-//        $sql = 'UPDATE `client` SET
-//                  current_year_sended_orders='.$client->current_year_sended_orders.',
-//                  current_year_sended_places='.$client->current_year_sended_places.',
-//                  current_year_canceled_orders='.$client->current_year_canceled_orders.',
-//                  current_year_canceled_places='.$client->current_year_canceled_places.',
-//                  current_year_orders_reliability='.$client->current_year_orders_reliability.',
-//                  current_year_places_reliability='.$client->current_year_places_reliability.'
-//                  WHERE id='.$client->id;
+
         $sql = 'UPDATE `client` SET
                   current_year_sended_orders='.$this->current_year_sended_orders.',
                   current_year_sended_places='.$this->current_year_sended_places.',

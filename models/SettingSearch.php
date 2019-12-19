@@ -19,7 +19,7 @@ class SettingSearch extends Setting
     {
         return [
             [['id', 'create_orders_yesterday'], 'integer'],
-            [['photo_server_url'], 'safe'],
+            [['photo_server_url', 'loyalty_switch'], 'safe'],
         ];
     }
 

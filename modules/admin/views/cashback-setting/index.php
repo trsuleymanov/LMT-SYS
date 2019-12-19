@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
-$this->title = 'Кэш-беки';
+$this->title = 'Кэш-бэки';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div id="cashback-setting-page" class="box box-default">
@@ -21,6 +21,10 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
+            'options' => ['class' => 'grid-view table-responsive'],
+            'tableOptions' => [
+                'class' => 'table table-condensed table-bordered table-hover'
+            ],
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
 
@@ -32,25 +36,81 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'order_accrual_percent',
-                'order_penalty_percent',
-                'hours_before_start_trip_for_penalty',
+                // 'order_penalty_percent',
+                // 'hours_before_start_trip_for_penalty',
                 [
                     'attribute' => 'with_commercial_trips',
                     'content' => function($model) {
                         return ($model->with_commercial_trips == true ? 'Да' : 'Нет');
-                    }
+                    },
+                    'filter' => Html::activeDropDownList(
+                        $searchModel,
+                        'with_commercial_trips',
+                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                        ['class' => "form-control"]
+                    )
                 ],
-
                 [
                     'attribute' => 'has_cashback_for_prepayment',
                     'content' => function($model) {
                         return ($model->has_cashback_for_prepayment == true ? 'Да' : 'Нет');
-                    }
+                    },
+                    'filter' => Html::activeDropDownList(
+                        $searchModel,
+                        'has_cashback_for_prepayment',
+                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                        ['class' => "form-control"]
+                    )
                 ],
                 [
                     'attribute' => 'has_cashback_for_nonprepayment',
                     'content' => function($model) {
                         return ($model->has_cashback_for_nonprepayment == true ? 'Да' : 'Нет');
+                    },
+                    'filter' => Html::activeDropDownList(
+                        $searchModel,
+                        'has_cashback_for_nonprepayment',
+                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                        ['class' => "form-control"]
+                    )
+                ],
+
+                [
+                    'attribute' => 'red_penalty_max_time',
+                    'content' => function($model) {
+                        return $model->red_penalty_max_time;
+                    }
+                ],
+                [
+                    'attribute' => 'order_red_penalty_percent',
+                    'content' => function($model) {
+                        return $model->order_red_penalty_percent;
+                    }
+                ],
+
+                [
+                    'attribute' => 'yellow_penalty_max_time',
+                    'content' => function($model) {
+                        return $model->yellow_penalty_max_time;
+                    }
+                ],
+                [
+                    'attribute' => 'order_yellow_penalty_percent',
+                    'content' => function($model) {
+                        return $model->order_yellow_penalty_percent;
+                    }
+                ],
+
+                [
+                    'attribute' => 'max_time_confirm_diff',
+                    'content' => function($model) {
+                        return $model->max_time_confirm_diff;
+                    }
+                ],
+                [
+                    'attribute' => 'max_time_confirm_delta',
+                    'content' => function($model) {
+                        return $model->max_time_confirm_delta;
                     }
                 ],
 

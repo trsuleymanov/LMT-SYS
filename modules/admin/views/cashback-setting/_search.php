@@ -21,10 +21,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'order_accrual_percent') ?>
 
+    <?php /*
     <?= $form->field($model, 'order_penalty_percent') ?>
+    */ ?>
 
+    <?php /*
     <?= $form->field($model, 'hours_before_start_trip_for_penalty') ?>
-
+    */ ?>
     <?php // echo $form->field($model, 'with_commercial_trips') ?>
 
     <div class="form-group">

@@ -48,11 +48,26 @@ class CashbackSettingController extends Controller
         }else {
             $model->start_date = time();
 
+
             $last_cashback_setting = CashbackSetting::find()->orderBy(['id' => SORT_DESC])->one();
+
+            $model->order_accrual_percent = 10;
+            $model->red_penalty_max_time = 900;
+            $model->yellow_penalty_max_time = 2400;
+            $model->order_red_penalty_percent = 10;
+            $model->order_yellow_penalty_percent = 5;
+            $model->max_time_confirm_delta = 1800;
+            $model->max_time_confirm_diff = 3600;
+
+
             if($last_cashback_setting != null) {
                 $model->order_accrual_percent = $last_cashback_setting->order_accrual_percent;
-                $model->order_penalty_percent = $last_cashback_setting->order_penalty_percent;
-                $model->hours_before_start_trip_for_penalty = $last_cashback_setting->hours_before_start_trip_for_penalty;
+                $model->red_penalty_max_time = $last_cashback_setting->red_penalty_max_time;
+                $model->order_red_penalty_percent = $last_cashback_setting->order_red_penalty_percent;
+                $model->yellow_penalty_max_time = $last_cashback_setting->yellow_penalty_max_time;
+                $model->order_yellow_penalty_percent = $last_cashback_setting->order_yellow_penalty_percent;
+                $model->max_time_confirm_diff = $last_cashback_setting->max_time_confirm_diff;
+                $model->max_time_confirm_delta = $last_cashback_setting->max_time_confirm_delta;
                 $model->with_commercial_trips = $last_cashback_setting->with_commercial_trips;
             }
 

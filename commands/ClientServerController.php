@@ -297,16 +297,38 @@ class ClientServerController extends Controller
                         $client_ext = $oldClientextsWithExternalId[$external_id];
                         //if ($client_ext['status'] == 'canceled') {
                         if ($client_ext['status'] == 'canceled_by_client') {
-                            $order->setStatus('canceled');
-                            $order->setField('canceled_by', 'client');
+
+                            $aFields = [
+                                'status_setting_time' => $client_ext['status_setting_time'],
+                                'cancellation_click_time' => $client_ext['cancellation_click_time'],
+                                'cancellation_clicker_id' => $client_ext['cancellation_clicker_id'],
+                                'canceled_by' => 'client'
+                            ];
+
+                            $order->setStatus('canceled', $aFields);
+                            //$order->setField('canceled_by', 'client');
+
+
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
+
                         }elseif($client_ext['status'] == 'canceled_by_operator') {
-                            $order->setStatus('canceled');
-                            $order->setField('canceled_by', 'operator');
+
+                            $aFields = [
+                                'canceled_by' => 'operator'
+                            ];
+                            $order->setStatus('canceled', $aFields);
+                            // $order->setField('canceled_by', 'operator');
+
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
+
                         }elseif($client_ext['status'] == 'canceled_auto') {
-                            $order->setStatus('canceled');
-                            $order->setField('canceled_by', 'auto');
+
+                            $aFields = [
+                                'canceled_by' => 'auto'
+                            ];
+                            $order->setStatus('canceled', $aFields);
+                            //$order->setField('canceled_by', 'auto');
+
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
                         }
 
@@ -363,15 +385,29 @@ class ClientServerController extends Controller
                                 $order->setField('external_type', 'application');
                             }
 
-                            $order->setStatus('canceled');
-
                             if($client_ext['status'] == 'canceled_by_client') {
-                                $order->setField('canceled_by', 'client');
+                                $aFields = [
+                                    'canceled_by' => 'client'
+                                ];
                             }elseif($client_ext['status'] == 'canceled_by_operator') {
-                                $order->setField('canceled_by', 'operator');
+                                $aFields = [
+                                    'canceled_by' => 'operator'
+                                ];
                             }elseif($client_ext['status'] == 'canceled_auto') {
-                                $order->setField('canceled_by', 'auto');
+                                $aFields = [
+                                    'canceled_by' => 'auto'
+                                ];
                             }
+
+                            $order->setStatus('canceled', $aFields);
+
+//                            if($client_ext['status'] == 'canceled_by_client') {
+//                                $order->setField('canceled_by', 'client');
+//                            }elseif($client_ext['status'] == 'canceled_by_operator') {
+//                                $order->setField('canceled_by', 'operator');
+//                            }elseif($client_ext['status'] == 'canceled_auto') {
+//                                $order->setField('canceled_by', 'auto');
+//                            }
 
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
 
@@ -639,7 +675,12 @@ class ClientServerController extends Controller
 
         $order->status_id = 0;
         $order->trip_id = $server_client_ext['trip_id'];
-        $order->status_setting_time = time();
+        // $order->status_setting_time = time();
+        $order->status_setting_time = $server_client_ext['trip_id'];
+        $order->cancellation_click_time = $server_client_ext['cancellation_click_time'];
+        $order->cancellation_clicker_id = $server_client_ext['cancellation_clicker_id'];
+
+
         $order->canceled_by = '';
         $order->date = $server_client_ext['data'];// 10.07.2018
         //$order->direction_id = $aDirectionsNameId[$server_client_ext['direction']];

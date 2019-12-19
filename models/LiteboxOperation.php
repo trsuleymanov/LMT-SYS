@@ -225,7 +225,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         ];
         $data = [
             'external_id' => $litebox_operation->sell_at.'_'.$litebox_operation->order_id , // 17052917561851307
-            'timestamp' => date("d.m.y H:i:s", $litebox_operation->sell_at),
+            //'timestamp' => date("d.m.y H:i:s", $litebox_operation->sell_at),
+            // нужен формат времени теперь: %d.%m.%Y %H:%M:%S
+            'timestamp' => date("d.m.Y H:M:S", $litebox_operation->sell_at),
             'receipt' => [
                 'client' => [
                     //'email' => $order->client->email,

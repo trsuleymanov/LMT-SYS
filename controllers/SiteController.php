@@ -1072,7 +1072,7 @@ class SiteController extends Controller
 //        echo '-'.$hours.':'.$mins;
 
         $order = Order::find()->where(['id' => 216144])->one();
-        echo "пенальти с заказа=".$order->getCalculatePenaltyCashBack();
+        echo "пенальти с заказа=".$order->getCalculatePenaltyCashBack(500);
     }
 
     public function actionTest2()

@@ -1701,7 +1701,7 @@ class Order extends \yii\db\ActiveRecord
             // если время отмены заказа больше чем ВРПТ минус yellow_penalty_max_time, то отмена в желтой зоне
             }elseif(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->yellow_penalty_max_time)) {
 
-                return $price*$cashback_setting->yellow_penalty_max_time/100;
+                return $price*$cashback_setting->order_yellow_penalty_percent/100;
             }
 
         }else { // fifth_place_prize

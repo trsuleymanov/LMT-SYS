@@ -497,9 +497,6 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             <li<?= $current_controller == 'tariff' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="glyphicon glyphicon-piggy-bank"></i> <span>Тарифы</span>', '/admin/tariff'); ?>
                             </li>
-                            <li<?= $current_controller == 'cashback-setting' ? ' class="active"' : '' ?>>
-                                <?= Html::a('<i class="glyphicon glyphicon-piggy-bank"></i> <span>Кэш-бэки</span>', '/admin/cashback-setting'); ?>
-                            </li>
                             <li<?= $current_route == 'admin/formula/index' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="glyphicon glyphicon-list-alt"></i> <span>Формулы</span>', '/admin/formula'); ?>
                             </li>
@@ -517,6 +514,9 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             </li>
                             <li<?= $current_route == 'admin/setting/loyalty-switch' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="glyphicon glyphicon-cog"></i> <span>Переключатель лояльности</span>', '/admin/setting/loyalty-switch/'); ?>
+                            </li>
+                            <li<?= $current_controller == 'cashback-setting' ? ' class="active"' : '' ?>>
+                                <?= Html::a('<i class="glyphicon glyphicon-piggy-bank"></i> <span>Кэш-бэки</span>', '/admin/cashback-setting'); ?>
                             </li>
                         </ul>
                     </li>

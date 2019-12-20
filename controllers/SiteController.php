@@ -1066,11 +1066,13 @@ class SiteController extends Controller
         echo "aStartTripsNames:<pre>"; print_r($aStartTripsNames); echo "</pre>";
         */
 
-        $diff = -38249;
+//        $diff = -38249;
+//        $hours = intval(abs($diff)/3600);
+//        $mins = intval((abs($diff) - 3600*$hours)/60);
+//        echo '-'.$hours.':'.$mins;
 
-        $hours = intval(abs($diff)/3600);
-        $mins = intval((abs($diff) - 3600*$hours)/60);
-        echo '-'.$hours.':'.$mins;
+        $order = Order::find()->where(['id' => 216144])->one();
+        echo "пенальти с заказа=".$order->getCalculatePenaltyCashBack();
     }
 
     public function actionTest2()

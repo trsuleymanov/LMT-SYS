@@ -1617,6 +1617,11 @@ class Order extends \yii\db\ActiveRecord
 
     public function getCalculateAccrualCashBack($price)
     {
+        $setting = Setting::find()->where(['id' => 1])->one();
+        if($setting->loyalty_switch == 'fifth_place_prize') {
+            return 0;
+        }
+
         $trip = $this->trip;
         if ($trip == null) {
             return 0;
@@ -1654,6 +1659,12 @@ class Order extends \yii\db\ActiveRecord
 
     public function getCalculatePenaltyCashBack($price)
     {
+        $setting = Setting::find()->where(['id' => 1])->one();
+        if($setting->loyalty_switch == 'fifth_place_prize') {
+            return 0;
+        }
+
+
         $trip = $this->trip;
         if ($trip == null) {
             return 0;
@@ -1669,44 +1680,28 @@ class Order extends \yii\db\ActiveRecord
             return 0;
         }
 
-        // происходит ли отмена менее чем за hours_before_start_trip_for_penalty часов до начала рейса
-//        $hour_minute = explode(':', $trip->start_time);
-//        $start_trip = $trip->date + intval($hour_minute[0])*3600 + intval($hour_minute[1])*60;
-//
-//        if(time() + 3600*$cashback_setting->hours_before_start_trip_for_penalty >= $start_trip) {
-//            // может быть проблема что в заказе цена пересчиталась, внутри модели заказа осталась старая цена, поэтому
-//            // в функцию явно передается $price, а не береться из параметра $this->price
-//            return $price*$cashback_setting->order_penalty_percent/100;
-//        }else {
-//            return 0;
-//        }
 
         // рассчитаем пенальти кэш-бэк
-        if($setting->loyalty_switch == 'cash_back_on') {
-
-            // эти зоны не будут работать, если разница ВРПТ более 30 минут
-            //   или если время изменения рейса и первичного ВРПТ более 60 минут.
-            if($this->time_confirm_delta > $cashback_setting->max_time_confirm_delta) {
-                return 0;
-            }
-            if($this->time_confirm_diff > $cashback_setting->max_time_confirm_diff) {
-                return 0;
-            }
-
-            // если время отмены заказа больше чем ВРПТ минус red_penalty_max_time, то отмена в красной зоне
-            if(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->red_penalty_max_time)) {
-
-                return $price*$cashback_setting->order_red_penalty_percent/100;
-
-            // если время отмены заказа больше чем ВРПТ минус yellow_penalty_max_time, то отмена в желтой зоне
-            }elseif(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->yellow_penalty_max_time)) {
-
-                return $price*$cashback_setting->order_yellow_penalty_percent/100;
-            }
-
-        }else { // fifth_place_prize
+        // эти зоны не будут работать, если разница ВРПТ более 30 минут
+        //   или если время изменения рейса и первичного ВРПТ более 60 минут.
+        if($this->time_confirm_delta > $cashback_setting->max_time_confirm_delta) {
             return 0;
         }
+        if($this->time_confirm_diff > $cashback_setting->max_time_confirm_diff) {
+            return 0;
+        }
+
+        // если время отмены заказа больше чем ВРПТ минус red_penalty_max_time, то отмена в красной зоне
+        if(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->red_penalty_max_time)) {
+
+            return $price*$cashback_setting->order_red_penalty_percent/100;
+
+        // если время отмены заказа больше чем ВРПТ минус yellow_penalty_max_time, то отмена в желтой зоне
+        }elseif(($this->cancellation_click_time > $this->time_confirm - $cashback_setting->yellow_penalty_max_time)) {
+
+            return $price*$cashback_setting->order_yellow_penalty_percent/100;
+        }
+
     }
 
 

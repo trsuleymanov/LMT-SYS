@@ -995,8 +995,8 @@ class Trip extends \yii\db\ActiveRecord
 
         // 1. Когда заказы переходят в статус "Отправлен", то в таблице клиентов пересчитываются: order_count++, prize_trip_count?++
         //$fact_orders_without_canceled = $this->factOrdersWithoutCanceled;
-        $order_status = OrderStatus::getByCode('sent');
-        $fact_orders_without_canceled = Order::find()->where(['trip_id' => $this->id])->andWhere(['status_id' => $order_status->id])->all();
+        $order_sent_status = OrderStatus::getByCode('sent');
+        $fact_orders_without_canceled = Order::find()->where(['trip_id' => $this->id])->andWhere(['status_id' => $order_sent_status->id])->all();
         $aClients = [];
         if(count($fact_orders_without_canceled) > 0) {
             $clients = Client::find()->where(['id' => ArrayHelper::map($fact_orders_without_canceled, 'client_id', 'client_id')])->all();
@@ -1384,64 +1384,43 @@ class Trip extends \yii\db\ActiveRecord
             $sql = 'UPDATE `'.CallCase::tableName().'` SET status = "completed_by_trip_sending" WHERE order_id IN('.implode(',', ArrayHelper::map($trip_orders, 'id', 'id')).')';
             Yii::$app->db->createCommand($sql)->execute();
 
-            // где-то здесь нужно пересчитать для заказов: accrual_cash_back, penalty_cash_back,
-            //    used_cash_back-это пока не используется
-            /*
+
+            // пересчет кэш-бэков связанных с начисленным кэш-бэком, использованным кэш-бэком, но не penalty-кэш-бэка.
+            $aSentClientsIds = [];
             foreach ($trip_orders as $trip_order) {
 
-                if($trip_order->status_id == 2) { // canceled
-
-                    // это нужно считать не при закрытии рейса, а при отмене рейса
-
-//                    $penalty_cash_back = $trip_order->getCalculatePenaltyCashBack($trip_order->price);
-//                    if($penalty_cash_back != $trip_order->penalty_cash_back) {
-//                        $trip_order->setField('penalty_cash_back', $penalty_cash_back);
-//                        $trip_order->penalty_cash_back = $penalty_cash_back;
-//                    }
-//                    if($trip_order->accrual_cash_back > 0) {
-//                        $trip_order->setField('accrual_cash_back', 0);
-//                        $trip_order->accrual_cash_back = 0;
-//                    }
-
-                }else {
+                if($trip_order->status_id == $order_sent_status->id) {
 
                     $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
                     if($accrual_cash_back != $trip_order->accrual_cash_back) {
                         $trip_order->setField('accrual_cash_back', $accrual_cash_back);
                         $trip_order->accrual_cash_back = $accrual_cash_back;
                     }
-                    if($trip_order->penalty_cash_back > 0) {
-                        $trip_order->setField('penalty_cash_back', 0);
-                        $trip_order->penalty_cash_back = 0;
-                    }
+                    $aSentClientsIds[$trip_order->client_id] = $trip_order->client_id;
                 }
             }
 
-            $clients = Client::find()->where(['id' => ArrayHelper::map($trip_orders, 'client_id', 'client_id')])->all();
-            if(count($clients) > 0) {
-                $aClients = ArrayHelper::index($clients, 'id');
+            $sent_clients = Client::find()->where(['id' => $aSentClientsIds])->all();
+            if(count($sent_clients) > 0) {
+                $aSentClients = ArrayHelper::index($sent_clients, 'id');
                 foreach ($trip_orders as $trip_order) {
-                    if(isset($aClients[$trip_order->client_id])) {
+                    if(isset($aSentClients[$trip_order->client_id])) {
 
                         $client = $aClients[$trip_order->client_id];
                         if($trip_order->accrual_cash_back > 0) {
                             $client->cashback += $trip_order->accrual_cash_back;
                         }
 
-                        if($trip_order->penalty_cash_back > 0) {
-                            $client->cashback -= $trip_order->penalty_cash_back;
-                        }
+//                        if($trip_order->used_cash_back > 0) {
+//                            $client->cashback -= $trip_order->used_cash_back;
+//                        }
 
-                        if($trip_order->used_cash_back > 0) {
-                            $client->cashback -= $trip_order->used_cash_back;
-                        }
-
-                        if($trip_order->accrual_cash_back > 0 || $trip_order->penalty_cash_back > 0 || $trip_order->used_cash_back > 0) {
+                        if($trip_order->accrual_cash_back > 0 /*|| $trip_order->used_cash_back > 0*/) {
                             $client->setField('cashback', $client->cashback);
                         }
                     }
                 }
-            }*/
+            }
         }
 
 
@@ -1483,8 +1462,8 @@ class Trip extends \yii\db\ActiveRecord
 
 
         // 1. Когда заказы переходят в статус "Отправлен" (т.е. наоборот), то в таблице клиентов пересчитываются: order_count, prize_trip_count
-        $order_status = OrderStatus::getByCode('sent');
-        $fact_orders_without_canceled = Order::find()->where(['trip_id' =>$this->id])->andWhere(['status_id' => $order_status->id])->all();
+        $order_sent_status = OrderStatus::getByCode('sent');
+        $fact_orders_without_canceled = Order::find()->where(['trip_id' =>$this->id])->andWhere(['status_id' => $order_sent_status->id])->all();
         $aClients = [];
         if(count($fact_orders_without_canceled) > 0) {
             $clients = Client::find()->where(['id' => ArrayHelper::map($fact_orders_without_canceled, 'client_id', 'client_id')])->all();
@@ -1604,9 +1583,9 @@ class Trip extends \yii\db\ActiveRecord
             $sql = 'UPDATE `'.CallCase::tableName().'` SET status = "not_completed" WHERE order_id IN('.implode(',', ArrayHelper::map($trip_orders, 'id', 'id')).')';
             Yii::$app->db->createCommand($sql)->execute();
 
-            // где-то здесь нужно пересчитать для заказов: accrual_cash_back, penalty_cash_back,
-            //      used_cash_back-это пока не используется
-            /*
+
+
+            // пересчет кэш-бэков связанных с начисленным кэш-бэком, использованным кэш-бэком, но не penalty-кэш-бэка.
             $clients = Client::find()->where(['id' => ArrayHelper::map($trip_orders, 'client_id', 'client_id')])->all();
             if(count($clients) > 0) {
 
@@ -1619,31 +1598,22 @@ class Trip extends \yii\db\ActiveRecord
                             $client->cashback -= $trip_order->accrual_cash_back;
                         }
 
-                        if($trip_order->penalty_cash_back > 0) {
-                            $client->cashback += $trip_order->penalty_cash_back;
-                        }
+//                        if($trip_order->used_cash_back > 0) {
+//                            $client->cashback += $trip_order->used_cash_back;
+//                        }
 
-                        if($trip_order->used_cash_back > 0) {
-                            $client->cashback += $trip_order->used_cash_back;
-                        }
-
-                        if($trip_order->accrual_cash_back > 0 || $trip_order->penalty_cash_back > 0 || $trip_order->used_cash_back > 0) {
+                        if($trip_order->accrual_cash_back > 0 /*|| $trip_order->used_cash_back > 0*/) {
                             $client->setField('cashback', $client->cashback);
                         }
                     }
                 }
             }
 
-
             foreach ($trip_orders as $trip_order) {
-
-                if($trip_order->penalty_cash_back > 0) {
-                    $trip_order->setField('penalty_cash_back', 0);
-                }
                 if($trip_order->accrual_cash_back > 0) {
                     $trip_order->setField('accrual_cash_back', 0);
                 }
-            }*/
+            }
         }
 
 

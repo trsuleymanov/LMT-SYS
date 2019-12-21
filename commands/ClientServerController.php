@@ -343,7 +343,7 @@ class ClientServerController extends Controller
                             if($order->is_paid != true) {
                                 $order->setField('is_paid', true);
                                 // $order->setField('cash_received_time', time());// это время получения денег водителем - здесь не нужно!
-                                $order->setField('paid_time', time()); // время оплаты (по факту время синхронизации после оплаты), погрешность +/- 30 секунд
+                                $order->setField('paid_time', $client_ext['paid_time']); // время оплаты (по факту время синхронизации после оплаты), погрешность +/- 30 секунд
 
                                 // если пришел сигнал об оплате, то отправляем на litebox сервер операцию "Приход" для фискализации
                                 LiteboxOperation::makeOperationSell($order);

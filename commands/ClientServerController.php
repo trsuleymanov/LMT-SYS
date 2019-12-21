@@ -148,7 +148,6 @@ class ClientServerController extends Controller
         $response = $request_1->createRequest()
             ->setMethod('post')
             ->setUrl(Yii::$app->params['clientServerUrl'].'clientext/get-not-sync-clientexts')
-            //->setData(['name' => 'John Doe', 'email' => 'johndoe@domain.com'])
             ->setHeaders(['Authorization' => 'SecretKey '.ClientServer::$secretKey])
             ->send();
 
@@ -167,58 +166,23 @@ class ClientServerController extends Controller
                     $aMainServerOrderId[$clientext['main_server_order_id']] = $clientext['main_server_order_id'];
                 }
 
-                // обработка направлений
-//                $aDirections = [];
-//                foreach($clientserver_clientexts as $clientext) {
-//                    $aIds[$clientext['id']] = $clientext['id'];
-//                    $aMainServerOrderId[$clientext['main_server_order_id']] = $clientext['main_server_order_id'];
-//                    $aDirections[$clientext['direction']] = $clientext['direction'];
-//                }
-                
-
-//                $aDirectionsNameId = [];
-//                foreach ($aDirections as $direction_name) {
-//                    $cities_from_to = explode('-', $direction_name);
-//                    $city_from = City::find()->where(['name' => $cities_from_to[0]])->one();
-//                    if ($city_from == null) {
-//                        self::sendMessageToAdmin('Город отравления не найден при идентификации направления direction_name='.$direction_name);
-//                        throw new ForbiddenHttpException('Город отравления не найден при идентификации направления');
-//                        //exit('Город отравления не найден при идентификации направления');
-//                    }
-//
-//                    $city_to = City::find()->where(['name' => $cities_from_to[1]])->one();
-//                    if ($city_to == null) {
-//                        self::sendMessageToAdmin('Город прибытия не найден при идентификации направления direction_name='.$direction_name);
-//                        throw new ForbiddenHttpException('Город прибытия не найден при идентификации направления');
-//                        //exit('Город прибытия не найден при идентификации направления');
-//                    }
-//
-//                    $direction = Direction::find()->where(['city_from' => $city_from->id, 'city_to' => $city_to->id])->one();
-//                    if ($direction == null) {
-//                        self::sendMessageToAdmin('Направление ' . $direction_name . ' не найдено. Необходимо создать данное направление.');
-//                        throw new ForbiddenHttpException('Направление ' . $direction_name . ' не найдено. Необходимо создать данное направление.');
-//                        //exit('Направление ' . $direction_name . ' не найдено. Необходимо создать данное направление.');
-//                    }
-//
-//                    $aDirectionsNameId[$direction_name] = $direction->id;
-//                }
-                
-                
-
 
                 // делим все заявки на новые и старые (у старых есть заказы, которые нужно обновить)
                 $new_clientexts = [];
 
+                // заказы созданные на клиентском сайте или в CRM
                 $orders_with_external_id = Order::find()->where(['external_id' => $aIds])->all();
+                // заказы изначально созданные в CRM
                 $orders_without_external_id = Order::find()->where(['id' => $aMainServerOrderId])->all();
 
                 $aClientOrdersWithExternalId = ArrayHelper::index($orders_with_external_id, 'external_id');
                 $aClientOrdersWithoutExternalId = ArrayHelper::index($orders_without_external_id, 'id');
 
 
-                $oldClientextsWithExternalId = [];
-                $oldClientextsWithoutExternalId = [];
+                $oldClientextsWithExternalId = []; // заказы которые уже ранее были синхронизированные
+                $oldClientextsWithoutExternalId = []; // старые заказы которые не были ранее синхронизированны
                 foreach($clientserver_clientexts as $clientext) {
+
                     if(isset($aClientOrdersWithExternalId[$clientext['id']])) {
                         $oldClientextsWithExternalId[$clientext['id']] = $clientext;
                     }elseif(isset($aClientOrdersWithoutExternalId[$clientext['main_server_order_id']])) {
@@ -232,6 +196,7 @@ class ClientServerController extends Controller
                 if(count($new_clientexts) > 0) {
 
                     foreach($new_clientexts as $server_client_ext) {
+
                         $order = new Order();
                         $order = self::orderFillClientextData($order, $server_client_ext);
 
@@ -247,13 +212,9 @@ class ClientServerController extends Controller
                             throw new ErrorException('Не сохранить заказ');
                         }
 
-                        $order->setPay(false);
+                        self::orderSetPayData($order, $server_client_ext);
+                        //$order->setPay(false);
 
-                        // если пришел сигнал об оплате, то отправляем на litebox сервер операцию "Приход" для фискализации
-//                        if($order->paid_time > 0) {
-//                            // $order->setPay(); - не стоит вызывать, так как paidSumm и другие поля заказа уже записаны
-//                            LiteboxOperation::makeOperationSell($order);
-//                        }
 
                         foreach($server_client_ext['passengers'] as $aPassenger) {
                             $passenger = Passenger::find()
@@ -289,15 +250,12 @@ class ClientServerController extends Controller
 
 
 
-
                 // старым заказам меняем статус если заявка была отменена
                 if(count($oldClientextsWithExternalId) > 0) {
 
-                    //echo "aClientOrdersWithExternalId:<pre>"; print_r($aClientOrdersWithExternalId); echo "</pre>";
-
                     foreach($aClientOrdersWithExternalId as $external_id => $order) {
                         $client_ext = $oldClientextsWithExternalId[$external_id];
-                        //if ($client_ext['status'] == 'canceled') {
+
                         if ($client_ext['status'] == 'canceled_by_client') {
 
                             $aFields = [
@@ -308,10 +266,8 @@ class ClientServerController extends Controller
                             ];
 
                             $order->setStatus('canceled', $aFields);
-                            //$order->setField('canceled_by', 'client');
-
-
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
+
 
                         }elseif($client_ext['status'] == 'canceled_by_operator') {
 
@@ -319,8 +275,6 @@ class ClientServerController extends Controller
                                 'canceled_by' => 'operator'
                             ];
                             $order->setStatus('canceled', $aFields);
-                            // $order->setField('canceled_by', 'operator');
-
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
 
                         }elseif($client_ext['status'] == 'canceled_auto') {
@@ -329,20 +283,14 @@ class ClientServerController extends Controller
                                 'canceled_by' => 'auto'
                             ];
                             $order->setStatus('canceled', $aFields);
-                            //$order->setField('canceled_by', 'auto');
-
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
                         }
 
-//                        if($order->is_paid != $client_ext['is_paid']) {
-//                            $order->setField('is_paid', $client_ext['is_paid']);
-//                        }
 
-
+                        /*
                         if($client_ext['is_paid'] == true) { // раз оплачено и цена фиксированная, то
                             if($order->is_paid != true) {
                                 $order->setField('is_paid', true);
-                                // $order->setField('cash_received_time', time());// это время получения денег водителем - здесь не нужно!
                                 $order->setField('paid_time', $client_ext['paid_time']); // время оплаты (по факту время синхронизации после оплаты), погрешность +/- 30 секунд
 
                                 // если пришел сигнал об оплате, то отправляем на litebox сервер операцию "Приход" для фискализации
@@ -368,7 +316,9 @@ class ClientServerController extends Controller
 
                         if($order->paid_summ != $client_ext['paid_summ']) {
                             $order->setField('paid_summ', $client_ext['paid_summ']);
-                        }
+                        }*/
+
+                        self::orderSetPayData($order, $client_ext);
                     }
                 }
 
@@ -405,27 +355,16 @@ class ClientServerController extends Controller
                             }
 
                             $order->setStatus('canceled', $aFields);
-
-//                            if($client_ext['status'] == 'canceled_by_client') {
-//                                $order->setField('canceled_by', 'client');
-//                            }elseif($client_ext['status'] == 'canceled_by_operator') {
-//                                $order->setField('canceled_by', 'operator');
-//                            }elseif($client_ext['status'] == 'canceled_auto') {
-//                                $order->setField('canceled_by', 'auto');
-//                            }
-
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
-
                         }
 
+
+                        /*
                         if($order->paid_summ != $client_ext['paid_summ']) {
                             $order->paid_summ = $client_ext['paid_summ'];
                             $order->setField('paid_summ', $order->paid_summ);
                         }
 
-//                        if($order->is_paid != $client_ext['is_paid']) {
-//                            $order->setField('is_paid', $client_ext['is_paid']);
-//                        }
 
                         $is_paid = false;
                         if($order->paid_summ >= $order->price) {
@@ -433,11 +372,12 @@ class ClientServerController extends Controller
                         }
                         if($is_paid == true) {
                             $order->setField('is_paid', true);
-                            $order->setField('is_paid', true);
                             $order->setField('price', $order->source_price);
                         }else {
                             $order->setField('is_paid', false);
-                        }
+                        }*/
+
+                        self::orderSetPayData($order, $client_ext);
                     }
                 }
 
@@ -448,8 +388,6 @@ class ClientServerController extends Controller
 
 //                // пошлем обратно ответ на клиентский сервер со списком id записанных заявок, чтобы там была установлена дата синхронизации
                 // curl -i -H "Authorization: SecretKey zLitjs_lUIthw908y" "Accept:application/json" -H "Content-Type:application/json" -XPOST http://tobus-client.ru/serverapi/clientext/set-sync-to-clientexts?ids=1,2,3,7
-
-
 
                 $request_2 = new \yii\httpclient\Client();
                 $response = $request_2->createRequest()
@@ -480,153 +418,6 @@ class ClientServerController extends Controller
 
 
 
-    /*
-     * Получение новых запросов с клиентского сервера и обновление данных по старым запросам
-     *
-     * php yii client-server/get-not-sync-requests
-     */
-    /*
-    public function actionGetNotSyncRequests()
-    {
-        $request_1 = new Client();
-
-        $response = $request_1->createRequest()
-            ->setMethod('post')
-            ->setUrl(Yii::$app->params['clientServerUrl'].'request/get-not-sync-requests')
-            ->setHeaders(['Authorization' => 'SecretKey '.ClientServer::$secretKey])
-            ->send();
-
-        if ($response->statusCode == 200) {
-
-//            [3] => Array(
-//                [id] => 5
-//                [created_at] => 123456789
-//                [direction] => АК
-//                [date] => 01.01.2019
-//                [phone] => +7-676-766-8686
-//            )
-
-            $clientserver_requests = $response->data;
-            if(count($clientserver_requests) > 0) {
-
-                // ищем уже существующие заказы связанные с полученными заявками
-                $aIds = [];
-                foreach($clientserver_requests as $request) {
-                    $aIds[] = $request['id'];
-                }
-
-                $exist_orders = Order::find()->where(['external_id' => $aIds])->andWhere(['external_type' => 'client_server_request'])->all();
-
-                $aExistOrders = [];
-                $new_requests = [];
-                $old_requests = [];
-                if(count($exist_orders) > 0) {
-                    $aExistOrders = ArrayHelper::map($exist_orders, 'external_id', 'id');
-                }
-                foreach($clientserver_requests as $request) {
-                    if(!isset($aExistOrders[$request['id']])) {
-                        $new_requests[] = $request;
-                    }else {
-                        $old_requests[] = $request;
-                    }
-                }
-
-
-                if(count($new_requests) > 0) {
-                    foreach($new_requests as $request) {
-                        $order = new Order();
-                        $order = self::orderFillRequestData($order, $request);
-
-                        if(!$order->save(false)) {
-                            echo "Не удалось создать заказ из запроса с клиенского сайта \n";
-                            exit;
-                        }
-                    }
-                }
-
-//                if(count($old_requests) > 0) {
-//                    foreach($old_requests as $request) {
-//
-//                    }
-//                }
-
-
-                // отправляем обновленнные данные о заявках в браузеры
-                if(count($new_requests) > 0) {
-                    IncomingOrdersWidget::updateIncomingRequestOrders();
-                }
-
-                // пошлем обратно ответ на клиентский сервер со списком id записанных заявок, чтобы там была установлена дата синхронизации
-                // curl -i -H "Authorization: SecretKey zLitjs_lUIthw908y" "Accept:application/json" -H "Content-Type:application/json" -XPOST http://tobus-client.ru/serverapi/request/set-sync-to-requests?ids=1,2,3,7
-                $request_2 = new Client();
-                $response = $request_2->createRequest()
-                    ->setMethod('post')
-                    ->setUrl(Yii::$app->params['clientServerUrl'].'request/set-sync-to-requests?ids='.implode(',', $aIds))
-                    ->setHeaders(['Authorization' => 'SecretKey '.ClientServer::$secretKey])
-                    ->send();
-
-                if ($response->statusCode == 200) {
-                    echo "Заказы созданы(".count($new_requests)." шт)\n";
-                }else {
-                    echo "Пришел ответ на запрос установки дат синхронизации со статусом ".$response->statusCode."\n";
-                    exit;
-                }
-
-
-            }else {
-                echo "нечего записывать \n";
-            }
-
-        }else {
-            echo "Пришел ответ на запрос получения клиентов со статусом ".$response->statusCode."\n";
-            exit;
-        }
-    }
-    */
-
-    /*
-    private static function orderFillRequestData($order, $request) {
-
-//          Array(
-//                [id] => 5
-//                [created_at] => 123456789
-//                [direction] => АК
-//                [date] => 01.01.2019
-//                [phone] => +7-676-766-8686
-//            )
-
-        //$order->is_mobile = 0;
-        $order->external_id = $request['id'];
-        $order->external_type = 'client_server_request';
-        $order->external_created_at = $request['created_at'];
-        $order->sync_date = time();
-
-        $client = \app\models\Client::find()
-            ->where(['mobile_phone' => $request['phone']])
-            ->one();
-        if($client == null) {
-            $client = new \app\models\Client();
-            $client->mobile_phone = $request['phone'];
-
-
-            if(!$client->save(false)) {
-                throw new ForbiddenHttpException('Не удалось сохранить клиента');
-            }
-        }
-
-        $order->client_id = $client->id;
-        $order->client_name = $client->name;
-
-
-        $order->status_id = 0;
-        $order->status_setting_time = time();
-        $order->date = $request['date'];// 10.07.2018
-        $order->direction_id = ($request['direction'] == 'АК' ? 1 : 2);
-
-        return $order;
-    }*/
-
-
     /**
      * @param $order
      * @param $server_client_ext
@@ -635,9 +426,7 @@ class ClientServerController extends Controller
      */
     private static function orderFillClientextData($order, $server_client_ext) {
 
-        //$order->is_mobile = $server_client_ext['is_mobile'];
         $order->external_id = $server_client_ext['id'];
-        //$order->external_type = 'client_server_client_ext';
         if($server_client_ext['source_type'] == 'main_site') {
             $order->external_type = '';
         }elseif($server_client_ext['source_type'] == 'client_site') {
@@ -663,7 +452,6 @@ class ClientServerController extends Controller
 
         // создание клиента должно было произойти ранее при синхронизации клиентов-пользователей
         if($client == null) {
-            // throw new ErrorException('Клиент не найден');
 
             // заказ без клиента, создадим нового
             $client = new Client();
@@ -680,19 +468,13 @@ class ClientServerController extends Controller
 
         $order->status_id = 0;
         $order->trip_id = $server_client_ext['trip_id'];
-        // $order->status_setting_time = time();
         $order->status_setting_time = $server_client_ext['trip_id'];
         $order->cancellation_click_time = $server_client_ext['cancellation_click_time'];
-        // id пользователя на клиентском сайте не соответствует id клиента в CRM
-        //$order->cancellation_clicker_id = $server_client_ext['cancellation_clicker_id'];
 
 
         $order->canceled_by = '';
         $order->date = $server_client_ext['data'];// 10.07.2018
-        //$order->direction_id = $aDirectionsNameId[$server_client_ext['direction']];
         $order->direction_id = $server_client_ext['direction_id'];
-
-        //$order->yandex_point_from_id = $server_client_ext['yandex_point_from_id'];
 
         $yandex_point_from = YandexPoint::find()->where(['name' => $server_client_ext['yandex_point_from_name']])->one();
         if($yandex_point_from != null) {
@@ -703,7 +485,6 @@ class ClientServerController extends Controller
         $order->yandex_point_from_long = $server_client_ext['yandex_point_from_long'];
 
 
-        //$order->yandex_point_to_id = $server_client_ext['yandex_point_to_id'];
         $yandex_point_to = YandexPoint::find()->where(['name' => $server_client_ext['yandex_point_to_name']])->one();
         if($yandex_point_to != null) {
             $order->yandex_point_to_id = $yandex_point_to->id;
@@ -716,16 +497,9 @@ class ClientServerController extends Controller
         
         $order->suitcase_count = $server_client_ext['suitcase_count'];
         $order->bag_count = $server_client_ext['bag_count'];
-        // $order->fio = $server_client_ext['fio'];
         $order->time_confirm = $server_client_ext['time_confirm'];
 
-//        $trip = Trip::find()
-//            ->where(['date' => $server_client_ext['data']])
-//            ->andWhere(['mid_time' => $server_client_ext['time']])
-//            ->one();
-//        if($trip != null) {
-//            $order->trip_id = $trip->id;
-//        }
+
 
         if($server_client_ext['places_count'] == 0) {
             $order->is_not_places = 1;
@@ -736,21 +510,19 @@ class ClientServerController extends Controller
         $order->is_not_places = $server_client_ext['is_not_places'];
         $order->prize_trip_count = $server_client_ext['prize_trip_count'];
 
+        /*
         $order->source_price = $server_client_ext['price'];
         $order->paid_summ = $server_client_ext['paid_summ'];
         if($server_client_ext['is_paid'] == true) {
             $order->use_fix_price = true;
             $order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
-            //$order->cash_received_time = time(); // это время получения денег водителем - здесь не нужно!
             $order->is_paid = true;
             $order->paid_time = $server_client_ext['paid_time'];
         }else {
             $order->use_fix_price = false;
             $order->is_paid = false;
             $order->paid_time = 0;
-        }
-        // $order->setPay(false);
-
+        }*/
 
         if($server_client_ext['source_type'] == 'application') {
             $informer_office = InformerOffice::find()->where(['code' => 'mobile_app'])->one();
@@ -759,10 +531,53 @@ class ClientServerController extends Controller
             }
         }
 
-        //$order->price = $server_client_ext['price'];
-        //$order->use_fix_price = true;
-
         return $order;
+    }
+
+    // заказу заполняются все данные связанные с ценой, оплатой, формируется чек при необходимости
+    private static function orderSetPayData($order, $server_client_ext) {
+
+        // параметры уже ранее могли быть заполнены, либо первый раз заполняются
+        // параметры: +paid_summ, +is_paid, +paid_time, +use_fix_price, +price
+        // - измененные параметры нужно сразу сохранить в заказе
+        // $order->setPay(false); - устанавливаются: paid_summ=price, paid_time=time(), is_paid=true
+        // cancelPay() - вызывается при отмене заказа (paid_summ=0, paid_time=0, is_paid=false + LiteboxOperation)
+
+        //$to_save = false;
+        if($order->source_price != $server_client_ext['price']) {
+            //$to_save = true;
+            $order->source_price = $server_client_ext['price'];
+            $order->setField('source_price', $order->source_price);
+        }
+
+        if($server_client_ext['is_paid'] == true) {
+
+            if($order->is_paid != true) {
+                // $to_save = true;
+                $order->use_fix_price = true;
+                $order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
+                // $order->is_paid = true;
+                // $order->paid_time = $server_client_ext['paid_time'];
+                $order->save(false);
+
+                $aFields = [
+                    'paid_time' => $server_client_ext['paid_time']
+                ];
+                $order->setPay(true, $aFields);
+            }
+        }
+        else {
+//
+//            if($order->is_paid == true) { // это случай отмены заказа / отмены оплаты - обрабатывается отдельно
+//                $order->use_fix_price = false;
+//                $order->is_paid = false;
+//                $order->paid_time = 0;
+//            }
+        }
+
+
+
+        return true;
     }
 
 

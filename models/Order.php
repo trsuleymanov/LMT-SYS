@@ -1893,7 +1893,7 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
-    function setPay($save_paid_data = true) {
+    function setPay($save_paid_data = true, $aFields = []) {
 
         // $this->cash_received_time = time(); // здесь не нужно устанавливать
         if($save_paid_data) {
@@ -1904,7 +1904,7 @@ class Order extends \yii\db\ActiveRecord
 
             $this->scenario = 'pay_or_cancel_pay';
             $this->paid_summ = $this->price;
-            $this->paid_time = time();
+            $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
             $this->is_paid = true;
             if (!$this->save(false)) {
                 throw new ForbiddenHttpException('Заказ не удалось сохранить');

@@ -712,7 +712,7 @@ class Order extends \yii\db\ActiveRecord
             //'litebox_fiscal_receipt_number' => 'Номер чека в смене',
             'litebox_fiscal_document_attribute' => 'Фискальный признак документа',
 
-            'paid_time' => 'Время оплаты', // по факту время синхронизации когда пришли данные по оплате
+            'paid_time' => 'Время оплаты',
             'accrual_cash_back' => 'Начисление кэш-бэка',
             'penalty_cash_back' => 'Использованный кэш-бэк для оплаты заказа',
             'cash_received_time' => 'Деньги за заказ получены',

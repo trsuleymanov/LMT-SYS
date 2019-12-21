@@ -743,7 +743,7 @@ class ClientServerController extends Controller
             $order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
             //$order->cash_received_time = time(); // это время получения денег водителем - здесь не нужно!
             $order->is_paid = true;
-            $order->paid_time = time(); // время оплаты (по факту время синхронизации после оплаты), погрешность +/- 30 секунд
+            $order->paid_time = $server_client_ext['paid_time'];
         }else {
             $order->use_fix_price = false;
             $order->is_paid = false;

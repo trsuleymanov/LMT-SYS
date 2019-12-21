@@ -754,15 +754,6 @@ a#open-chat:hover {}
     padding: 0 5px;
 }
 
-/* "коммерческие" рейсы на Нлавной странице и на странице "Расстановка" */
-#directions-block .direction .trip[commercial="1"] .reis a{
-    color: red;
-    font-weight: 700;
-}
-#set-of-trips-page .info-list .trip[commercial="1"] .reis_name a.trip_detail_link{
-    color: red;
-    font-weight: 700;
-}
 
 /* направление в состояние "коммерческое" на странице Расстановка */
 #set-of-trips-page .sh_route .direction-name {
@@ -957,6 +948,16 @@ a#open-chat:hover {}
     right: -2px;
     font-size: 14px;
     cursor: pointer;
+}
+
+/* "коммерческие" рейсы на Нлавной странице и на странице "Расстановка" */
+#directions-block .direction .trip[commercial="1"] .reis a{
+    color: red;
+    font-weight: 700;
+}
+#set-of-trips-page .info-list .trip[commercial="1"] .reis_name a.trip_detail_link{
+    color: red;
+    font-weight: 700;
 }
 
 

@@ -198,7 +198,7 @@ class GetNotSyncOrdersAction extends \yii\rest\Action
                 //'trip_time' => // используем trip_name
 
                 'client_email' => $aClient['email'],
-                //'client_name' => $aClient['name'],
+                'client_name' => $aClient['name'],
                 'client_mobile_phone' => $aClient['mobile_phone'],
                 //'client_cashback' => $aClient['cashback'],
             ];

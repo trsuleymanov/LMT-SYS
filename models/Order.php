@@ -1640,16 +1640,15 @@ class Order extends \yii\db\ActiveRecord
             return 0; // для коммерческих рейсов не накапливается кэш-бэк
         }
 
-        // может быть проблема что в заказе цена пересчиталась, внутри модели заказа осталась старая цена, поэтому
-        // в функцию явно передается $price, а не береться из параметра $this->price
+
         if($this->is_paid == true) {
-            if($cashback_setting->has_cashback_for_prepayment == true) {
+            if($cashback_setting->has_cashback_for_prepayment == true) { // КБ на предоплаченные заказы с источником "t417"
                 return $price*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
             }
         }else {
-            if($cashback_setting->has_cashback_for_nonprepayment == true) {
+            if($cashback_setting->has_cashback_for_nonprepayment == true) { // КБ для
                 return $price*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
@@ -1909,6 +1908,12 @@ class Order extends \yii\db\ActiveRecord
             if (!$this->save(false)) {
                 throw new ForbiddenHttpException('Заказ не удалось сохранить');
             }
+
+            // сообщим браузерам что надо обновить страницу рейсов
+            if($this->trip_id > 0) {
+                $trip = $this->trip;
+                SocketDemon::updateMainPages($trip->id, $trip->date);
+            }
         }
 
         // запрос на создание чека
@@ -1935,6 +1940,12 @@ class Order extends \yii\db\ActiveRecord
         $this->is_paid = false;
         if(!$this->save(false)) {
             throw new ForbiddenHttpException('Заказ не удалось сохранить');
+        }
+
+        // сообщим браузерам что надо обновить страницу рейсов
+        if($this->trip_id > 0) {
+            $trip = $this->trip;
+            SocketDemon::updateMainPages($trip->id, $trip->date);
         }
 
         $litebox_operation = LiteboxOperation::find()->where(['order_id' => $this->id])->one();

@@ -107,9 +107,19 @@ class HelloController extends Controller
         $order = Order::find()->where(['id' => $order_id])->one();
 
         if($order->trip_id > 0) {
-            $trip = $order->trip;
-            SocketDemon::updateMainPages($trip->id, $trip->date);
-            echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
+            //$trip = $order->trip;
+            //SocketDemon::updateMainPages($trip->id, $trip->date);
+            //echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
+
+            // обновление страницы Состав рейса
+            SocketDemon::sendOutBrowserMessage(
+                '/trip/trip-orders',
+                ['trip_id' => $order->trip_id],
+                'updateTripOrdersPage()',
+                ''
+            );
+
+            echo "отработала sendOutBrowserMessage для рейса ".$order->trip_id."<br />";
         }
     }
 }

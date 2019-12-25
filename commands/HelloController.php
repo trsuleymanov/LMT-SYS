@@ -108,26 +108,27 @@ class HelloController extends Controller
 
         if($order->trip_id > 0) {
             //$trip = $order->trip;
-            //SocketDemon::updateMainPages($trip->id, $trip->date);
-            //echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
+//            SocketDemon::updateMainPages($trip->id, $trip->date);
+//            echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
 
             // обновление страницы Состав рейса
-//            SocketDemon::sendOutBrowserMessage(
-//                '/trip/trip-orders',
-//                ['trip_id' => $order->trip_id],
-//                'updateTripOrdersPage()',
-//                ''
-//            );
-//            echo "отработала sendOutBrowserMessage для рейса ".$order->trip_id."<br />";
-
-            SocketDemon::sendOutBrowserMessageInstant(
+            SocketDemon::sendOutBrowserMessage(
                 '/trip/trip-orders',
                 ['trip_id' => $order->trip_id],
                 'updateTripOrdersPage()',
                 '',
-                []
+                false
             );
-            echo "отработала sendOutBrowserMessageInstant для рейса ".$order->trip_id."<br />";
+            echo "отработала sendOutBrowserMessage для рейса ".$order->trip_id."<br />";
+
+//            SocketDemon::sendOutBrowserMessageInstant(
+//                '/trip/trip-orders',
+//                ['trip_id' => $order->trip_id],
+//                'updateTripOrdersPage()',
+//                '',
+//                []
+//            );
+//            echo "отработала sendOutBrowserMessageInstant для рейса ".$order->trip_id."<br />";
         }
     }
 }

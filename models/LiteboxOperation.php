@@ -426,7 +426,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         ];
         $data = [
             'external_id' => $this->sell_refund_at.'_'.$this->order_id , // 17052917561851307
-            'timestamp' => date("d.m.y H:i:s", $this->sell_refund_at),
+            //'timestamp' => date("d.m.y H:i:s", $this->sell_refund_at),
+            // нужен формат времени теперь: %d.%m.%Y %H:%M:%S
+            'timestamp' => date("d.m.Y H:i:s", $this->sell_refund_at),
             'receipt' => [
                 'client' => [
                     'email' => $order->client->email,

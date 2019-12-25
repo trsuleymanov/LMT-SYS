@@ -1914,7 +1914,7 @@ class Order extends \yii\db\ActiveRecord
         // сообщим браузерам что надо обновить страницу рейсов
         if($this->trip_id > 0) {
             $trip = $this->trip;
-            SocketDemon::updateMainPages($trip->id, $trip->date);
+            SocketDemon::updateMainPages($trip->id, $trip->date, false);
         }
 
         // запрос на создание чека
@@ -1946,7 +1946,7 @@ class Order extends \yii\db\ActiveRecord
         // сообщим браузерам что надо обновить страницу рейсов
         if($this->trip_id > 0) {
             $trip = $this->trip;
-            SocketDemon::updateMainPages($trip->id, $trip->date);
+            SocketDemon::updateMainPages($trip->id, $trip->date, false);
         }
 
         $litebox_operation = LiteboxOperation::find()->where(['order_id' => $this->id])->one();

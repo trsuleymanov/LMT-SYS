@@ -347,15 +347,18 @@ class SocketDemon {
         return $user_data;
     }
 
-
-    public static function updateMainPages($trip_id, $date) {
+    /*
+     * При вызове из консоли при использовании $with_buffer=true - может не работать!
+     */
+    public static function updateMainPages($trip_id, $date, $with_buffer = true) {
 
         // обновление страницы Состав рейса
         SocketDemon::sendOutBrowserMessage(
             '/trip/trip-orders',
             ['trip_id' => $trip_id],
             'updateTripOrdersPage()',
-            ''
+            '',
+            $with_buffer
         );
 
         // обновление Главной страницы
@@ -363,14 +366,16 @@ class SocketDemon {
             '/',
             ['date' => date("d.m.Y", $date)],
             'updateDirectionsTripBlock()',
-            ''
+            '',
+            $with_buffer
         );
         if(date("d.m.Y", $date) == date("d.m.Y", time())) {
             SocketDemon::sendOutBrowserMessage(
                 '/',
                 [],
                 'updateDirectionsTripBlock()',
-                ''
+                '',
+                $with_buffer
             );
         }
 
@@ -379,7 +384,8 @@ class SocketDemon {
             '/trip/set-trips',
             ['date' => date("d.m.Y", $date)],
             'updateSetTripsPage()',
-            ''
+            '',
+            $with_buffer
         );
     }
 

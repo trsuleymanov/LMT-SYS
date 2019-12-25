@@ -1077,29 +1077,14 @@ class SiteController extends Controller
 
     public function actionTest2()
     {
-        // echo "<pre>"; print_r($_SERVER); echo "</pre>";
-//        $trip_id = 35301;
-//        $sended_trip_transports = TripTransport::find()
-//            ->where(['trip_id' => $trip_id])
-//            ->all();
-//        echo "count=".count($sended_trip_transports)."<br />";
-//
-//        $has_free_places = false;
-//        foreach ($sended_trip_transports as $trip_transport) {
-//            $transport = $trip_transport->transport;
-//            echo "places_count=".$transport->places_count."<br />";
-//            echo "factKZMPlacesCount=".$trip_transport->factKZMPlacesCount."<br />";
-//            if($transport->places_count > $trip_transport->factKZMPlacesCount) {
-//                $has_free_places = true;
-//                break;
-//            }
-//        }
-//
-//        echo "has_free_places=$has_free_places";
+        $order_id=216174;
+        $order = Order::find()->where(['id' => $order_id])->one();
 
-        $user = Yii::$app->user->identity;
-        echo $user->lastname.'';
-        //echo "user:<pre>"; print_r($user); echo "</pre>";
+        if($order->trip_id > 0) {
+            $trip = $order->trip;
+            SocketDemon::updateMainPages($trip->id, $trip->date);
+            echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
+        }
     }
 
     public function actionTest3($call_id)

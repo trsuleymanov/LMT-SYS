@@ -1909,11 +1909,12 @@ class Order extends \yii\db\ActiveRecord
                 throw new ForbiddenHttpException('Заказ не удалось сохранить');
             }
 
-            // сообщим браузерам что надо обновить страницу рейсов
-            if($this->trip_id > 0) {
-                $trip = $this->trip;
-                SocketDemon::updateMainPages($trip->id, $trip->date);
-            }
+        }
+
+        // сообщим браузерам что надо обновить страницу рейсов
+        if($this->trip_id > 0) {
+            $trip = $this->trip;
+            SocketDemon::updateMainPages($trip->id, $trip->date);
         }
 
         // запрос на создание чека

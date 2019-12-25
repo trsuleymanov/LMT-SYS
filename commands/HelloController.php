@@ -107,7 +107,7 @@ class HelloController extends Controller
         $order = Order::find()->where(['id' => $order_id])->one();
 
         if($order->trip_id > 0) {
-            //$trip = $order->trip;
+            $trip = $order->trip;
 //            SocketDemon::updateMainPages($trip->id, $trip->date);
 //            echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
 
@@ -119,7 +119,15 @@ class HelloController extends Controller
                 '',
                 false
             );
-            echo "отработала sendOutBrowserMessage для рейса ".$order->trip_id."<br />";
+            // обновление Главной страницы
+            SocketDemon::sendOutBrowserMessage(
+                '/',
+                ['date' => date("d.m.Y", $trip->date)],
+                'updateDirectionsTripBlock()',
+                '',
+                false
+            );
+            echo "отработала 2*x для рейса ".$order->trip_id."<br />";
 
 //            SocketDemon::sendOutBrowserMessageInstant(
 //                '/trip/trip-orders',

@@ -722,12 +722,20 @@ $columns = ArrayHelper::merge($columns, [
             //return date('d.m.Y H:i', $model->time_vpz);
 
             // для страрых записей временный код - нужно будет удалить (создано 12.08.2018)
-            if(empty($model->first_writedown_click_time) && !empty( $model->time_vpz)) {
-                return date('d.m.Y H:i', $model->first_writedown_click_time);
-            }else {
+//            if(empty($model->first_writedown_click_time) && !empty( $model->time_vpz)) {
+//                return date('d.m.Y H:i', $model->first_writedown_click_time);
+//            }else {
+//                return
+//                    date('d.m.Y H:i', $model->first_writedown_click_time) .
+//                    ($model->firstWritedownClicker != null ?  ' '.$model->firstWritedownClicker->username : '');
+//            }
+
+            if($model->first_writedown_click_time > 0) {
                 return
                     date('d.m.Y H:i', $model->first_writedown_click_time) .
-                    ($model->firstWritedownClicker != null ?  ' '.$model->firstWritedownClicker->username : '');
+                    ($model->firstWritedownClicker != null ? ' ' . $model->firstWritedownClicker->username : '');
+            }else {
+                return '';
             }
         }
     ],

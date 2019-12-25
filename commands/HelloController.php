@@ -8,6 +8,8 @@
 namespace app\commands;
 
 use app\models\Call;
+use app\models\Order;
+use app\models\SocketDemon;
 use app\widgets\IncomingOrdersWidget;
 use yii\console\Controller;
 
@@ -42,9 +44,9 @@ class HelloController extends Controller
 
         //echo \yii\console\Request::cookieValidationKey;
 
-        $call = Call::find()->where(['id' => 1])->one();
-        //echo $call->getCallWindowThroughController(1);
-        $call->sendToBrawserCallWindow();
+//        $call = Call::find()->where(['id' => 1])->one();
+//        //echo $call->getCallWindowThroughController(1);
+//        $call->sendToBrawserCallWindow();
 
 
 
@@ -101,5 +103,13 @@ class HelloController extends Controller
         //echo $main_page_content;
 
 
+        $order_id = 216175;
+        $order = Order::find()->where(['id' => $order_id])->one();
+
+        if($order->trip_id > 0) {
+            $trip = $order->trip;
+            SocketDemon::updateMainPages($trip->id, $trip->date);
+            echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
+        }
     }
 }

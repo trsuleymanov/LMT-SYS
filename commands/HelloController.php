@@ -117,7 +117,7 @@ class HelloController extends Controller
                 ['trip_id' => $order->trip_id],
                 'updateTripOrdersPage()',
                 '',
-                false
+                //false
             );
             // обновление Главной страницы
             SocketDemon::sendOutBrowserMessage(
@@ -125,7 +125,7 @@ class HelloController extends Controller
                 ['date' => date("d.m.Y", $trip->date)],
                 'updateDirectionsTripBlock()',
                 '',
-                false
+                //false
             );
             echo "отработала 2*x для рейса ".$order->trip_id."<br />";
 

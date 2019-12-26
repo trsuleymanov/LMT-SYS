@@ -1642,13 +1642,15 @@ class Order extends \yii\db\ActiveRecord
 
 
         if($this->is_paid == true) {
-            if($cashback_setting->has_cashback_for_prepayment == true) { // КБ на предоплаченные заказы с источником "t417"
+            //if($cashback_setting->has_cashback_for_prepayment == true) { // КБ на предоплаченные заказы с источником "t417"
+            if($cashback_setting->cashback_type == 'with_prepayment') { // КБ на предоплаченные заказы с источником "t417"
                 return $price*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
             }
         }else {
-            if($cashback_setting->has_cashback_for_nonprepayment == true) { // КБ для
+            //if($cashback_setting->has_cashback_for_nonprepayment == true) { // КБ для
+            if($cashback_setting->cashback_type == 'without_prepayment') { // КБ для заказов не оплаченных сразу (это или заказы созданные в t417, или заказы созданные в CRM)
                 return $price*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;

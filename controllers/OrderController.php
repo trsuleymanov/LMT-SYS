@@ -127,7 +127,7 @@ class OrderController extends Controller
                 $new_order->suitcase_count = $order->suitcase_count;
                 $new_order->oversized_count = $order->oversized_count;
                 $new_order->prize_trip_count = $order->prize_trip_count;
-                $new_order->comment = (!empty($order->comment) ? $order->comment.' ВПУ id '.$order->id : 'ВПУ id '.$order->id);
+                $new_order->comment = (!empty($order->comment) ? $order->comment.' ВПУ id удаленного заказа '.$order->id : 'ВПУ id удаленного заказа '.$order->id);
                 $new_order->additional_phone_1 = $order->additional_phone_1;
                 $new_order->additional_phone_2 = $order->additional_phone_2;
                 $new_order->additional_phone_3 = $order->additional_phone_3;

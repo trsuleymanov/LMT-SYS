@@ -50,22 +50,40 @@ $this->params['breadcrumbs'][] = $this->title;
                         ['class' => "form-control"]
                     )
                 ],
+//                [
+//                    'attribute' => 'has_cashback_for_prepayment',
+//                    'content' => function($model) {
+//                        return ($model->has_cashback_for_prepayment == true ? 'Да' : 'Нет');
+//                    },
+//                    'filter' => Html::activeDropDownList(
+//                        $searchModel,
+//                        'has_cashback_for_prepayment',
+//                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+//                        ['class' => "form-control"]
+//                    )
+//                ],
+//                [
+//                    'attribute' => 'has_cashback_for_nonprepayment',
+//                    'content' => function($model) {
+//                        return ($model->has_cashback_for_nonprepayment == true ? 'Да' : 'Нет');
+//                    },
+//                    'filter' => Html::activeDropDownList(
+//                        $searchModel,
+//                        'has_cashback_for_nonprepayment',
+//                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+//                        ['class' => "form-control"]
+//                    )
+//                ],
+
                 [
-                    'attribute' => 'has_cashback_for_prepayment',
+                    'attribute' => 'cashback_type',
                     'content' => function($model) {
-                        return ($model->has_cashback_for_prepayment == true ? 'Да' : 'Нет');
-                    },
-                    'filter' => Html::activeDropDownList(
-                        $searchModel,
-                        'has_cashback_for_prepayment',
-                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
-                        ['class' => "form-control"]
-                    )
-                ],
-                [
-                    'attribute' => 'has_cashback_for_nonprepayment',
-                    'content' => function($model) {
-                        return ($model->has_cashback_for_nonprepayment == true ? 'Да' : 'Нет');
+                        //return ($model->cashback_type == '' ? 'Да' : 'Нет');
+                        if($model->cashback_type == 'with_prepayment') {
+                            return 'КБ с предоплатой';
+                        }else {
+                            return 'КБ без предоплаты';
+                        }
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModel,

@@ -16,6 +16,7 @@ use Yii;
  */
 class CashbackSetting extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -33,8 +34,8 @@ class CashbackSetting extends \yii\db\ActiveRecord
             [['order_accrual_percent', /*'order_penalty_percent', 'hours_before_start_trip_for_penalty',*/
                 'red_penalty_max_time', 'order_red_penalty_percent', 'yellow_penalty_max_time',
                 'order_yellow_penalty_percent', 'max_time_confirm_diff', 'max_time_confirm_delta',
-                'with_commercial_trips', 'has_cashback_for_prepayment', 'has_cashback_for_nonprepayment'], 'integer'],
-            [['start_date'], 'safe']
+                'with_commercial_trips', ], 'integer'],
+            [['start_date', 'cashback_type'], 'safe']
         ];
     }
 
@@ -46,8 +47,9 @@ class CashbackSetting extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'start_date' => 'Дата запуска',
-            'has_cashback_for_prepayment' => 'Кэш-бэк предоплаты',
-            'has_cashback_for_nonprepayment' => 'Обычный кэш-бэк',
+            //'has_cashback_for_prepayment' => 'Кэш-бэк предоплаты (предоплаченные заказы с источником "t417")',
+            //'has_cashback_for_nonprepayment' => 'Обычный кэш-бэк',
+            'cashback_type' => 'Тип кэш-бэка (с предоплатой, или без предоплаты)',
             'order_accrual_percent' => 'Процент начисления за заказ (от 0 до 100)',
             // 'order_penalty_percent' => 'Процент штрафа с заказа (от 0 до 100)',
             // 'hours_before_start_trip_for_penalty' => 'Количество часов до начала рейса являющиеся условием начисления штрафа',

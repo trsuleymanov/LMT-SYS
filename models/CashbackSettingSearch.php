@@ -21,8 +21,8 @@ class CashbackSettingSearch extends CashbackSetting
                 /*'hours_before_start_trip_for_penalty',*/ 'with_commercial_trips',
                 'red_penalty_max_time', 'order_red_penalty_percent', 'yellow_penalty_max_time',
                 'order_yellow_penalty_percent', 'max_time_confirm_diff', 'max_time_confirm_delta',
-                'has_cashback_for_prepayment', 'has_cashback_for_nonprepayment'
             ], 'integer'],
+            [['cashback_type'], 'string', 'max' => 20]
         ];
     }
 
@@ -76,8 +76,9 @@ class CashbackSettingSearch extends CashbackSetting
             'max_time_confirm_delta' => $this->max_time_confirm_delta,
 
             'with_commercial_trips' => $this->with_commercial_trips,
-            'has_cashback_for_prepayment' => $this->has_cashback_for_prepayment,
-            'has_cashback_for_nonprepayment' => $this->has_cashback_for_nonprepayment,
+            //'has_cashback_for_prepayment' => $this->has_cashback_for_prepayment,
+            //'has_cashback_for_nonprepayment' => $this->has_cashback_for_nonprepayment,
+            'cashback_type' => $this->cashback_type,
         ]);
 
         return $dataProvider;

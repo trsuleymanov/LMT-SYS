@@ -22,17 +22,21 @@ if($model->id > 0) {
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <div class="row">
-            <div class="col-sm-12 form-group form-group-sm">
-                <?= $form->field($model, 'has_cashback_for_prepayment')->checkbox()->label(false) ?>
-            </div>
-        </div>
 
         <div class="row">
             <div class="col-sm-12 form-group form-group-sm">
-                <?= $form->field($model, 'has_cashback_for_nonprepayment')->checkbox()->label(false) ?>
+                <?php /*
+                <?= $form->field($model, 'cashback_type')
+                    ->radioList(['with_prepayment' => 'КБ с предоплатой (для предоплаченных заказов в t417)', 'without_prepayment' => 'КБ для заказов без предоплаты'])
+                    ->label(false); */ ?>
+
+                <label><input type="radio" name="CashbackSetting[cashback_type]" value="with_prepayment"> КБ с предоплатой (для предоплаченных заказов в t417)</label>
+                <br />
+                <label><input type="radio" name="CashbackSetting[cashback_type]" value="without_prepayment" checked=""> КБ для заказов без предоплаты</label>
             </div>
         </div>
+
+
 
         <div class="row">
             <div class="col-sm-12 form-group form-group-sm">

@@ -1391,7 +1391,7 @@ class Trip extends \yii\db\ActiveRecord
 
                 if($trip_order->status_id == $order_sent_status->id) {
 
-                    $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
+                    $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->paid_summ);
                     if($accrual_cash_back != $trip_order->accrual_cash_back) {
                         $trip_order->setField('accrual_cash_back', $accrual_cash_back);
                         $trip_order->accrual_cash_back = $accrual_cash_back;

@@ -1622,7 +1622,8 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
-    public function getCalculateAccrualCashBack($price)
+
+    public function getCalculateAccrualCashBack($paid_summ)
     {
         $setting = Setting::find()->where(['id' => 1])->one();
         if($setting->loyalty_switch == 'fifth_place_prize') {
@@ -1634,11 +1635,29 @@ class Order extends \yii\db\ActiveRecord
             return 0;
         }
 
-        $cashback_setting = CashbackSetting::find()
-			->where(['<=', 'start_date', $trip->date])
-			//->andWhere(['with_commercial_trips' => intval($trip->commercial)])
-			->orderBy(['start_date' => SORT_DESC])
-			->one();
+        // эта функция вызывается при отправке (закрытии) рейса, а значит заказ уже "оплачен" или в CRM, или на клиентском сайте, или в приложении
+        if($this->payment_source == 'crm') {
+            $cashback_setting = CashbackSetting::find()
+                ->where(['<=', 'start_date', $trip->date])
+                ->andWhere(['cashback_type' => 'without_prepayment'])
+                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
+                ->orderBy(['start_date' => SORT_DESC])
+                ->one();
+
+        // насчет payment_source = application - не уверен - требует отдельного тестирования!!!
+        }else if(in_array($this->payment_source, ['client_site', 'application'])) {
+            $cashback_setting = CashbackSetting::find()
+                ->where(['<=', 'start_date', $trip->date])
+                ->andWhere(['cashback_type' => 'with_prepayment'])
+                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
+                ->orderBy(['start_date' => SORT_DESC])
+                ->one();
+
+        }else {
+            throw new ErrorException('Не определен источник оплаты');
+        }
+
+
         if($cashback_setting == null) {
             return 0;
         }
@@ -1651,14 +1670,14 @@ class Order extends \yii\db\ActiveRecord
         if($this->is_paid == true) {
             //if($cashback_setting->has_cashback_for_prepayment == true) { // КБ на предоплаченные заказы с источником "t417"
             if($cashback_setting->cashback_type == 'with_prepayment') { // КБ на предоплаченные заказы с источником "t417"
-                return $price*$cashback_setting->order_accrual_percent/100;
+                return $paid_summ*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
             }
         }else {
             //if($cashback_setting->has_cashback_for_nonprepayment == true) { // КБ для
             if($cashback_setting->cashback_type == 'without_prepayment') { // КБ для заказов не оплаченных сразу (это или заказы созданные в t417, или заказы созданные в CRM)
-                return $price*$cashback_setting->order_accrual_percent/100;
+                return $paid_summ*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
             }
@@ -1683,11 +1702,28 @@ class Order extends \yii\db\ActiveRecord
         // если заказ создан на клиентском сайте и там же оплачен, то ищем соответстветвующий CashbackSetting
         //if($this->external_type == 'client_site' &&
 
+        if($this->payment_source == 'crm') {
+            $cashback_setting = CashbackSetting::find()
+                ->where(['<=', 'start_date', $trip->date])
+                ->andWhere(['cashback_type' => 'without_prepayment'])
+                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
+                ->orderBy(['start_date' => SORT_DESC])
+                ->one();
 
-        $cashback_setting = CashbackSetting::find()
-            ->where(['<=', 'start_date', $trip->date])
-            ->orderBy(['start_date' => SORT_DESC])
-            ->one();
+            // насчет payment_source = application - не уверен - требует отдельного тестирования!!!
+        }else if(in_array($this->payment_source, ['client_site', 'application'])) {
+            $cashback_setting = CashbackSetting::find()
+                ->where(['<=', 'start_date', $trip->date])
+                ->andWhere(['cashback_type' => 'with_prepayment'])
+                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
+                ->orderBy(['start_date' => SORT_DESC])
+                ->one();
+
+        }else {
+            throw new ErrorException('Не определен источник оплаты');
+        }
+
+
         if($cashback_setting == null) {
             return 0;
         }

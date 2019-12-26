@@ -87,8 +87,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModel,
-                        'has_cashback_for_nonprepayment',
-                        ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                        'cashback_type',
+                        ['' => 'Все', 'with_prepayment' => 'с предоплатой', 'without_prepayment' => 'без предоплаты'],
                         ['class' => "form-control"]
                     )
                 ],

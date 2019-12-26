@@ -46,7 +46,7 @@ class OrderSearch extends Order
                 // 'time_vpz',
                 'client_name_phone', 'client_name', 'fact_transport_id', 'plan_transport_id',
                 'penalty', 'places_student_child_count', 'yandex_point_from_name', 'yandex_point_to_name',
-                'first_writedown_click_time', 'status_id'], 'safe'],
+                'first_writedown_click_time', 'status_id', 'payment_source'], 'safe'],
         ];
     }
 
@@ -137,6 +137,7 @@ class OrderSearch extends Order
             $this->tableName().'.price' => $this->price,
             $this->tableName().'.paid_summ' => $this->paid_summ,
             $this->tableName().'.paid_time' => $this->paid_time,
+            $this->tableName().'.payment_source' => $this->payment_source,
             $this->tableName().'.accrual_cash_back' => $this->accrual_cash_back,
             $this->tableName().'.used_cash_back' => $this->used_cash_back,
             $this->tableName().'.penalty_cash_back' => $this->penalty_cash_back,

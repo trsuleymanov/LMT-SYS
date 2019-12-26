@@ -184,6 +184,10 @@ class GetNotSyncOrdersAction extends \yii\rest\Action
                 'yandex_point_to_long' => $order['yandex_point_to_long'],
 
                 'price' => $order['price'],
+                'paid_summ' => $order['paid_summ'],
+                'is_paid' => $order['is_paid'],
+                'payment_source' => $order['payment_source'],
+
                 'accrual_cash_back' => $order['accrual_cash_back'],
                 'penalty_cash_back' => $order['penalty_cash_back'],
                 'used_cash_back' => $order['used_cash_back'],

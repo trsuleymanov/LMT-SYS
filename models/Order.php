@@ -235,7 +235,8 @@ class Order extends \yii\db\ActiveRecord
                 'time_air_train_arrival', 'time_air_train_departure', 'use_fix_price', 'fix_price',
                 'price', 'paid_summ', 'paid_time', 'accrual_cash_back', 'penalty_cash_back', 'cash_received_time', 'used_cash_back',
                 'forced', 'trip_transport_id', 'time_confirm_sort',
-                'fact_trip_transport_car_reg', 'client_name', 'is_test', 'external_type', 'external_created_at', 'is_paid', 'canceled_by'], 'safe'],
+                'fact_trip_transport_car_reg', 'client_name', 'is_test', 'external_type', 'external_created_at', 'is_paid',
+                'canceled_by', 'payment_source'], 'safe'],
         ];
     }
 
@@ -397,6 +398,7 @@ class Order extends \yii\db\ActiveRecord
             'price',
             'paid_summ',
             'paid_time',
+            'payment_source',
             'accrual_cash_back',
             'is_paid',
 //            'first_writedown_click_time',
@@ -479,6 +481,7 @@ class Order extends \yii\db\ActiveRecord
             'price',
             'paid_summ',
             'paid_time',
+            'payment_source',
             'accrual_cash_back',
             'is_paid',
 //            'first_writedown_click_time',
@@ -540,6 +543,7 @@ class Order extends \yii\db\ActiveRecord
             'price',
             'paid_summ',
             'paid_time',
+            'payment_source',
             'is_paid',
             // пока не используются: 'accrual_cash_back', 'penalty_cash_back', 'cash_received_time', 'used_cash_back',
             'trip_id',
@@ -592,6 +596,7 @@ class Order extends \yii\db\ActiveRecord
             'price',
             'paid_summ',
             'paid_time',
+            'payment_source',
             'accrual_cash_back', // 'penalty_cash_back', 'used_cash_back',
             'is_paid',
             'relation_order_id',
@@ -623,6 +628,7 @@ class Order extends \yii\db\ActiveRecord
         $scenarios['pay_or_cancel_pay'] = [
             'paid_summ',
             'paid_time',
+            'payment_source',
             'is_paid',
         ];
 
@@ -713,6 +719,7 @@ class Order extends \yii\db\ActiveRecord
             'litebox_fiscal_document_attribute' => 'Фискальный признак документа',
 
             'paid_time' => 'Время оплаты',
+            'payment_source' => 'Источник оплаты',
             'accrual_cash_back' => 'Начисление кэш-бэка',
             'penalty_cash_back' => 'Использованный кэш-бэк для оплаты заказа',
             'cash_received_time' => 'Деньги за заказ получены',
@@ -1673,6 +1680,10 @@ class Order extends \yii\db\ActiveRecord
 
         $setting = Setting::find()->where(['id' => 1])->one();
 
+        // если заказ создан на клиентском сайте и там же оплачен, то ищем соответстветвующий CashbackSetting
+        //if($this->external_type == 'client_site' &&
+
+
         $cashback_setting = CashbackSetting::find()
             ->where(['<=', 'start_date', $trip->date])
             ->orderBy(['start_date' => SORT_DESC])
@@ -1906,6 +1917,7 @@ class Order extends \yii\db\ActiveRecord
             $this->scenario = 'pay_or_cancel_pay';
             $this->paid_summ = $this->price;
             $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
+            $this->payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
             $this->is_paid = true;
             if (!$this->save(false)) {
                 throw new ForbiddenHttpException('Заказ не удалось сохранить');
@@ -1941,6 +1953,7 @@ class Order extends \yii\db\ActiveRecord
         $this->paid_summ = 0;
         $this->paid_time = 0;
         $this->is_paid = false;
+        $this->payment_source = '';
         if(!$this->save(false)) {
             throw new ForbiddenHttpException('Заказ не удалось сохранить');
         }

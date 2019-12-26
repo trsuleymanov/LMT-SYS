@@ -561,7 +561,8 @@ class ClientServerController extends Controller
                 $order->save(false);
 
                 $aFields = [
-                    'paid_time' => $server_client_ext['paid_time']
+                    'paid_time' => $server_client_ext['paid_time'],
+                    'payment_source' => $server_client_ext['payment_source'],
                 ];
                 $order->setPay(true, $aFields);
             }

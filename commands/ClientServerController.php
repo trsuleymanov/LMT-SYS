@@ -557,6 +557,7 @@ class ClientServerController extends Controller
 
     private static function orderUpdateClientextData($order, $server_client_ext) {
 
+        $aSqlUpdates = [];
 
         $client = null;
         if(!empty($server_client_ext['email'])) {
@@ -583,92 +584,154 @@ class ClientServerController extends Controller
             }
         }
 
-        $order->client_id = $client->id;
-        $order->client_name = $client->name;
+        if($order->client_id != $client->id) {
+            $order->client_id = $client->id;
+            $aSqlUpdates['client_id'] = $client->id;
+        }
+        if($order->client_name != $client->name) {
+            $order->client_name = $client->name;
+            $aSqlUpdates['client_name'] = $client->name;
+        }
 
         //$order->status_id = 0;
-        $order->trip_id = $server_client_ext['trip_id'];
+        if($order->trip_id != $server_client_ext['trip_id']) {
+            $order->trip_id = $server_client_ext['trip_id'];
+            $aSqlUpdates['trip_id'] = $order->trip_id;
+        }
         //$order->status_setting_time = $server_client_ext['trip_id'];
         //$order->cancellation_click_time = $server_client_ext['cancellation_click_time'];
 
 
         //$order->canceled_by = '';
-        $order->date = $server_client_ext['data'];// 10.07.2018
-        $order->direction_id = $server_client_ext['direction_id'];
+        if($order->date != $server_client_ext['data']) {
+            $order->date = $server_client_ext['data'];// 10.07.2018
+            $aSqlUpdates['date'] = $order->date;
+        }
+        if($order->direction_id != $server_client_ext['direction_id']) {
+            $order->direction_id = $server_client_ext['direction_id'];
+            $aSqlUpdates['direction_id'] = $order->direction_id;
+        }
 
         $yandex_point_from = YandexPoint::find()->where(['name' => $server_client_ext['yandex_point_from_name']])->one();
         if($yandex_point_from != null) {
-            $order->yandex_point_from_id = $yandex_point_from->id;
+            if($order->yandex_point_from_id != $yandex_point_from->id) {
+                $order->yandex_point_from_id = $yandex_point_from->id;
+                $aSqlUpdates['yandex_point_from_id'] = $order->yandex_point_from_id;
+            }
         }
-        $order->yandex_point_from_name = $server_client_ext['yandex_point_from_name'];
-        $order->yandex_point_from_lat = $server_client_ext['yandex_point_from_lat'];
-        $order->yandex_point_from_long = $server_client_ext['yandex_point_from_long'];
+        if($order->yandex_point_from_name != $server_client_ext['yandex_point_from_name']) {
+            $order->yandex_point_from_name = $server_client_ext['yandex_point_from_name'];
+            $aSqlUpdates['yandex_point_from_name'] = $order->yandex_point_from_name;
+        }
+        if($order->yandex_point_from_lat != $server_client_ext['yandex_point_from_lat']) {
+            $order->yandex_point_from_lat = $server_client_ext['yandex_point_from_lat'];
+            $aSqlUpdates['yandex_point_from_lat'] = $order->yandex_point_from_lat;
+        }
+        if($order->yandex_point_from_long != $server_client_ext['yandex_point_from_long']) {
+            $order->yandex_point_from_long = $server_client_ext['yandex_point_from_long'];
+            $aSqlUpdates['yandex_point_from_long'] = $order->yandex_point_from_long;
+        }
 
 
         $yandex_point_to = YandexPoint::find()->where(['name' => $server_client_ext['yandex_point_to_name']])->one();
         if($yandex_point_to != null) {
-            $order->yandex_point_to_id = $yandex_point_to->id;
+            if($order->yandex_point_to_id != $yandex_point_to->id) {
+                $order->yandex_point_to_id = $yandex_point_to->id;
+                $aSqlUpdates['yandex_point_to_id'] = $order->yandex_point_to_id;
+            }
         }
-        $order->yandex_point_to_name = $server_client_ext['yandex_point_to_name'];
-        $order->yandex_point_to_lat = $server_client_ext['yandex_point_to_lat'];
-        $order->yandex_point_to_long = $server_client_ext['yandex_point_to_long'];
+        if($order->yandex_point_to_name != $server_client_ext['yandex_point_to_name']) {
+            $order->yandex_point_to_name = $server_client_ext['yandex_point_to_name'];
+            $aSqlUpdates['yandex_point_to_name'] = $order->yandex_point_to_name;
+        }
+        if($order->yandex_point_to_lat != $server_client_ext['yandex_point_to_lat']) {
+            $order->yandex_point_to_lat = $server_client_ext['yandex_point_to_lat'];
+            $aSqlUpdates['yandex_point_to_lat'] = $order->yandex_point_to_lat;
+        }
+        if($order->yandex_point_to_long != $server_client_ext['yandex_point_to_long']) {
+            $order->yandex_point_to_long = $server_client_ext['yandex_point_to_long'];
+            $aSqlUpdates['yandex_point_to_long'] = $order->yandex_point_to_long;
+        }
 
-        $order->time_air_train_arrival = $server_client_ext['time_air_train_arrival'];
+        if($order->time_air_train_arrival != $server_client_ext['time_air_train_arrival']) {
+            $order->time_air_train_arrival = $server_client_ext['time_air_train_arrival'];
+            $aSqlUpdates['time_air_train_arrival'] = $order->time_air_train_arrival;
+        }
 
-        $order->suitcase_count = $server_client_ext['suitcase_count'];
-        $order->bag_count = $server_client_ext['bag_count'];
-        $order->time_confirm = $server_client_ext['time_confirm'];
+        if($order->suitcase_count != $server_client_ext['suitcase_count']) {
+            $order->suitcase_count = $server_client_ext['suitcase_count'];
+            $aSqlUpdates['suitcase_count'] = $order->suitcase_count;
+        }
+        if($order->bag_count != $server_client_ext['bag_count']) {
+            $order->bag_count = $server_client_ext['bag_count'];
+            $aSqlUpdates['bag_count'] = $order->bag_count;
+        }
+        if($order->time_confirm != $server_client_ext['time_confirm']) {
+            $order->time_confirm = $server_client_ext['time_confirm'];
+            $aSqlUpdates['time_confirm'] = $order->time_confirm;
+        }
 
 
         if($server_client_ext['places_count'] == 0) {
-            $order->is_not_places = 1;
+            if($order->is_not_places != 1) {
+                $order->is_not_places = 1;
+                $aSqlUpdates['is_not_places'] = $order->is_not_places;
+            }
         }
-        $order->places_count = $server_client_ext['places_count'];
-        $order->student_count = $server_client_ext['student_count'];
-        $order->child_count = $server_client_ext['child_count'];
-        $order->is_not_places = $server_client_ext['is_not_places'];
-        $order->prize_trip_count = $server_client_ext['prize_trip_count'];
+        if($order->places_count != $server_client_ext['places_count']) {
+            $order->places_count = $server_client_ext['places_count'];
+            $aSqlUpdates['places_count'] = $order->places_count;
+        }
+        if($order->student_count != $server_client_ext['student_count']) {
+            $order->student_count = $server_client_ext['student_count'];
+            $aSqlUpdates['student_count'] = $order->student_count;
+        }
+        if($order->child_count != $server_client_ext['child_count']) {
+            $order->child_count = $server_client_ext['child_count'];
+            $aSqlUpdates['child_count'] = $order->child_count;
+        }
+        if($order->is_not_places != $server_client_ext['is_not_places']) {
+            $order->is_not_places = $server_client_ext['is_not_places'];
+            $aSqlUpdates['is_not_places'] = $order->is_not_places;
+        }
+        if($order->prize_trip_count != $server_client_ext['prize_trip_count']) {
+            $order->prize_trip_count = $server_client_ext['prize_trip_count'];
+            $aSqlUpdates['prize_trip_count'] = $order->prize_trip_count;
+        }
 
-        $order->accrual_cash_back = $server_client_ext['accrual_cash_back'];
-        $order->penalty_cash_back = $server_client_ext['penalty_cash_back'];
-        $order->used_cash_back = $server_client_ext['used_cash_back'];
+        if($order->accrual_cash_back != $server_client_ext['accrual_cash_back']) {
+            $order->accrual_cash_back = $server_client_ext['accrual_cash_back'];
+            $aSqlUpdates['accrual_cash_back'] = $order->accrual_cash_back;
+        }
+        if($order->penalty_cash_back != $server_client_ext['penalty_cash_back']) {
+            $order->penalty_cash_back = $server_client_ext['penalty_cash_back'];
+            $aSqlUpdates['penalty_cash_back'] = $order->penalty_cash_back;
+        }
+        if($order->used_cash_back != $server_client_ext['used_cash_back']) {
+            $order->used_cash_back = $server_client_ext['used_cash_back'];
+            $aSqlUpdates['used_cash_back'] = $order->used_cash_back;
+        }
 
         if($server_client_ext['source_type'] == 'application') {
             $informer_office = InformerOffice::find()->where(['code' => 'mobile_app'])->one();
             if ($informer_office != null) {
-                $order->informer_office_id = $informer_office->id;
+                if($order->informer_office_id != $informer_office->id) {
+                    $order->informer_office_id = $informer_office->id;
+                    $aSqlUpdates['informer_office_id'] = $order->informer_office_id;
+                }
             }
         }
 
-        $sql = 'UPDATE `order` SET 
-                client_id='.$order->client_id.', 
-                client_name="'.$order->client_name.'",
-                trip_id='.$order->trip_id.',
-                `date`='.$order->date.',
-                direction_id='.$order->direction_id.',
-                yandex_point_from_id='.$order->yandex_point_from_id.',
-                yandex_point_from_name="'.$order->yandex_point_from_name.'",
-                yandex_point_from_lat='.$order->yandex_point_from_lat.',
-                yandex_point_from_long='.$order->yandex_point_from_long.',
-                yandex_point_to_id='.$order->yandex_point_to_id.',
-                yandex_point_to_name="'.$order->yandex_point_to_name.'",
-                yandex_point_to_lat='.$order->yandex_point_to_lat.',
-                yandex_point_to_long='.$order->yandex_point_to_long.',
-                time_air_train_arrival="'.$order->time_air_train_arrival.'",
-                suitcase_count='.$order->suitcase_count.',
-                bag_count='.$order->bag_count.',
-                time_confirm='.$order->time_confirm.',
-                is_not_places='.$order->is_not_places.',
-                places_count='.$order->places_count.',
-                student_count='.$order->student_count.',
-                child_count='.$order->child_count.',
-                prize_trip_count='.$order->prize_trip_count.',
-                accrual_cash_back='.$order->accrual_cash_back.',
-                penalty_cash_back='.$order->penalty_cash_back.',
-                used_cash_back='.$order->used_cash_back.',
-                informer_office_id='.$order->informer_office_id.'
-                WHERE id='.$order->id;
-        $res = Yii::$app->db->createCommand($sql)->execute();
+        if(count($aSqlUpdates) > 0) {
+
+            $aSqlFieldsValues = '';
+            foreach ($aSqlUpdates as $field => $value) {
+                $aSqlFieldsValues[] = $field.'="'.$value.'"';
+            }
+
+            $sql = 'UPDATE `order` SET '.implode(',', $aSqlFieldsValues).' WHERE id='.$order->id;
+            $res = Yii::$app->db->createCommand($sql)->execute();
+        }
 
 
         return $order;

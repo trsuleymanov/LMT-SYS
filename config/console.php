@@ -40,6 +40,9 @@ $config = [
 //                'application/json' => 'yii\web\JsonParser',
 //            ],
 //        ],
+        'setting' => [
+            'class' => 'app\components\Setting',
+        ]
     ],
     'params' => $params,
     'aliases' => [

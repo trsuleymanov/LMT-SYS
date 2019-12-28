@@ -510,6 +510,10 @@ class ClientServerController extends Controller
         $order->is_not_places = $server_client_ext['is_not_places'];
         $order->prize_trip_count = $server_client_ext['prize_trip_count'];
 
+        $order->accrual_cash_back = $server_client_ext['accrual_cash_back'];
+        $order->penalty_cash_back = $server_client_ext['penalty_cash_back'];
+        $order->used_cash_back = $server_client_ext['used_cash_back'];
+
         /*
         $order->source_price = $server_client_ext['price'];
         $order->paid_summ = $server_client_ext['paid_summ'];

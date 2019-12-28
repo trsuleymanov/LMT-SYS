@@ -286,44 +286,8 @@ class ClientServerController extends Controller
                             DispatcherAccounting::createLog('order_cancel', $order->id, time(), 0);// логируем Удаление заказа
                         }
 
-
-                        /*
-                        if($client_ext['is_paid'] == true) { // раз оплачено и цена фиксированная, то
-                            if($order->is_paid != true) {
-                                $order->setField('is_paid', true);
-                                $order->setField('paid_time', $client_ext['paid_time']); // время оплаты (по факту время синхронизации после оплаты), погрешность +/- 30 секунд
-
-                                // если пришел сигнал об оплате, то отправляем на litebox сервер операцию "Приход" для фискализации
-                                LiteboxOperation::makeOperationSell($order);
-                            }
-                            if($order->use_fix_price != true) {
-                                $order->setField('use_fix_price', true);
-                            }
-                            if($order->price != $client_ext['price']) {
-                                $order->setField('price', $client_ext['price']);
-                            }
-
-                        }else {
-                            // если например заказ был отменен, то оплаченный заказ перестанет быть оплаченным
-                            if($order->use_fix_price == true) {
-                                $order->setField('use_fix_price', false);
-                            }
-                            if($order->is_paid == true) {
-                                $order->setField('is_paid', false);
-                                $order->setField('paid_time', 0);
-                            }
-                        }
-
-                        if($order->paid_summ != $client_ext['paid_summ']) {
-                            $order->setField('paid_summ', $client_ext['paid_summ']);
-                        }*/
-
-                        //$order->scenario = 'update_with_sync';
-                        self::orderUpdateClientextData($order, $client_ext);
-                        //echo "order1:<pre>"; print_r($order); echo "</pre>";
-//                        if(!$order->save(false)) {
-//                            throw new ErrorException('Не удалось сохранить заказ 322');
-//                        }
+                        // пока оплату и данные по кэшбэкам заказа выгружать не нужно на клиентский сайт
+                        // self::orderUpdateClientextData($order, $client_ext);
 
                         self::orderSetPayData($order, $client_ext);
                     }
@@ -366,33 +330,8 @@ class ClientServerController extends Controller
                         }
 
 
-                        /*
-                        if($order->paid_summ != $client_ext['paid_summ']) {
-                            $order->paid_summ = $client_ext['paid_summ'];
-                            $order->setField('paid_summ', $order->paid_summ);
-                        }
-
-
-                        $is_paid = false;
-                        if($order->paid_summ >= $order->price) {
-                            $is_paid = true;
-                        }
-                        if($is_paid == true) {
-                            $order->setField('is_paid', true);
-                            $order->setField('price', $order->source_price);
-                        }else {
-                            $order->setField('is_paid', false);
-                        }*/
-
-                        //$order->scenario = 'update_with_sync';
-                        self::orderUpdateClientextData($order, $client_ext);
-                        // echo "order2:<pre>"; print_r($order); echo "</pre>";
-//                        echo "до записи used_cash_back=".$order->used_cash_back."\n";
-//                        if(!$order->save(false)) {
-//                            throw new ErrorException('Не удалось сохранить заказ 388');
-//                        }
-//                        echo "после записи used_cash_back=".$order->used_cash_back."\n";
-                        //echo "order2 после записи:<pre>"; print_r($order); echo "</pre>";
+                        // пока оплату и данные по кэшбэкам заказа выгружать не нужно на клиентский сайт
+                        // self::orderUpdateClientextData($order, $client_ext);
 
                         self::orderSetPayData($order, $client_ext);
                     }

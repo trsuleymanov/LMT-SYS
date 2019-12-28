@@ -632,6 +632,36 @@ class Order extends \yii\db\ActiveRecord
             'is_paid',
         ];
 
+        $scenarios['update_with_sync'] = [
+            'client_id',
+            'client_name',
+            'trip_id',
+            'date',
+            'direction_id',
+            'yandex_point_from_id',
+            'yandex_point_from_name',
+            'yandex_point_from_lat',
+            'yandex_point_from_long',
+            'yandex_point_to_id',
+            'yandex_point_to_name',
+            'yandex_point_to_lat',
+            'yandex_point_to_long',
+            'time_air_train_arrival',
+            'suitcase_count',
+            'bag_count',
+            'time_confirm',
+            'is_not_places',
+            'places_count',
+            'student_count',
+            'child_count',
+            'is_not_places',
+            'prize_trip_count',
+            'accrual_cash_back',
+            'penalty_cash_back',
+            'used_cash_back',
+            'informer_office_id',
+        ];
+
         return $scenarios;
     }
 

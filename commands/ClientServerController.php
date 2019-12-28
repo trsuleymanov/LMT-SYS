@@ -318,6 +318,7 @@ class ClientServerController extends Controller
                             $order->setField('paid_summ', $client_ext['paid_summ']);
                         }*/
 
+                        $order->scenario = 'update_with_sync';
                         $order = self::orderUpdateClientextData($order, $client_ext);
                         //echo "order1:<pre>"; print_r($order); echo "</pre>";
                         if(!$order->save(false)) {
@@ -383,6 +384,7 @@ class ClientServerController extends Controller
                             $order->setField('is_paid', false);
                         }*/
 
+                        $order->scenario = 'update_with_sync';
                         $order = self::orderUpdateClientextData($order, $client_ext);
                         // echo "order2:<pre>"; print_r($order); echo "</pre>";
                         if(!$order->save(false)) {

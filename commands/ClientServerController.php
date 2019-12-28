@@ -318,12 +318,12 @@ class ClientServerController extends Controller
                             $order->setField('paid_summ', $client_ext['paid_summ']);
                         }*/
 
-                        $order->scenario = 'update_with_sync';
-                        $order = self::orderUpdateClientextData($order, $client_ext);
+                        //$order->scenario = 'update_with_sync';
+                        self::orderUpdateClientextData($order, $client_ext);
                         //echo "order1:<pre>"; print_r($order); echo "</pre>";
-                        if(!$order->save(false)) {
-                            throw new ErrorException('Не удалось сохранить заказ 322');
-                        }
+//                        if(!$order->save(false)) {
+//                            throw new ErrorException('Не удалось сохранить заказ 322');
+//                        }
 
                         self::orderSetPayData($order, $client_ext);
                     }
@@ -384,13 +384,15 @@ class ClientServerController extends Controller
                             $order->setField('is_paid', false);
                         }*/
 
-                        $order->scenario = 'update_with_sync';
-                        $order = self::orderUpdateClientextData($order, $client_ext);
+                        //$order->scenario = 'update_with_sync';
+                        self::orderUpdateClientextData($order, $client_ext);
                         // echo "order2:<pre>"; print_r($order); echo "</pre>";
-                        if(!$order->save(false)) {
-                            throw new ErrorException('Не удалось сохранить заказ 388');
-                        }
-                        echo "order2 после записи:<pre>"; print_r($order); echo "</pre>";
+//                        echo "до записи used_cash_back=".$order->used_cash_back."\n";
+//                        if(!$order->save(false)) {
+//                            throw new ErrorException('Не удалось сохранить заказ 388');
+//                        }
+//                        echo "после записи used_cash_back=".$order->used_cash_back."\n";
+                        //echo "order2 после записи:<pre>"; print_r($order); echo "</pre>";
 
                         self::orderSetPayData($order, $client_ext);
                     }
@@ -637,6 +639,37 @@ class ClientServerController extends Controller
                 $order->informer_office_id = $informer_office->id;
             }
         }
+
+        $sql = 'UPDATE `order` SET 
+                client_id='.$order->client_id.', 
+                client_name="'.$order->client_name.'",
+                trip_id='.$order->trip_id.',
+                `date`='.$order->date.',
+                direction_id='.$order->direction_id.',
+                yandex_point_from_id='.$order->yandex_point_from_id.',
+                yandex_point_from_name="'.$order->yandex_point_from_name.'",
+                yandex_point_from_lat='.$order->yandex_point_from_lat.',
+                yandex_point_from_long='.$order->yandex_point_from_long.',
+                yandex_point_to_id='.$order->yandex_point_to_id.',
+                yandex_point_to_name="'.$order->yandex_point_to_name.'",
+                yandex_point_to_lat='.$order->yandex_point_to_lat.',
+                yandex_point_to_long='.$order->yandex_point_to_long.',
+                time_air_train_arrival="'.$order->time_air_train_arrival.'",
+                suitcase_count='.$order->suitcase_count.',
+                bag_count='.$order->bag_count.',
+                time_confirm='.$order->time_confirm.',
+                is_not_places='.$order->is_not_places.',
+                places_count='.$order->places_count.',
+                student_count='.$order->student_count.',
+                child_count='.$order->child_count.',
+                prize_trip_count='.$order->prize_trip_count.',
+                accrual_cash_back='.$order->accrual_cash_back.',
+                penalty_cash_back='.$order->penalty_cash_back.',
+                used_cash_back='.$order->used_cash_back.',
+                informer_office_id='.$order->informer_office_id.'
+                WHERE id='.$order->id;
+        $res = Yii::$app->db->createCommand($sql)->execute();
+
 
         return $order;
     }

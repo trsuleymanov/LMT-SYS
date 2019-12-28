@@ -5,6 +5,7 @@ namespace app\models;
 use app\components\Helper;
 use Yii;
 use app\models\Point;
+use yii\base\ErrorException;
 use yii\web\ForbiddenHttpException;
 
 /**
@@ -41,6 +42,9 @@ class Client extends \yii\db\ActiveRecord
         }
 
         $client = Client::find()->where(['mobile_phone' => $mobile_phone])->one();
+        if($client == null) {
+            throw new ErrorException('клиент не найден. Телефон: '.$mobile_phone);
+        }
 
         return $client;
     }

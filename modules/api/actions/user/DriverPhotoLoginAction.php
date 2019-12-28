@@ -91,7 +91,7 @@ class DriverPhotoLoginAction extends \yii\rest\Action
 
         //$aDrivers = ArrayHelper::map($drivers, 'id', 'fio');
 
-        $settings = Setting::find()->where(['id' => 1])->one();
+        //$settings = Setting::find()->where(['id' => 1])->one();
 
 
         // ищем машину соответствующую водителю - это последняя отправленная машина с этим водителем
@@ -112,7 +112,7 @@ class DriverPhotoLoginAction extends \yii\rest\Action
             'drivers' => $aDrivers,
             'driver_id' => $driverLoginForm->driver->id,
             'transport_id' => $trip_transport->transport_id,
-            'photo_server_url' => ($settings != null ? $settings->photo_server_url : '')
+            'photo_server_url' => Yii::$app->setting->photo_server_url
         ];
 
     }

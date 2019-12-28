@@ -17,7 +17,7 @@ $this->registerJsFile('https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=5c7acdc
 
 $user = Yii::$app->user->identity;
 
-$setting = Setting::find()->where(['id' => 1])->one();
+// $setting = Setting::find()->where(['id' => 1])->one();
 
 //echo "aDirections:<pre>"; print_r($aDirections); echo "</pre>";
 ?>
@@ -173,7 +173,7 @@ $setting = Setting::find()->where(['id' => 1])->one();
 //            !in_array(Yii::$app->session->get('role_alias'), ['graph_operator', 'warehouse_turnover'])
 //            && ($setting->access_to_client_info_main_page == true || in_array(Yii::$app->session->get('role_alias'), ['root', 'admin']))
 //        ) {
-        if($setting->access_to_client_info_main_page == true && Access::hasUserAccess('search_client_by_phone', 'page_part')) { ?>
+        if(Yii::$app->setting->access_to_client_info_main_page == true && Access::hasUserAccess('search_client_by_phone', 'page_part')) { ?>
 
             <?= MaskedInput::widget([
                 'name' => 'client-search',

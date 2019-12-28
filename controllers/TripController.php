@@ -417,8 +417,8 @@ class TripController extends Controller
 
         }else {
 
-		    $setting = Setting::find()->where(['id' => 1])->one();
-		    if($setting->use_mobile_app_by_default == true) {
+		    //$setting = Setting::find()->where(['id' => 1])->one();
+		    if(Yii::$app->setting->use_mobile_app_by_default == true) {
 
                 $trip->use_mobile_app = true;
 
@@ -489,7 +489,7 @@ class TripController extends Controller
         $aOrdersLog = [];
         if(count($orders) > 0) {
             foreach ($orders as $order) {
-                $price = $order->calculatePrice;
+                $price = $order->getCalculatePrice();
                 if ($order->price != $price) {
                     $aOrdersLog[$order->id] = [
                         'order_id' => $order->id,
@@ -497,6 +497,28 @@ class TripController extends Controller
                         'new_price' => $price
                     ];
                     $order->setField('price', $price);
+                    $update_page = true;
+                }
+
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                if ($order->used_cash_back != $used_cash_back) {
+                    $order->setField('used_cash_back', $used_cash_back);
+                    $aOrdersLog[$order->id] = [
+                        'order_id' => $order->id,
+                        'old_price' => $order->price,
+                        'new_price' => $price
+                    ];
+                    $update_page = true;
+                }
+
+                $prizeTripCount = $order->prizeTripCount;
+                if($order->prize_trip_count != $prizeTripCount) {
+                    $order->setField('prize_trip_count', $prizeTripCount);
+                    $aOrdersLog[$order->id] = [
+                        'order_id' => $order->id,
+                        'old_price' => $order->price,
+                        'new_price' => $price
+                    ];
                     $update_page = true;
                 }
             }

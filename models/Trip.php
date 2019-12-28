@@ -608,11 +608,22 @@ class Trip extends \yii\db\ActiveRecord
 			$orders = Order::find()->where(['IN', 'id', $aAllOrders])->all(); // лучше заново создать модели с обновленными данными по рейсу
 			foreach($orders as $order) {
 
-				$price = $order->calculatePrice;
+				$price = $order->getCalculatePrice();
 				if($price != $order->price) {
 					$order->setField('price', $price);
 				}
 
+				// кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                if ($order->used_cash_back != $used_cash_back) {
+                    $order->setField('used_cash_back', $used_cash_back);
+                }
+
+                // кол-во мест в каждом заказе, как и настройки никак не меняются от слияния рейсов, значит призовые не пересчитываются
+//                $prizeTripCount = $order->prizeTripCount;
+//                if($order->prize_trip_count != $prizeTripCount) {
+//                    $order->setField('prize_trip_count', $prizeTripCount);
+//                }
 
 //				if($order->status_id == 2) { // canceled
 //
@@ -1389,9 +1400,12 @@ class Trip extends \yii\db\ActiveRecord
             $aSentClientsIds = [];
             foreach ($trip_orders as $trip_order) {
 
-                if($trip_order->status_id == $order_sent_status->id) {
+                //if($trip_order->status_id == $order_sent_status->id) {
+                if(in_array($trip_order->status_id, [1, 3])) {
 
-                    $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->paid_summ);
+                    $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
+                    //echo "id=".$trip_order->price." accrual_cash_back=$accrual_cash_back <br />";
+
                     if($accrual_cash_back != $trip_order->accrual_cash_back) {
                         $trip_order->setField('accrual_cash_back', $accrual_cash_back);
                         $trip_order->accrual_cash_back = $accrual_cash_back;
@@ -1976,10 +1990,16 @@ class Trip extends \yii\db\ActiveRecord
 		if(count($trip_orders) > 0) {
 			foreach($trip_orders as $order) {
 
-				$price = $order->calculatePrice;
+				$price = $order->getCalculatePrice();
 				if($order->price != $price) {
 					$order->setField('price', $price); // сохранили в базу
 				}
+
+                // кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                if ($order->used_cash_back != $used_cash_back) {
+                    $order->setField('used_cash_back', $used_cash_back);
+                }
 
                 if($order->time_confirm > 0) {
                     $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
@@ -2029,7 +2049,10 @@ class Trip extends \yii\db\ActiveRecord
 		Trip::updateAll(['commercial' => true, 'updated_at' => time()], ['IN', 'id', ArrayHelper::map($trips, 'id', 'id')]);
 
 		// в заказах рейсов должны быть обновлены данные: цена, кол-во призовых поездок.
-		$trips_orders = Order::find()->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])->all();
+		$trips_orders = Order::find()
+            ->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])
+            ->andWhere(['status_id' => 1])
+            ->all();
 		if(count($trips_orders) > 0) {
 			foreach($trips_orders as $order) {
 				$prize_trip_count = $order->prizeTripCount;
@@ -2037,10 +2060,16 @@ class Trip extends \yii\db\ActiveRecord
 					$order->setField('prize_trip_count', $prize_trip_count);
 				}
 
-				$price = $order->calculatePrice;
+				$price = $order->getCalculatePrice();
 				if($order->price != $price) {
 					$order->setField('price', $price);
 				}
+
+                // кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                if ($order->used_cash_back != $used_cash_back) {
+                    $order->setField('used_cash_back', $used_cash_back);
+                }
 
 				if($order->time_confirm > 0) {
                     $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
@@ -2101,7 +2130,11 @@ class Trip extends \yii\db\ActiveRecord
 		Trip::updateAll(['commercial' => false, 'updated_at' => time()], ['IN', 'id', ArrayHelper::map($trips, 'id', 'id')]);
 
 		// в заказах рейсов должны быть обновлены данные: цена, кол-во призовых поездок.
-		$trips_orders = Order::find()->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])->all();
+		$trips_orders =
+            Order::find()
+                ->where(['IN', 'trip_id', ArrayHelper::map($trips, 'id', 'id')])
+                ->andWhere(['status_id' => 1])
+                ->all();
 		if(count($trips_orders) > 0) {
 			foreach($trips_orders as $order) {
 				$prize_trip_count = $order->prizeTripCount;
@@ -2109,10 +2142,16 @@ class Trip extends \yii\db\ActiveRecord
 					$order->setField('prize_trip_count', $prize_trip_count);
 				}
 
-				$price = $order->calculatePrice;
+				$price = $order->getCalculatePrice();
 				if($price != $order->price) {
 					$order->setField('price', $price);
 				}
+
+                // кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                if ($order->used_cash_back != $used_cash_back) {
+                    $order->setField('used_cash_back', $used_cash_back);
+                }
 
                 if($order->time_confirm > 0) {
                     $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05

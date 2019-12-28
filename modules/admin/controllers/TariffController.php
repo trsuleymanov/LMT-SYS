@@ -165,19 +165,11 @@ class TariffController extends Controller
         $orders = $tariff->futureOrders;
         if(count($orders) > 0) {
             foreach($orders as $order) {
-                $price = $order->calculatePrice;
-                //$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
+                $price = $order->getCalculatePrice();
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                $prize_trip_count = $order->prizeTripCount;
 
-//                if($order->status_id == 2) { // canceled
-//                    $penalty_cash_back = $order->getCalculatePenaltyCashBack($price);
-//                    $accrual_cash_back = 0;
-//                }else {
-//                    $accrual_cash_back = $order->getCalculateAccrualCashBack($price);
-//                    $penalty_cash_back = 0;
-//                }
-
-                //$command = Yii::$app->db->createCommand('UPDATE `'.Order::tableName().'` SET price="'.$price.'", accrual_cash_back="'.$accrual_cash_back.'", penalty_cash_back="'.$penalty_cash_back.'" WHERE id='.$order->id);
-                $command = Yii::$app->db->createCommand('UPDATE `'.Order::tableName().'` SET price="'.$price.'" WHERE id='.$order->id);
+                $command = Yii::$app->db->createCommand('UPDATE `'.Order::tableName().'` SET price="'.$price.'", used_cash_back="'.$used_cash_back.'", prize_trip_count="'.$prize_trip_count.'" WHERE id='.$order->id);
 	            $command->execute();
             }
         }else {

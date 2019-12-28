@@ -1063,35 +1063,9 @@ class OrderController extends Controller
         }
         $model->scenario = 'calculate_price';
 
-//        $use_fix_price = $post['Order']['use_fix_price'] == 'true' ? true : false;
-//        $fix_price = floatval($post['Order']['fix_price']);
-
-//        echo "use_fix_price=$use_fix_price fix_price=$fix_price";
-//        exit;
 
         if ($model->load($post) && $model->validate()) {
 
-            //echo "model:<pre>"; print_r($model); echo "</pre>";
-
-//            if($model->use_fix_price == 'true') {
-//                $model->use_fix_price = true;
-//            }elseif($model->use_fix_price == 'false') {
-//                $model->use_fix_price = false;
-//            }
-
-            //echo 'model_use_fix_price='.$model->use_fix_price.' modal_price='.$model->price."<br />";
-
-//            if($use_fix_price == true) {
-//                $model->use_fix_price = true;
-//                $model->price = $fix_price;
-//            }elseif($use_fix_price == 'false') {
-//                $model->use_fix_price = false;
-//            }
-
-            //echo 'use_fix_price='.$model->use_fix_price.' price='.$model->price."<br />";
-
-
-            $client = null;
             if(empty($model->client_id)) {
                 if(isset($post['Client']['mobile_phone'])) {
                     $client = Client::getClientByMobilePhone($post['Client']['mobile_phone']);
@@ -1101,15 +1075,6 @@ class OrderController extends Controller
                 }
             }
 
-//            $do_tariff = null;
-//            $use_fix_price = $model->use_fix_price;
-//            $informer_office = $model->informerOffice;
-//            if($informer_office != null) {
-//                $do_tariff = $informer_office->doTariff;
-//                if($do_tariff != null) {
-//                    $use_fix_price = $do_tariff->use_fix_price;
-//                }
-//            }
             $use_fix_price = $model->use_fix_price;
 
             $do_tariff = null;
@@ -1134,9 +1099,17 @@ class OrderController extends Controller
                 $comment = $model->comment;
             }
 
+
+            $full_price = $model->getCalculatePrice(true);
+            $used_cash_back = $model->getCalculateUsedCashBack();
+            $result_price = intval($full_price) - intval($used_cash_back);
+
             return [
                 'success' => true,
-                'price' => $model->calculatePrice, // а если пришли пустые значения, то как сработает расчет?
+                'loyalty_switch' => Yii::$app->setting->loyalty_switch,
+                'price' => $full_price,
+                'used_cash_back' => $used_cash_back,
+                'result_price' => $result_price,
                 'prizeTripCount' => $model->prizeTripCount, // кол-во призовых поездок
                 'use_fix_price' => $use_fix_price,
                 'comment' => $comment

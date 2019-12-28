@@ -19,14 +19,14 @@ class CallController extends Controller
      */
     public function actionCloseMissedCases()
     {
-        $setting = Setting::find()->where(['id' => 1])->one();
+        //$setting = Setting::find()->where(['id' => 1])->one();
         // $setting->missed_calls_close_interval // Количество секунд до закрытия пропущенных обращений
 
         $missed_cases = CallCase::find()
             ->where(['case_type' => 'missed'])
             ->andWhere(['status' => 'not_completed'])
             ->andWhere(['close_time' => NULL])
-            ->andWhere(['<', 'update_time', time() - $setting->missed_calls_close_interval])
+            ->andWhere(['<', 'update_time', time() - Yii::$app->setting->missed_calls_close_interval])
             ->all();
 
 

@@ -1188,9 +1188,9 @@ $columns = ArrayHelper::merge($columns, [
 
 ]);
 
-$setting = Setting::find()->where(['id' => 1])->one();
+// $setting = Setting::find()->where(['id' => 1])->one();
 
-if($setting->show_passenger_button_in_trip_orders_page == true) {
+if(Yii::$app->setting->show_passenger_button_in_trip_orders_page == true) {
 
     $columns[] = [
         'class' => 'yii\grid\ActionColumn',

@@ -300,7 +300,6 @@ function updatePrice()
                 && (parseInt(data.Order.places_count) > 0 || data.Order.is_not_places == 1)
                 && data.Order.use_fix_price != true
             )
-            // || data.Order.use_fix_price == true   // странное условие, если цена=fix, то меняется
         ) {
 
             $.ajax({
@@ -312,8 +311,18 @@ function updatePrice()
                 },
                 success: function (response) {
                     if (response.success == true) {
-                        $('#order-client-form #price').text(response.price);
-                        $('#order-client-form #prizeTripCount').text(response.prizeTripCount);
+
+                        if(response.loyalty_switch == 'cash_back_on') {
+
+                            $('#order-client-form #price').text(response.price);
+                            $('#order-client-form #usedCashBack').text(response.used_cash_back);
+                            $('#order-client-form #resultPrice').text(response.result_price);
+
+                        }else { // fifth_place_prize
+                            $('#order-client-form #price').text(response.price);
+                            $('#order-client-form #prizeTripCount').text(response.prizeTripCount);
+                        }
+
 
                         if(response.use_fix_price == 1) {
                             $('*[name="Order[use_fix_price]"]').prop('checked', true);

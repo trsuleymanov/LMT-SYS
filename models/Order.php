@@ -246,9 +246,9 @@ class Order extends \yii\db\ActiveRecord
             $this->date = strtotime($this->date);   // convent '07.11.2016' to unixtime
         }
 
-        $setting = Setting::find()->where(['id' => 1])->one();
+        // $setting = Setting::find()->where(['id' => 1])->one();
         $today_finish = strtotime(date('d.m.Y'));
-        if(($setting == null || intval($setting->create_orders_yesterday) == 0) && $this->date < $today_finish) {
+        if((intval(Yii::$app->setting->create_orders_yesterday) == 0) && $this->date < $today_finish) {
             $this->addError($attribute, 'Нельзя выбрать прошедшую дату');
         }else {
             return true;
@@ -720,10 +720,10 @@ class Order extends \yii\db\ActiveRecord
 
             'paid_time' => 'Время оплаты',
             'payment_source' => 'Источник оплаты',
-            'accrual_cash_back' => 'Начисление кэш-бэка',
-            'penalty_cash_back' => 'Использованный кэш-бэк для оплаты заказа',
+            'accrual_cash_back' => 'Начисление кэш-бэка с оплаченной суммы',
+            'penalty_cash_back' => 'Списанный кэш-бэк как штраф',
+            'used_cash_back' => 'Использованный кэш-бэк для оплаты заказа',
             'cash_received_time' => 'Деньги за заказ получены',
-            'used_cash_back' => 'Списанный кэш-бэк как штраф',
             'is_paid' => 'Заказ полностью оплачен - да/нет',
             'fix_price' => 'Фикс. цена',
             'first_opened_form_time' => 'Время первого открытия формы заказа',
@@ -817,26 +817,16 @@ class Order extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($this->isNewRecord) {
+
             $this->created_at = time();
-            // $this->time_vpz = time();  - это копия поля first_writedown_click_time
 
             if(($this->status_id === null || $this->status_id === 0) && !empty($this->client_id)) {
                 if(!empty($this->temp_identifier)) { // если заказ был создан из формы, то он получает не нулевой статус
                     $order_status = OrderStatus::getByCode('created');
                     $this->status_id = $order_status->id;
                     $this->status_setting_time = time();
-
-                    //$this->first_writedown_click_time = time();
-                    //$this->first_writedown_clicker_id = Yii::$app->user->id;
-
-                    //DispatcherAccounting::createLog('order_create', $this->id);// логируем Первичную запись
                 }
             }
-
-            // здесь создается заявко-заказ с нулевым статусом автоматом
-//            if($this->client_server_ext_id > 0 && ($this->status_id === null || $this->status_id === 0)) {
-//                IncomingOrdersWidget::updateIncomingClientextOrders();
-//            }
 
         }else {
 
@@ -847,18 +837,6 @@ class Order extends \yii\db\ActiveRecord
                 $order_status = OrderStatus::getByCode('created');
                 $this->status_id = $order_status->id;
                 $this->status_setting_time = time();
-
-                //$this->first_writedown_click_time = time();
-                //$this->first_writedown_clicker_id = Yii::$app->user->id;
-
-                //DispatcherAccounting::createLog('order_create', $this->id);// логируем Первичную запись
-
-                // обновляем окно заявко-заказов (если заявко-заказ получает статус)
-//                if($this->external_type == 'client_server_client_ext') {
-//                    IncomingOrdersWidget::updateIncomingClientextOrders();
-//                }
-            }else {
-                //DispatcherAccounting::createLog('order_update', $this->id);// логируем Редактирование заказа
             }
         }
 
@@ -882,7 +860,6 @@ class Order extends \yii\db\ActiveRecord
             }
         }
 
-        // is_not_places    places_count
 
         if(preg_match('/^[0-9]{2} : [0-9]{2}$/i', $this->time_confirm)) {
             $hour_minute = explode(':', $this->time_confirm);
@@ -908,10 +885,8 @@ class Order extends \yii\db\ActiveRecord
         }
 
 
-        $this->price = $this->calculatePrice;
-//        if(!($this->external_type == "client_site" && $this->is_paid == true)) {
-//            $this->accrual_cash_back = $this->getCalculateAccrualCashBack($this->price);
-//        }
+        $this->price = $this->getCalculatePrice(false);
+        $this->used_cash_back = $this->getCalculateUsedCashBack();
 
 
         // установим редактируемому заказу наименьшее ВПЗ на данном рейсе
@@ -984,9 +959,6 @@ class Order extends \yii\db\ActiveRecord
             $this->client_name = '';
         }
 
-//        if (!$this->isNewRecord) {
-//            $this->setClientExtStatus();
-//        }
 
         // отмена статуса "отменен"
         if(isset($this->oldAttributes['status_id']) && $this->oldAttributes['status_id'] == 2 && $this->oldAttributes['status_id'] != $this->status_id) {
@@ -1412,8 +1384,8 @@ class Order extends \yii\db\ActiveRecord
 
     public function getPrizeTripCount()
     {
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if($setting->loyalty_switch == 'cash_back_on') {
+        //$setting = Setting::find()->where(['id' => 1])->one();
+        if(Yii::$app->setting->loyalty_switch == 'cash_back_on') {
             return 0;
         }
 
@@ -1495,7 +1467,217 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
-    public function getCalculatePrice()
+    /*
+     * Функция возвращает кэшбэк только для каждого 5-го места (при наличии других доп.условий)
+     */
+    /*public function getCalculateUsedCashBack($price) {
+
+        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
+            return 0;
+        }
+
+        if($this->client == null) {
+            return 0;
+        }
+
+
+        if($this->client->cashback > 0) {
+            if($this->client->cashback > $price) {
+                $used_cash_back = intval($price);
+            }else {
+                $used_cash_back = intval($this->client->cashback);
+            }
+        }else {
+            $used_cash_back = 0;
+        }
+
+        if($used_cash_back == 0) {
+            return 0;
+        }
+
+        // проверяем выполнение условие "5-е место подряд в заказах - дает право на списание кэш-бэка"
+        if($this->places_count >= 5) {
+            return $used_cash_back;
+        }else {
+            // ищем последний отправленный заказ на котором есть списанный кэш-бэк
+            $last_order = Order::find()
+                ->where(['client_id' => $this->client_id])
+                ->andWhere(['status_id' => 3]) // отправлен
+                ->andWhere(['>', 'used_cash_back', 0])
+                ->andWhere(['use_fix_price' => 0])
+                ->orderBy(['id' => SORT_DESC])
+                ->one();
+            if($last_order == null){
+                return 0;
+            }else {
+                $all_last_orders = Order::find()
+                    ->where(['>=', 'id', $last_order->id])
+                    ->andWhere(['status_id' => 3]) // отправлен
+                    ->andWhere(['use_fix_price' => 0])
+                    ->all();
+
+                $all_last_places_count = 0;
+                foreach ($all_last_orders as $order) {
+                    $all_last_places_count += $order->places_count;
+                }
+
+                if($all_last_places_count >= 5) {
+                    return $used_cash_back;
+                }else {
+                    return 0;
+                }
+            }
+        }
+    }*/
+
+
+    /*
+     * Функция возвращает кэш-бэк который может быть использован в заказе для уменьшения цены заказа
+     */
+    public function getCalculateUsedCashBack() {
+
+        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
+            return 0;
+        }
+
+        if($this->client == null) {
+            return 0;
+        }
+
+
+        $do_tariff = null;
+        if($this->client_id > 0) {
+            $do_tariff = $this->client->doTariff;
+        }
+        if($do_tariff == null) {
+            $informer_office = $this->informerOffice;
+            if ($informer_office != null) {
+                $do_tariff = $informer_office->doTariff;
+            }
+        }
+        if($this->use_fix_price == true && $do_tariff == null ) {
+            return 0;
+        }
+
+        if($do_tariff != null && $do_tariff->use_fix_price == true) {
+            $this->use_fix_price = true;
+        }else {
+            $this->use_fix_price = false;
+        }
+        if($this->use_fix_price == 1) {
+            return 0;
+        }
+
+        // при наличии $do_tariff кэш-бэк не считаем!!!
+        if($do_tariff != null) {
+            return 0;
+        }
+
+        $trip = $this->trip;
+        if ($trip == null) {
+            return 0;
+        }
+        $tariff = $trip->tariff;
+        if ($tariff == null) {
+            return 0;
+        }
+
+
+        $full_price = $this->getCalculatePrice(true);
+        if($this->isAllowToUseCashback()) {
+
+            $free_cashback = $this->client->cashback;
+
+            // свободный кэшбэк должен быть уменьшен на задействованный кэшбэк в еще не отправленных заказах
+            $orders_with_cashback = Order::find()
+                ->where(['client_id' => $this->client_id])
+                ->andWhere(['status_id' => 1]) // создан (в работе)
+                ->andWhere(['>', 'used_cash_back', 0])
+                ->andWhere(['use_fix_price' => 0])
+                ->andWhere(['!=', 'id', $this->id])
+                ->all();
+            if(count($orders_with_cashback) > 0) {
+                foreach ($orders_with_cashback as $order) {
+                    $free_cashback = $free_cashback - $order->used_cash_back;
+                }
+            }
+
+            if($free_cashback > 0) {
+                if($free_cashback > $full_price) {
+                    return $full_price;
+                }else {
+                    return $free_cashback;
+                }
+            }else {
+                return 0;
+            }
+        }else {
+            return 0;
+        }
+    }
+
+
+    public function isAllowToUseCashback() {
+
+        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
+            return false;
+        }
+
+        if($this->client == null) {
+            return false;
+        }
+
+        if($this->client->cashback == 0) {
+            return false;
+        }
+
+        // проверяем выполнение условие "5-е место подряд в заказах - дает право на списание кэш-бэка"
+        if($this->places_count >= 5) {
+            return true;
+        }else {
+            // ищем последний отправленный заказ на котором есть списанный кэш-бэк
+            $last_order = Order::find()
+                ->where(['client_id' => $this->client_id])
+                ->andWhere(['status_id' => 3]) // отправлен
+                ->andWhere(['>', 'used_cash_back', 0])
+                ->andWhere(['use_fix_price' => 0])
+                ->orderBy(['id' => SORT_DESC])
+                ->one();
+
+            //echo "last_order:<pre>"; print_r($last_order); echo "</pre>";
+
+            if($last_order == null){
+                return false;
+            }else {
+                $all_last_orders = Order::find()
+                    ->where(['>=', 'id', $last_order->id])
+                    ->andWhere(['status_id' => 3]) // отправлен
+                    ->andWhere(['use_fix_price' => 0])
+                    ->all();
+
+//                foreach ($all_last_orders as $or) {
+//                    echo "id=".$or->id."<br />";
+//                }
+
+                $all_last_places_count = 0;
+                foreach ($all_last_orders as $order) {
+                    $all_last_places_count += $order->places_count;
+                }
+                $all_last_places_count += $this->places_count;
+
+                if($all_last_places_count >= 5) {
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    /*
+     * Возвращается цена заказа
+     */
+    public function getCalculatePrice($return_full_price_without_cashback = false)
     {
         // определяем источник, по нему определяем признак формирования цены
         $do_tariff = null;
@@ -1522,47 +1704,50 @@ class Order extends \yii\db\ActiveRecord
         }
 
 
-        $COST = 0;
         if($this->use_fix_price == 1) {
+            return $this->price;
+        }
 
-            $COST = $this->price;
+        $trip = $this->trip;
+        if ($trip == null) {
+            return 0;
+        }
+        $tariff = $trip->tariff;
+        if ($tariff == null) {
+            return 0;
+        }
 
-        }else {
 
-            $P = intval($this->places_count); // количество мест в текущем заказе
-            $S = intval($this->student_count); // количество студентов в текущем заказе
-            $B = intval($this->child_count); // количество детей в текущем заказе
+        // Расчитываем цену заказа
+        $COST = 0;
+
+        $P = intval($this->places_count); // количество мест в текущем заказе
+        $S = intval($this->student_count); // количество студентов в текущем заказе
+        $B = intval($this->child_count); // количество детей в текущем заказе
+
+        if (preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/i', $this->date)) {
+            $this->date = strtotime($this->date);
+        }
+
+
+        $T_RESERV = $tariff->unprepayment_reservation_cost; // стоимость бронирования
+        $T_COMMON = $tariff->unprepayment_common_price + $T_RESERV;  // цена по общему тарифу
+        $T_STUDENT = $tariff->unprepayment_student_price + $T_RESERV; // студенческий тариф
+        $T_BABY = $tariff->unprepayment_baby_price + $T_RESERV;    // детский тариф
+        $T_AERO = $tariff->unprepayment_aero_price + $T_RESERV;    // тариф аэропорт
+        $T_LOYAL = $tariff->unprepayment_loyal_price + $T_RESERV;   // тариф призовой поездки
+        $T_PARCEL = $tariff->unprepayment_parcel_price + $T_RESERV; // тариф отправки посылки (без места)
+
+        // если клиенту едут в аэропорт, то они считаются по иной формуле
+        $yandexPointTo = $this->yandexPointTo;
+        $yandexPointFrom = $this->yandexPointFrom;
+
+
+
+        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
+
 
             $prize_count = $this->prizeTripCount; // количество призовых поездок в текущем заказе
-
-            if (preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/i', $this->date)) {
-                $this->date = strtotime($this->date);
-            }
-
-            $trip = $this->trip;
-            if ($trip == null) {
-                //throw new ForbiddenHttpException('Рейс не найден');
-                return 0;
-            }
-            $tariff = $trip->tariff;
-            if ($tariff == null) {
-                //throw new ForbiddenHttpException('Тариф не найден');
-                return 0;
-            }
-
-            $T_RESERV = $tariff->unprepayment_reservation_cost; // стоимость бронирования
-
-            $T_COMMON = $tariff->unprepayment_common_price + $T_RESERV;  // цена по общему тарифу
-            $T_STUDENT = $tariff->unprepayment_student_price + $T_RESERV; // студенческий тариф
-            $T_BABY = $tariff->unprepayment_baby_price + $T_RESERV;    // детский тариф
-            $T_AERO = $tariff->unprepayment_aero_price + $T_RESERV;    // тариф аэропорт
-            $T_LOYAL = $tariff->unprepayment_loyal_price + $T_RESERV;   // тариф призовой поездки
-            $T_PARCEL = $tariff->unprepayment_parcel_price + $T_RESERV; // тариф отправки посылки (без места)
-
-
-            // если клиенту едут в аэропорт, то они считаются по иной формуле
-            $yandexPointTo = $this->yandexPointTo;
-            $yandexPointFrom = $this->yandexPointFrom;
 
             if ($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
                 $COST = 10;
@@ -1611,41 +1796,185 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
-        }
 
-        if($do_tariff != null) {
-            $COST = $do_tariff->changeTotalPrice($COST, $this);
-        }
+            if($do_tariff != null) {
+                $COST = $do_tariff->changeTotalPrice($COST, $this);
+            }
 
+
+        }else { // cash_back_on
+
+
+            // кэш-бэк для $do_tariff не считаем!!!
+            if($do_tariff != null) {
+
+                if ($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
+                    $COST = 10;
+                }elseif ($this->is_not_places == 1) {
+                    $COST = $do_tariff->changePlacePrice($T_PARCEL, $this);
+                }elseif (
+                    ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+                    || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                ) { // едут в аэропорт или из аэропорта
+
+                    $COST = $P * $do_tariff->changePlacePrice($T_AERO, $this);
+
+                    // кэш-бэк для $do_tariff не считаем!!!
+                    // ...
+
+                }else {
+
+                    // составляется массив всех цен за места (общих, студенческих, детских)
+                    $aPlacesPrice = [];
+                    $P = $P - $S - $B;
+                    for ($i = 0; $i < $P; $i++) {
+                        $aPlacesPrice[] = $T_COMMON;
+                    }
+                    for ($i = 0; $i < $S; $i++) {
+                        $aPlacesPrice[] = $T_STUDENT;
+                    }
+                    for ($i = 0; $i < $B; $i++) {
+                        $aPlacesPrice[] = $T_BABY;
+                    }
+                    sort($aPlacesPrice);
+
+                    // суммируются цены за места и получается общая цена заказа
+                    foreach ($aPlacesPrice as $placePrise) {
+                        $COST += $do_tariff->changePlacePrice($placePrise, $this);
+                    }
+
+
+                    // кэш-бэк для $do_tariff не считаем!!!
+                    // ...
+
+                }
+
+                $COST = $do_tariff->changeTotalPrice($COST, $this);
+
+            }else {  // считаем цену без $do_tariff (99% случаев, кроме заказов с фикс.ценой)
+
+                if ($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
+
+                    // здесь кэш-бэк не используем
+                    $COST = 10;
+
+                } elseif ($this->is_not_places == 1) {
+
+                    // здесь кэш-бэк не используем
+                    $COST = $T_PARCEL;
+
+                } elseif (
+                    ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+                    || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                ) { // едут в аэропорт или из аэропорта
+
+                    $COST = $P * $T_AERO;
+
+                    if(
+                        $return_full_price_without_cashback == false
+                        && $this->isAllowToUseCashback()
+                        && $this->client->cashback > 0
+                    ) {
+                        if($this->client->cashback > $COST) {
+                            $COST = 0; // кэш-бэк полностью покрывает цену заказа
+                        }else {
+                            $COST = $COST - $this->client->cashback; // так должно работать в 99% случаев для каждой 5-й поездки
+                        }
+                    }
+
+                } else {
+
+                    // составляется массив всех цен за места (общих, студенческих, детских)
+                    $aPlacesPrice = [];
+                    $P = $P - $S - $B;
+                    for ($i = 0; $i < $P; $i++) {
+                        $aPlacesPrice[] = $T_COMMON;
+                    }
+                    for ($i = 0; $i < $S; $i++) {
+                        $aPlacesPrice[] = $T_STUDENT;
+                    }
+                    for ($i = 0; $i < $B; $i++) {
+                        $aPlacesPrice[] = $T_BABY;
+                    }
+                    sort($aPlacesPrice);
+
+                    // суммируются цены за места и получается общая цена заказа
+                    foreach ($aPlacesPrice as $placePrise) {
+                        $COST += $placePrise;
+                    }
+
+
+                    if(
+                        $return_full_price_without_cashback == false
+                        && $this->isAllowToUseCashback()
+                        && $this->client->cashback > 0
+                    ) {
+                        if($this->client->cashback > $COST) {
+                            $COST = 0; // кэш-бэк полностью покрывает цену заказа
+                        }else {
+                            $COST = $COST - $this->client->cashback; // так должно работать в 99% случаев для каждой 5-й поездки
+                        }
+                    }
+                }
+            }
+        }
 
         return $COST;
     }
 
 
 
-    public function getCalculateAccrualCashBack($paid_summ)
+
+    public function getCalculateAccrualCashBack($price)
     {
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if($setting->loyalty_switch == 'fifth_place_prize') {
+        // $setting = Setting::find()->where(['id' => 1])->one();
+        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
             return 0;
         }
 
+        // при отсутствии рейса заказ нельзя считать заказом чтобы что-то считать
         $trip = $this->trip;
         if ($trip == null) {
             return 0;
         }
 
-        // эта функция вызывается при отправке (закрытии) рейса, а значит заказ уже "оплачен" или в CRM, или на клиентском сайте, или в приложении
-        if($this->payment_source == 'crm') {
-            $cashback_setting = CashbackSetting::find()
-                ->where(['<=', 'start_date', $trip->date])
-                ->andWhere(['cashback_type' => 'without_prepayment'])
-                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
-                ->orderBy(['start_date' => SORT_DESC])
-                ->one();
+        // при отсутствии клиента о каком штрафовании кэш-бэком может идти речь
+        if($this->client == null) {
+            return 0;
+        }
+
+        $do_tariff = null;
+        if($this->client_id > 0) {
+            $do_tariff = $this->client->doTariff;
+        }
+        if($do_tariff == null) {
+            $informer_office = $this->informerOffice;
+            if ($informer_office != null) {
+                $do_tariff = $informer_office->doTariff;
+            }
+        }
+        // если тут фикс.цена, то КБ не накапливаем
+        if($this->use_fix_price == true && $do_tariff == null ) {
+            return 0;
+        }
+        if($do_tariff != null && $do_tariff->use_fix_price == true) {
+            $this->use_fix_price = true;
+        }else {
+            $this->use_fix_price = false;
+        }
+        // если тут фикс.цена, то КБ не накапливаем
+        if($this->use_fix_price == 1) {
+            return 0;
+        }
+        // при наличии $do_tariff КБ не накапливаем
+        if($do_tariff != null) {
+            return 0;
+        }
+
+
 
         // насчет payment_source = application - не уверен - требует отдельного тестирования!!!
-        }else if(in_array($this->payment_source, ['client_site', 'application'])) {
+        if(in_array($this->payment_source, ['client_site', 'application'])) {
             $cashback_setting = CashbackSetting::find()
                 ->where(['<=', 'start_date', $trip->date])
                 ->andWhere(['cashback_type' => 'with_prepayment'])
@@ -1653,8 +1982,13 @@ class Order extends \yii\db\ActiveRecord
                 ->orderBy(['start_date' => SORT_DESC])
                 ->one();
 
-        }else {
-            throw new ErrorException('Не определен источник оплаты');
+        }else { // если источник crm, или он не определен
+            $cashback_setting = CashbackSetting::find()
+                ->where(['<=', 'start_date', $trip->date])
+                ->andWhere(['cashback_type' => 'without_prepayment'])
+                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
+                ->orderBy(['start_date' => SORT_DESC])
+                ->one();
         }
 
 
@@ -1668,16 +2002,14 @@ class Order extends \yii\db\ActiveRecord
 
 
         if($this->is_paid == true) {
-            //if($cashback_setting->has_cashback_for_prepayment == true) { // КБ на предоплаченные заказы с источником "t417"
             if($cashback_setting->cashback_type == 'with_prepayment') { // КБ на предоплаченные заказы с источником "t417"
-                return $paid_summ*$cashback_setting->order_accrual_percent/100;
+                return $price*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
             }
         }else {
-            //if($cashback_setting->has_cashback_for_nonprepayment == true) { // КБ для
             if($cashback_setting->cashback_type == 'without_prepayment') { // КБ для заказов не оплаченных сразу (это или заказы созданные в t417, или заказы созданные в CRM)
-                return $paid_summ*$cashback_setting->order_accrual_percent/100;
+                return $price*$cashback_setting->order_accrual_percent/100;
             }else {
                 return 0;
             }
@@ -1686,32 +2018,55 @@ class Order extends \yii\db\ActiveRecord
 
     public function getCalculatePenaltyCashBack($price)
     {
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if($setting->loyalty_switch == 'fifth_place_prize') {
+        // $setting = Setting::find()->where(['id' => 1])->one();
+        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
             return 0;
         }
 
-
+        // при отсутствии рейса заказ нельзя считать заказом чтобы что-то считать
         $trip = $this->trip;
         if ($trip == null) {
             return 0;
         }
 
-        $setting = Setting::find()->where(['id' => 1])->one();
+        // при отсутствии клиента о каком штрафовании кэш-бэком может идти речь
+        if($this->client == null) {
+            return 0;
+        }
 
-        // если заказ создан на клиентском сайте и там же оплачен, то ищем соответстветвующий CashbackSetting
-        //if($this->external_type == 'client_site' &&
+        $do_tariff = null;
+        if($this->client_id > 0) {
+            $do_tariff = $this->client->doTariff;
+        }
+        if($do_tariff == null) {
+            $informer_office = $this->informerOffice;
+            if ($informer_office != null) {
+                $do_tariff = $informer_office->doTariff;
+            }
+        }
+        // если тут фикс.цена, то кэш-бэком не штрафуем
+        if($this->use_fix_price == true && $do_tariff == null ) {
+            return 0;
+        }
+        if($do_tariff != null && $do_tariff->use_fix_price == true) {
+            $this->use_fix_price = true;
+        }else {
+            $this->use_fix_price = false;
+        }
+        // если тут фикс.цена, то кэш-бэком не штрафуем
+        if($this->use_fix_price == 1) {
+            return 0;
+        }
+        // при наличии $do_tariff кэш-бэком не штрафуем
+        if($do_tariff != null) {
+            return 0;
+        }
 
-        if($this->payment_source == 'crm') {
-            $cashback_setting = CashbackSetting::find()
-                ->where(['<=', 'start_date', $trip->date])
-                ->andWhere(['cashback_type' => 'without_prepayment'])
-                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
-                ->orderBy(['start_date' => SORT_DESC])
-                ->one();
 
-            // насчет payment_source = application - не уверен - требует отдельного тестирования!!!
-        }else if(in_array($this->payment_source, ['client_site', 'application'])) {
+
+
+        // насчет payment_source = application - не уверен - требует отдельного тестирования!!!
+        if(in_array($this->payment_source, ['client_site', 'application'])) {
             $cashback_setting = CashbackSetting::find()
                 ->where(['<=', 'start_date', $trip->date])
                 ->andWhere(['cashback_type' => 'with_prepayment'])
@@ -1719,13 +2074,21 @@ class Order extends \yii\db\ActiveRecord
                 ->orderBy(['start_date' => SORT_DESC])
                 ->one();
 
-        }else {
-            throw new ErrorException('Не определен источник оплаты');
+        }else { // если источник - crm или не определен
+            $cashback_setting = CashbackSetting::find()
+                ->where(['<=', 'start_date', $trip->date])
+                ->andWhere(['cashback_type' => 'without_prepayment'])
+                //->andWhere(['with_commercial_trips' => intval($trip->commercial)])
+                ->orderBy(['start_date' => SORT_DESC])
+                ->one();
         }
 
 
         if($cashback_setting == null) {
             return 0;
+        }
+        if($trip->commercial == true && $cashback_setting->with_commercial_trips == 0) {
+            return 0; // для коммерческих рейсов не страфуем кэш-бэком (наверно...)
         }
 
 
@@ -1753,6 +2116,7 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
+
     public function getPenaltyAuthor() {
         return $this->hasOne(User::className(), ['id' => 'penalty_author_id']);
     }
@@ -1774,11 +2138,11 @@ class Order extends \yii\db\ActiveRecord
 
             // если текущее время отмены заказа больше чем время (первая точка рейча минут часы $setting->count_hours_before_trip_to_cancel_order),
             // то отмена заказа запрещена
-            $setting = Setting::find()->where(['id' => 1])->one();
+            // $setting = Setting::find()->where(['id' => 1])->one();
             $trip = $this->trip;
             if($trip != null && $this->paid_summ > 0) {
-                if(time() > $trip->getStartTimeUnixtime() - 3600*intval($setting->count_hours_before_trip_to_cancel_order)) {
-                    throw new ForbiddenHttpException('Запрещено отменять заказ менее чем за '.$setting->count_hours_before_trip_to_cancel_order.' часов до рейса');
+                if(time() > $trip->getStartTimeUnixtime() - 3600*intval(Yii::$app->setting->count_hours_before_trip_to_cancel_order)) {
+                    throw new ForbiddenHttpException('Запрещено отменять заказ менее чем за '.Yii::$app->setting->count_hours_before_trip_to_cancel_order.' часов до рейса');
                 }
             }
 
@@ -1914,16 +2278,16 @@ class Order extends \yii\db\ActiveRecord
         $trip_end_time_secs = 3600 * intval($aTripEnd[0]) + 60 * intval($aTripEnd[1]);
 
 
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if($setting == null) {
-            throw new ErrorException('Настройки не найдены');
-        }
+//        $setting = Setting::find()->where(['id' => 1])->one();
+//        if($setting == null) {
+//            throw new ErrorException('Настройки не найдены');
+//        }
         if($trip->direction_id == 1) {
             //$max_time_short_trip = Trip::$max_time_short_trip_AK;
-            $max_time_short_trip = $setting->max_time_short_trip_AK;
+            $max_time_short_trip = Yii::$app->setting->max_time_short_trip_AK;
         }else {
             //$max_time_short_trip = Trip::$max_time_short_trip_KA;
-            $max_time_short_trip = $setting->max_time_short_trip_KA;
+            $max_time_short_trip = Yii::$app->setting->max_time_short_trip_KA;
         }
 
         if($trip_end_time_secs - $trip_start_time_secs <= $max_time_short_trip) { // короткий рейс

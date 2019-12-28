@@ -16,6 +16,8 @@ $this->title = 'Переключатель лояльности';
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <p style="color:red;">После переключения лояльности заказы нужно вручную пересохранить, чтобы в заказах произошел пересчет.</p>
+    <br />
 
     <div class="row">
         <div class="col-sm-6 form-group form-group-sm">

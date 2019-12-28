@@ -233,13 +233,13 @@ class Call extends \yii\db\ActiveRecord
 
         if(!empty($this->t_answer)) {
 
-            $setting = Setting::find()->where(['id' => 1])->one();
-            if ($setting == null) {
-                throw new ForbiddenHttpException('Не найдена запись с настройками');
-            }
+//            $setting = Setting::find()->where(['id' => 1])->one();
+//            if ($setting == null) {
+//                throw new ForbiddenHttpException('Не найдена запись с настройками');
+//            }
 
             // если время разговора дольше чем установленная в настройках мин-е время разговора для закрытия заявок
-            if($this->t_hungup - $this->t_answer >= $setting->min_talk_time_to_perform_request) {
+            if($this->t_hungup - $this->t_answer >= Yii::$app->setting->min_talk_time_to_perform_request) {
 
                 $client = Client::find()->where(['mobile_phone' => $this->operand])->one();
                 if ($client != null) {

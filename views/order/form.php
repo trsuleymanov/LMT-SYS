@@ -35,6 +35,8 @@ if($order->id > 0) {
 //    $order->additional_phone_3 = '';
 //}
 
+// $setting = Setting::find()->where(['id' => 1])->one();
+
 
 $form = ActiveForm::begin([
     'id' => 'order-client-form',
@@ -976,8 +978,11 @@ $form = ActiveForm::begin([
             ?>
         </div>
     </div>
-    <div class="yellow-line">Стоимость проезда: <span id="price"><?= intval($order->price) ?></span> рублей (<span id="prizeTripCount"><?= $order->prizeTripCount ?></span> призовый поездок) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Оплачено: <?= $order->paid_summ ?> рублей</div>
-
+    <?php if(Yii::$app->setting->loyalty_switch == 'cash_back_on') { ?>
+        <div class="yellow-line">К оплате <span id="resultPrice"><?= intval($order->price) ?></span> р. (полная стоимость - <span id="price"><?= (intval($order->price) + intval($order->used_cash_back)) ?></span> р., КБ - <span id="usedCashBack"><?= intval($order->used_cash_back) ?></span> р.)</div>
+    <?php }else { // fifth_place_prize  ?>
+        <div class="yellow-line">Стоимость проезда: <span id="price"><?= intval($order->price) ?></span> рублей (<span id="prizeTripCount"><?= $order->prizeTripCount ?></span> призовый поездок) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Оплачено: <?= $order->paid_summ ?> рублей</div>
+    <?php } ?>
     <div class="row">
         <div class="col-sm-1  first-col" style="width: 13.5%;">&nbsp;</div>
         <div class="col-sm-10">

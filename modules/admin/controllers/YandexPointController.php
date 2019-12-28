@@ -103,16 +103,16 @@ class YandexPointController extends Controller
 //        $max_time_short_trip_AK = 40*60;
 //        $max_time_short_trip_KA = 40*60;
 
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if($setting == null) {
-            throw new ErrorException('Настройки не найдены');
-        }
+//        $setting = Setting::find()->where(['id' => 1])->one();
+//        if($setting == null) {
+//            throw new ErrorException('Настройки не найдены');
+//        }
 
         YandexPoint::recountTimeToGetTogether(
-            $setting->ya_point_p_AK,
-            $setting->ya_point_p_KA,
-            $setting->max_time_short_trip_AK,
-            $setting->max_time_short_trip_KA
+            Yii::$app->setting->ya_point_p_AK,
+            Yii::$app->setting->ya_point_p_KA,
+            Yii::$app->setting->max_time_short_trip_AK,
+            Yii::$app->setting->max_time_short_trip_KA
         );
 
 

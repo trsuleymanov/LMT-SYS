@@ -358,7 +358,7 @@ class TripTransport extends \yii\db\ActiveRecord
 
 	public function getStatusClass() {
 
-		if(!empty($this->date_sended > 0)) {
+		if(!empty($this->date_sended)) {
 
             // $class = 'sended'; // отправленная машина
 		    if($this->used_places_count < $this->total_places_count) {
@@ -645,6 +645,9 @@ class TripTransport extends \yii\db\ActiveRecord
 
         }else {
 
+            $clients = Client::find()->where(['id' => ArrayHelper::map($fact_orders_without_canceled, 'client_id', 'client_id')])->all();
+            $aClients = ArrayHelper::index($clients, 'id');
+
             $aNotConfirmTimeSat = [];
             foreach($fact_orders_without_canceled as $fact_order) {
                 if(empty($fact_order->time_sat)) {
@@ -652,6 +655,12 @@ class TripTransport extends \yii\db\ActiveRecord
                 }
                 if(empty($fact_order->confirmed_time_sat)) {
                     $aNotConfirmTimeSat[$fact_order->id] = $fact_order->id;
+                }
+
+                if($fact_order->used_cash_back > 0) {
+                    $client = $aClients[$fact_order->client_id];
+                    $client->cashback = $client->cashback - $fact_order->used_cash_back;
+                    $client->setField('cashback', $client->cashback);
                 }
             }
 
@@ -1381,8 +1390,8 @@ class TripTransport extends \yii\db\ActiveRecord
 	 */
     public function cancelSend()
     {
-        $fact_orders = $this->factOrdersWithoutCanceled;
-        if(count($fact_orders) == 0)
+        $fact_orders_without_canceled = $this->factOrdersWithoutCanceled;
+        if(count($fact_orders_without_canceled) == 0)
         {
             // отменяем отправку пустой машины
             $this->status_id = 0;
@@ -1395,9 +1404,20 @@ class TripTransport extends \yii\db\ActiveRecord
 
         }else {
 
+            $clients = Client::find()->where(['id' => ArrayHelper::map($fact_orders_without_canceled, 'client_id', 'client_id')])->all();
+            $aClients = ArrayHelper::index($clients, 'id');
+
+            foreach($fact_orders_without_canceled as $fact_order) {
+                if($fact_order->used_cash_back > 0) {
+                    $client = $aClients[$fact_order->client_id];
+                    $client->cashback = $client->cashback + $fact_order->used_cash_back;
+                    $client->setField('cashback', $client->cashback);
+                }
+            }
+
             // все отправленные заказы привязанные "фактически" к текущей машине перевожу в статус "Записан"
             $created_order_status = OrderStatus::getByCode('created');
-            $aFactOrdersId = ArrayHelper::map($fact_orders, 'id', 'id');
+            $aFactOrdersId = ArrayHelper::map($fact_orders_without_canceled, 'id', 'id');
             if (count($aFactOrdersId) > 0) {
                 Yii::$app->db->createCommand('UPDATE `order` SET status_id = ' . $created_order_status->id . ', status_setting_time=' . time() . ', updated_at=' . time() . ' WHERE id IN (' . implode(',', $aFactOrdersId) . ')')->execute();
             }

@@ -952,127 +952,19 @@ class SiteController extends Controller
 
     public function actionTest() {
 
-        /*
-        $item1 = [
-            'name' => 'ТЕСТ',
-            'price' => 2,
-            'quantity' => 1,
-            'sum' => 2,
-            'measurement_unit' => "услуга",
-            "payment_method" => "full_prepayment",
-            "payment_object" => "service",
-            'vat' => [
-                'type' => "none",
-                'sum' => 0
-            ]
-        ];
+        //echo 'max_time_short_trip_AK='.Yii::$app->setting->max_time_short_trip_AK;
 
-        $payments[0] = [
-            'type' => 1,
-            'sum' => 2,
-        ];
-
-        $data = [
-            'external_id' => "1569169501_160221",
-            'timestamp' => date("d.m.y H:i:s", time()),
-            'receipt' => [
-                'client' => [
-                    'email' => "trsuleymanov@gmail.com",
-                ],
-                'company' => [
-                    'email' => "t417417@gmail.com",
-                    'inn' => "165711720197",
-                    'sno' => "envd",
-                    'payment_address' => "t417.ru"
-                ],
-                'items' => [
-                    $item1,
-                    //$item2,
-                ],
-                'payments' => $payments,
-                'total' => 2,
-                'is_print' => false
-            ],
-        ];
-
-        $headers[] = 'Authorization: Token '.LiteboxOperation::$token;
-        $headers[] = 'Content-Type: application/json; charset=UTF-8';
-
-        $myCurl = curl_init();
-        curl_setopt_array($myCurl, [
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_URL => 'https://in.litebox.ru/fiscalization/v1/shops/'.LiteboxOperation::$shop_id.'/sell',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            //CURLOPT_POSTFIELDS => http_build_query($data)
-            CURLOPT_POSTFIELDS => json_encode($data)
-        ]);
-        $response = curl_exec($myCurl);
-        curl_close($myCurl);
-
-        $result = json_decode($response);
-        echo "<pre>"; print_r($result); echo "</pre>";
-        */
-
-        /*
-        $pl_number = 512091;
-        $date = '05.12.2018';
-        $transport_id = 2;
-        $driver_id = 66;
-
-        $transport_waybill = TransportWaybill::find()
-            ->where(['number' => $pl_number])
-            ->andWhere(['date_of_issue' => strtotime($date)])
-            ->andWhere(['transport_id' => $transport_id])
-            ->andWhere(['driver_id' => $driver_id])
-            ->one();
-        echo "transport_waybill_id=".$transport_waybill->id."<br />";
-        $transport = Transport::find()->where(['id' => $transport_id])->one();
-        $date_of_issue = strtotime($date);
-
-        // определим направление "базирование" - это направление в котогом город отправления равен городу базирования транспорта
-        if(empty($transport->base_city_id)) {
-            throw new ForbiddenHttpException('Город базирования у машины не найден');
-        }
-        $base_direction = Direction::find()->where(['city_from' => $transport->base_city_id])->one();
-        if($base_direction == null) {
-            throw new ForbiddenHttpException('Город базирования не найден в направлениях');
-        }
+//        $order = Order::find()->where(['id' => $id])->one();
+//        echo "доступен ли кэш-бэк = ".$order->isAllowToUseCashback()."<br />";
+//        echo 'полная цена = '.$order->getCalculatePrice(true)."<br />";
+//        echo 'кэш-бэк = '.$order->getCalculateUsedCashBack()."<br />";
+//        echo 'цена с вычетом кэш-бэка = '.$order->getCalculatePrice()."<br /><br />";
 
 
-        $base_trips = Trip::find()
-            ->where(['date' => $date_of_issue])
-            ->andWhere(['direction_id' => $base_direction->id])
-            ->all();
-        $aBaseTrips = ArrayHelper::index($base_trips, 'id');
-        //echo "aBaseTrips:<pre>"; print_r($aBaseTrips); echo "</pre>";
+        $order = Order::find()->where(['id' => 206584])->one();
+        echo $order->getCalculateAccrualCashBack($order->price);
+        //echo 'AccrualCashBack = '.$order->getCalculateAccrualCashBack($order->price)."<br />";
 
-        $aBaseTripsIds = ArrayHelper::map($base_trips, 'id', 'id');
-        echo "aBaseTripsIds:<pre>"; print_r($aBaseTripsIds); echo "</pre><br />";
-
-        $base_trip_transports = TripTransport::find()
-            ->where(['transport_id' => $transport_id])
-            ->andWhere(['trip_id' => $aBaseTripsIds])
-            ->andWhere(['status_id' => 1])
-            ->all();
-        foreach ($base_trip_transports as $base_trip_transport) {
-            echo "base_trip_transport_id=".$base_trip_transport->id."<br />";
-        }
-        foreach($base_trip_transports as $trip_transport) {
-            $trip = $aBaseTrips[$trip_transport->trip_id];
-            $aStartTripsNames[$trip_transport->id] = ($trip->direction_id == 1 ? 'АК ' : 'КА ').' '.$trip->name;
-        }
-
-        echo "aStartTripsNames:<pre>"; print_r($aStartTripsNames); echo "</pre>";
-        */
-
-//        $diff = -38249;
-//        $hours = intval(abs($diff)/3600);
-//        $mins = intval((abs($diff) - 3600*$hours)/60);
-//        echo '-'.$hours.':'.$mins;
-
-        $order = Order::find()->where(['id' => 216144])->one();
-        echo "пенальти с заказа=".$order->getCalculatePenaltyCashBack(500);
     }
 
     public function actionTest2()

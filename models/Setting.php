@@ -104,7 +104,7 @@ class Setting extends \yii\db\ActiveRecord
      */
     public static function changeShowingPhone($phone, $setting_field, $replacementSymbol = '') {
 
-        $setting = Setting::find()->where(['id' => 1])->one();
+        // $setting = Setting::find()->where(['id' => 1])->one();
 
         $sapi = php_sapi_name();
         if ($sapi=='cli') { // это консольный запуск
@@ -113,7 +113,7 @@ class Setting extends \yii\db\ActiveRecord
 
         switch ($setting_field) {
             case 'show_short_clients_phones':
-                if($setting->show_short_clients_phones == true && !in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) {
+                if(Yii::$app->setting->show_short_clients_phones == true && !in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) {
                     // +7-111-111-1111 -> +7-111-..-1111 - старый вариант
                     // +7-111-111-1111 -> +7-.....-1111 - новый вариант
                     // +7-111-111-1111 -> +7-xxx-xxx-1111 - посимвольная замена
@@ -126,7 +126,7 @@ class Setting extends \yii\db\ActiveRecord
                 break;
 
             case 'show_short_drivers_phones':
-                if($setting->show_short_drivers_phones == true && !in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) {
+                if(Yii::$app->setting->show_short_drivers_phones == true && !in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) {
                     // +7-111-111-1111 -> +7-111-..-1111
                     // +7-111-111-1111 -> +7-.....-1111 - новый вариант
                     if(empty($replacementSymbol)) {

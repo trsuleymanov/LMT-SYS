@@ -82,11 +82,11 @@ class OperatorBeelineSubscription extends \yii\db\ActiveRecord
 
         $expires = 14*3600;
 
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if($setting == null) {
-            throw new ErrorException('Запись с настройками не найдена');
-        }
-        if(empty($setting->crm_url_for_beeline_ats)) {
+//        $setting = Setting::find()->where(['id' => 1])->one();
+//        if($setting == null) {
+//            throw new ErrorException('Запись с настройками не найдена');
+//        }
+        if(empty(Yii::$app->setting->crm_url_for_beeline_ats)) {
             throw new ErrorException('Ссылка на струницу в CRM не найдена');
         }
 
@@ -95,7 +95,7 @@ class OperatorBeelineSubscription extends \yii\db\ActiveRecord
         //$something['subscriptionType'] = "BASIC_CALL";
         $something['subscriptionType'] = "ADVANCED_CALL";
         //$something['url'] = 'http://'.$_SERVER['HTTP_HOST'].'/beeline/default';
-        $something['url'] = $setting->crm_url_for_beeline_ats;
+        $something['url'] = Yii::$app->setting->crm_url_for_beeline_ats;
 
 
         //$headers[] = 'X-MPBX-API-AUTH-TOKEN: b3469183-f19a-46ce-9b44-19ace72e84c2';

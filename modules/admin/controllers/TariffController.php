@@ -169,7 +169,7 @@ class TariffController extends Controller
                 $used_cash_back = $order->getCalculateUsedCashBack();
                 $prize_trip_count = $order->prizeTripCount;
 
-                $command = Yii::$app->db->createCommand('UPDATE `'.Order::tableName().'` SET price="'.$price.'", used_cash_back="'.$used_cash_back.'", prize_trip_count="'.$prize_trip_count.'" WHERE id='.$order->id);
+                $command = Yii::$app->db->createCommand('UPDATE `'.Order::tableName().'` SET price="'.$price.'", used_cash_back="'.$used_cash_back.'", prize_trip_count="'.$prize_trip_count.'", sync_date=NULL WHERE id='.$order->id);
 	            $command->execute();
             }
         }else {

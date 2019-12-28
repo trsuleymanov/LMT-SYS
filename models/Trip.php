@@ -608,15 +608,19 @@ class Trip extends \yii\db\ActiveRecord
 			$orders = Order::find()->where(['IN', 'id', $aAllOrders])->all(); // лучше заново создать модели с обновленными данными по рейсу
 			foreach($orders as $order) {
 
+                $is_changed = false;
+
 				$price = $order->getCalculatePrice();
 				if($price != $order->price) {
 					$order->setField('price', $price);
+                    $is_changed = true;
 				}
 
 				// кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
                 $used_cash_back = $order->getCalculateUsedCashBack();
                 if ($order->used_cash_back != $used_cash_back) {
                     $order->setField('used_cash_back', $used_cash_back);
+                    $is_changed = true;
                 }
 
                 // кол-во мест в каждом заказе, как и настройки никак не меняются от слияния рейсов, значит призовые не пересчитываются
@@ -650,7 +654,12 @@ class Trip extends \yii\db\ActiveRecord
 				$time_confirm = $order->getYandexPointTimeConfirm();
 				if($time_confirm > 0) {
 					$order->setField('time_confirm_auto', $time_confirm);
+                    $is_changed = true;
 				}
+
+                if($is_changed == true) {
+                    $order->setField('sync_date', NULL);
+                }
 			}
 
 		}
@@ -2021,32 +2030,6 @@ class Trip extends \yii\db\ActiveRecord
                     $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
                     $order->setField('time_confirm_diff', $time_confirm_diff);
                 }
-
-//				$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
-//				if($order->accrual_cash_back != $accrual_cash_back) {
-//					$order->setField('accrual_cash_back', $accrual_cash_back); // сохранили в базу
-//				}
-
-//				if($order->status_id == 2) { // canceled
-//
-//					$penalty_cash_back = $order->getCalculatePenaltyCashBack($price);
-//					if($penalty_cash_back != $order->penalty_cash_back) {
-//						$order->setField('penalty_cash_back', $penalty_cash_back);
-//					}
-//					if($order->accrual_cash_back > 0) {
-//						$order->setField('accrual_cash_back', 0);
-//					}
-//
-//				}else {
-//
-//					$accrual_cash_back = $order->getCalculateAccrualCashBack($price);
-//					if($accrual_cash_back != $order->accrual_cash_back) {
-//						$order->setField('accrual_cash_back', $accrual_cash_back);
-//					}
-//					if($order->penalty_cash_back > 0) {
-//						$order->setField('penalty_cash_back', 0);
-//					}
-//				}
 			}
 
 			Order::resetOrders(ArrayHelper::map($trip_orders, 'id', 'id'));
@@ -2071,52 +2054,37 @@ class Trip extends \yii\db\ActiveRecord
             ->all();
 		if(count($trips_orders) > 0) {
 			foreach($trips_orders as $order) {
+
+                $is_changed = false;
+
 				$prize_trip_count = $order->prizeTripCount;
 				if($order->prize_trip_count != $prize_trip_count) {
 					$order->setField('prize_trip_count', $prize_trip_count);
+                    $is_changed = true;
 				}
 
 				$price = $order->getCalculatePrice();
 				if($order->price != $price) {
 					$order->setField('price', $price);
+                    $is_changed = true;
 				}
 
                 // кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
                 $used_cash_back = $order->getCalculateUsedCashBack();
                 if ($order->used_cash_back != $used_cash_back) {
                     $order->setField('used_cash_back', $used_cash_back);
+                    $is_changed = true;
                 }
 
 				if($order->time_confirm > 0) {
                     $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
                     $order->setField('time_confirm_diff', $time_confirm_diff);
+                    $is_changed = true;
                 }
 
-//				$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
-//				if($accrual_cash_back != $order->accrual_cash_back) {
-//					$order->setField('accrual_cash_back', $accrual_cash_back);
-//				}
-
-//				if($order->status_id == 2) { // canceled
-//
-//					$penalty_cash_back = $order->getCalculatePenaltyCashBack($price);
-//					if($penalty_cash_back != $order->penalty_cash_back) {
-//						$order->setField('penalty_cash_back', $penalty_cash_back);
-//					}
-//					if($order->accrual_cash_back > 0) {
-//						$order->setField('accrual_cash_back', 0);
-//					}
-//
-//				}else {
-//
-//					$accrual_cash_back = $order->getCalculateAccrualCashBack($price);
-//					if($accrual_cash_back != $order->accrual_cash_back) {
-//						$order->setField('accrual_cash_back', $accrual_cash_back);
-//					}
-//					if($order->penalty_cash_back > 0) {
-//						$order->setField('penalty_cash_back', 0);
-//					}
-//				}
+                if($is_changed == true) {
+                    $order->setField('sync_date', NULL);
+                }
 			}
 		}
 
@@ -2153,52 +2121,37 @@ class Trip extends \yii\db\ActiveRecord
                 ->all();
 		if(count($trips_orders) > 0) {
 			foreach($trips_orders as $order) {
+
+                $is_changed = false;
+
 				$prize_trip_count = $order->prizeTripCount;
 				if($order->prize_trip_count != $prize_trip_count) {
 					$order->setField('prize_trip_count', $prize_trip_count);
+                    $is_changed = true;
 				}
 
 				$price = $order->getCalculatePrice();
 				if($price != $order->price) {
 					$order->setField('price', $price);
+                    $is_changed = true;
 				}
 
                 // кэш-бэк может зависеть от цены заказа, поэтому пересчитывается
                 $used_cash_back = $order->getCalculateUsedCashBack();
                 if ($order->used_cash_back != $used_cash_back) {
                     $order->setField('used_cash_back', $used_cash_back);
+                    $is_changed = true;
                 }
 
                 if($order->time_confirm > 0) {
                     $time_confirm_diff = $order->time_confirm - time(); // например ВРПТ 3:05, изменяли рейс в 2:00, $time_confirm_diff равен 1:05
                     $order->setField('time_confirm_diff', $time_confirm_diff);
+                    $is_changed = true;
                 }
 
-//				$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
-//				if($accrual_cash_back != $order->accrual_cash_back) {
-//					$order->setField('accrual_cash_back', $accrual_cash_back);
-//				}
-
-//				if($order->status_id == 2) { // canceled
-//
-//					$penalty_cash_back = $order->getCalculatePenaltyCashBack($price);
-//					if($penalty_cash_back != $order->penalty_cash_back) {
-//						$order->setField('penalty_cash_back', $penalty_cash_back);
-//					}
-//					if($order->accrual_cash_back > 0) {
-//						$order->setField('accrual_cash_back', 0);
-//					}
-//
-//				}else {
-//
-//					$accrual_cash_back = $order->getCalculateAccrualCashBack($price);
-//					if($accrual_cash_back != $order->accrual_cash_back) {
-//						$order->setField('accrual_cash_back', $accrual_cash_back);
-//					}
-//					if($order->penalty_cash_back > 0) {
-//						$order->setField('penalty_cash_back', 0);
-//					}
-//				}
+                if($is_changed == true) {
+                    $order->setField('sync_date', NULL);
+                }
 			}
 		}
 

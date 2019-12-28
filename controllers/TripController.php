@@ -489,6 +489,9 @@ class TripController extends Controller
         $aOrdersLog = [];
         if(count($orders) > 0) {
             foreach ($orders as $order) {
+
+                $is_changed = false;
+
                 $price = $order->getCalculatePrice();
                 if ($order->price != $price) {
                     $aOrdersLog[$order->id] = [
@@ -497,28 +500,33 @@ class TripController extends Controller
                         'new_price' => $price
                     ];
                     $order->setField('price', $price);
-                    $update_page = true;
+                    $is_changed = true;
                 }
 
                 $used_cash_back = $order->getCalculateUsedCashBack();
                 if ($order->used_cash_back != $used_cash_back) {
                     $order->setField('used_cash_back', $used_cash_back);
+                    $is_changed = true;
                     $aOrdersLog[$order->id] = [
                         'order_id' => $order->id,
                         'old_price' => $order->price,
                         'new_price' => $price
                     ];
-                    $update_page = true;
                 }
 
                 $prizeTripCount = $order->prizeTripCount;
                 if($order->prize_trip_count != $prizeTripCount) {
                     $order->setField('prize_trip_count', $prizeTripCount);
+                    $is_changed = true;
                     $aOrdersLog[$order->id] = [
                         'order_id' => $order->id,
                         'old_price' => $order->price,
                         'new_price' => $price
                     ];
+                }
+
+                if($is_changed == true) {
+                    $order->setField('sync_date', NULL);
                     $update_page = true;
                 }
             }
@@ -526,6 +534,7 @@ class TripController extends Controller
 
         if(count($aOrdersLog) > 0) {
             foreach ($aOrdersLog as $aOrderData) {
+
                 $log = new LogOrderPriceRecount();
                 $log->trip_id = $trip->id;
                 $log->trip_link = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/trip/trip-orders?trip_id='.$trip->id;

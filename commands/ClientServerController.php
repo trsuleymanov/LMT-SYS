@@ -318,6 +318,11 @@ class ClientServerController extends Controller
                             $order->setField('paid_summ', $client_ext['paid_summ']);
                         }*/
 
+                        $order = self::orderUpdateClientextData($order, $client_ext);
+                        if(!$order->save(false)) {
+                            throw new ErrorException('Не удалось сохранить заказ 322');
+                        }
+
                         self::orderSetPayData($order, $client_ext);
                     }
                 }
@@ -376,6 +381,11 @@ class ClientServerController extends Controller
                         }else {
                             $order->setField('is_paid', false);
                         }*/
+
+                        $order = self::orderUpdateClientextData($order, $client_ext);
+                        if(!$order->save(false)) {
+                            throw new ErrorException('Не удалось сохранить заказ 388');
+                        }
 
                         self::orderSetPayData($order, $client_ext);
                     }
@@ -500,7 +510,6 @@ class ClientServerController extends Controller
         $order->time_confirm = $server_client_ext['time_confirm'];
 
 
-
         if($server_client_ext['places_count'] == 0) {
             $order->is_not_places = 1;
         }
@@ -527,6 +536,95 @@ class ClientServerController extends Controller
             $order->is_paid = false;
             $order->paid_time = 0;
         }*/
+
+        if($server_client_ext['source_type'] == 'application') {
+            $informer_office = InformerOffice::find()->where(['code' => 'mobile_app'])->one();
+            if ($informer_office != null) {
+                $order->informer_office_id = $informer_office->id;
+            }
+        }
+
+        return $order;
+    }
+
+
+    private static function orderUpdateClientextData($order, $server_client_ext) {
+
+
+        $client = null;
+        if(!empty($server_client_ext['email'])) {
+            $client = \app\models\Client::find()
+                ->where(['email' => $server_client_ext['email']])
+                ->one();
+        }
+        if($client == null) {
+            $client = \app\models\Client::find()
+                ->where(['mobile_phone' => $server_client_ext['phone']])
+                ->one();
+        }
+
+        // создание клиента должно было произойти ранее при синхронизации клиентов-пользователей
+        if($client == null) {
+
+            // заказ без клиента, создадим нового
+            $client = new Client();
+            $client->name = $server_client_ext['fio'];
+            $client->email = $server_client_ext['email'];
+            $client->mobile_phone = $server_client_ext['phone'];
+            if(!$client->save(false)) {
+                throw new ForbiddenHttpException('Не удалось создать пользователя');
+            }
+        }
+
+        $order->client_id = $client->id;
+        $order->client_name = $client->name;
+
+        //$order->status_id = 0;
+        $order->trip_id = $server_client_ext['trip_id'];
+        //$order->status_setting_time = $server_client_ext['trip_id'];
+        //$order->cancellation_click_time = $server_client_ext['cancellation_click_time'];
+
+
+        //$order->canceled_by = '';
+        $order->date = $server_client_ext['data'];// 10.07.2018
+        $order->direction_id = $server_client_ext['direction_id'];
+
+        $yandex_point_from = YandexPoint::find()->where(['name' => $server_client_ext['yandex_point_from_name']])->one();
+        if($yandex_point_from != null) {
+            $order->yandex_point_from_id = $yandex_point_from->id;
+        }
+        $order->yandex_point_from_name = $server_client_ext['yandex_point_from_name'];
+        $order->yandex_point_from_lat = $server_client_ext['yandex_point_from_lat'];
+        $order->yandex_point_from_long = $server_client_ext['yandex_point_from_long'];
+
+
+        $yandex_point_to = YandexPoint::find()->where(['name' => $server_client_ext['yandex_point_to_name']])->one();
+        if($yandex_point_to != null) {
+            $order->yandex_point_to_id = $yandex_point_to->id;
+        }
+        $order->yandex_point_to_name = $server_client_ext['yandex_point_to_name'];
+        $order->yandex_point_to_lat = $server_client_ext['yandex_point_to_lat'];
+        $order->yandex_point_to_long = $server_client_ext['yandex_point_to_long'];
+
+        $order->time_air_train_arrival = $server_client_ext['time_air_train_arrival'];
+
+        $order->suitcase_count = $server_client_ext['suitcase_count'];
+        $order->bag_count = $server_client_ext['bag_count'];
+        $order->time_confirm = $server_client_ext['time_confirm'];
+
+
+        if($server_client_ext['places_count'] == 0) {
+            $order->is_not_places = 1;
+        }
+        $order->places_count = $server_client_ext['places_count'];
+        $order->student_count = $server_client_ext['student_count'];
+        $order->child_count = $server_client_ext['child_count'];
+        $order->is_not_places = $server_client_ext['is_not_places'];
+        $order->prize_trip_count = $server_client_ext['prize_trip_count'];
+
+        $order->accrual_cash_back = $server_client_ext['accrual_cash_back'];
+        $order->penalty_cash_back = $server_client_ext['penalty_cash_back'];
+        $order->used_cash_back = $server_client_ext['used_cash_back'];
 
         if($server_client_ext['source_type'] == 'application') {
             $informer_office = InformerOffice::find()->where(['code' => 'mobile_app'])->one();

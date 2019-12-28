@@ -2205,14 +2205,17 @@ class Order extends \yii\db\ActiveRecord
                 $order->penalty_cash_back = $order->getCalculatePenaltyCashBack($order->price);
                 if($order->penalty_cash_back > 0) {
                     $order->setField('penalty_cash_back', $order->penalty_cash_back);
+                    $order->setField('sync_date', NULL);
 
                     $client->cashback -= $order->penalty_cash_back;
                     $client->setField('cashback', $client->cashback);
+                    $client->setField('sync_date', NULL);
                 }
 
                 if($order->accrual_cash_back > 0) {
                     $order->accrual_cash_back = 0;
                     $order->setField('accrual_cash_back', $order->accrual_cash_back);
+                    $order->setField('sync_date', NULL);
                 }
             }
 

@@ -661,6 +661,7 @@ class TripTransport extends \yii\db\ActiveRecord
                     $client = $aClients[$fact_order->client_id];
                     $client->cashback = $client->cashback - $fact_order->used_cash_back;
                     $client->setField('cashback', $client->cashback);
+                    $client->setField('sync_date', NULL);
                 }
             }
 
@@ -1412,6 +1413,7 @@ class TripTransport extends \yii\db\ActiveRecord
                     $client = $aClients[$fact_order->client_id];
                     $client->cashback = $client->cashback + $fact_order->used_cash_back;
                     $client->setField('cashback', $client->cashback);
+                    $client->setField('sync_date', NULL);
                 }
             }
 

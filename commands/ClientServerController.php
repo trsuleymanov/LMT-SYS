@@ -65,7 +65,7 @@ class ClientServerController extends Controller
                         $client->email = $aUser['email'];
                         $client->name = $aUser['fio'];
                         $client->mobile_phone = $aUser['phone'];
-                        $client->cashback = $aUser['cashback'];
+                        //$client->cashback = $aUser['cashback']; // это поле будет пересчитываться только в CRM
                         $client->current_year_sended_places = $aUser['current_year_sended_places'];
                         $client->current_year_sended_prize_places = $aUser['current_year_sended_prize_places'];
                         $client->current_year_penalty = $aUser['current_year_penalty'];
@@ -83,7 +83,7 @@ class ClientServerController extends Controller
                         if(!empty($aUser['phone']) && $client->mobile_phone != $aUser['phone']) {
                             $client->mobile_phone = $aUser['phone'];
                         }
-                        $client->cashback = $aUser['cashback'];
+                        // $client->cashback = $aUser['cashback'];  // это поле будет пересчитываться только в CRM
                         $client->current_year_sended_places = $aUser['current_year_sended_places'];
                         $client->current_year_sended_prize_places = $aUser['current_year_sended_prize_places'];
                         $client->current_year_penalty = $aUser['current_year_penalty'];

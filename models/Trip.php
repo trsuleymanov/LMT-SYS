@@ -1408,6 +1408,7 @@ class Trip extends \yii\db\ActiveRecord
 
                     if($accrual_cash_back != $trip_order->accrual_cash_back) {
                         $trip_order->setField('accrual_cash_back', $accrual_cash_back);
+                        $trip_order->setField('sync_date', NULL);
                         $trip_order->accrual_cash_back = $accrual_cash_back;
                     }
                     $aSentClientsIds[$trip_order->client_id] = $trip_order->client_id;
@@ -1431,6 +1432,7 @@ class Trip extends \yii\db\ActiveRecord
 
                         if($trip_order->accrual_cash_back > 0 /*|| $trip_order->used_cash_back > 0*/) {
                             $client->setField('cashback', $client->cashback);
+                            $client->setField('sync_date', NULL);
                         }
                     }
                 }
@@ -1618,6 +1620,7 @@ class Trip extends \yii\db\ActiveRecord
 
                         if($trip_order->accrual_cash_back > 0 /*|| $trip_order->used_cash_back > 0*/) {
                             $client->setField('cashback', $client->cashback);
+                            $client->setField('sync_date', NULL);
                         }
                     }
                 }
@@ -1626,6 +1629,7 @@ class Trip extends \yii\db\ActiveRecord
             foreach ($trip_orders as $trip_order) {
                 if($trip_order->accrual_cash_back > 0) {
                     $trip_order->setField('accrual_cash_back', 0);
+                    $trip_order->setField('sync_date', NULL);
                 }
             }
         }
@@ -1714,10 +1718,12 @@ class Trip extends \yii\db\ActiveRecord
 					$penalty_cash_back = $trip_order->getCalculatePenaltyCashBack($trip_order->price);
 					if($penalty_cash_back != $trip_order->penalty_cash_back) {
                         $trip_order->setField('penalty_cash_back', $penalty_cash_back);
+                        $trip_order->setField('sync_date', NULL);
                         $trip_order->penalty_cash_back = $penalty_cash_back;
 					}
 					if($trip_order->accrual_cash_back > 0) {
                         $trip_order->setField('accrual_cash_back', 0);
+                        $trip_order->setField('sync_date', NULL);
                         $trip_order->accrual_cash_back = 0;
 					}
 
@@ -1726,10 +1732,12 @@ class Trip extends \yii\db\ActiveRecord
 					$accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
 					if($accrual_cash_back != $trip_order->accrual_cash_back) {
                         $trip_order->setField('accrual_cash_back', $accrual_cash_back);
+                        $trip_order->setField('sync_date', NULL);
                         $trip_order->accrual_cash_back = $accrual_cash_back;
 					}
 					if($trip_order->penalty_cash_back > 0) {
                         $trip_order->setField('penalty_cash_back', 0);
+                        $trip_order->setField('sync_date', NULL);
                         $trip_order->penalty_cash_back = 0;
 					}
 				}
@@ -1758,6 +1766,7 @@ class Trip extends \yii\db\ActiveRecord
 
                         if($trip_order->accrual_cash_back > 0 || $trip_order->penalty_cash_back > 0 || $trip_order->used_cash_back > 0) {
                             $client->setField('cashback', $client->cashback);
+                            $client->setField('sync_date', NULL);
                         }
                     }
                 }
@@ -1845,9 +1854,11 @@ class Trip extends \yii\db\ActiveRecord
                 $penalty_cash_back = $trip_order->getCalculatePenaltyCashBack($trip_order->price);
                 if($penalty_cash_back != $trip_order->penalty_cash_back) {
                     $trip_order->setField('penalty_cash_back', $penalty_cash_back);
+                    $trip_order->setField('sync_date', NULL);
                 }
                 if($trip_order->accrual_cash_back > 0) {
                     $trip_order->setField('accrual_cash_back', 0);
+                    $trip_order->setField('sync_date', NULL);
                 }
 
             }else {
@@ -1855,9 +1866,11 @@ class Trip extends \yii\db\ActiveRecord
                 $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
                 if($accrual_cash_back != $trip_order->accrual_cash_back) {
                     $trip_order->setField('accrual_cash_back', $accrual_cash_back);
+                    $trip_order->setField('sync_date', NULL);
                 }
                 if($trip_order->penalty_cash_back > 0) {
                     $trip_order->setField('penalty_cash_back', 0);
+                    $trip_order->setField('sync_date', NULL);
                 }
             }
         }
@@ -1894,6 +1907,7 @@ class Trip extends \yii\db\ActiveRecord
 
                         if($trip_order->accrual_cash_back > 0 || $trip_order->penalty_cash_back > 0 || $trip_order->used_cash_back > 0) {
                             $client->setField('cashback', $client->cashback);
+                            $client->setField('sync_date', NULL);
                         }
                     }
                 }
@@ -1904,9 +1918,11 @@ class Trip extends \yii\db\ActiveRecord
 
                 if($trip_order->penalty_cash_back > 0) {
                     $trip_order->setField('penalty_cash_back', 0);
+                    $trip_order->setField('sync_date', NULL);
                 }
                 if($trip_order->accrual_cash_back > 0) {
                     $trip_order->setField('accrual_cash_back', 0);
+                    $trip_order->setField('sync_date', NULL);
                 }
             }
 		}

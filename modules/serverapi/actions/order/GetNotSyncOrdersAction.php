@@ -209,6 +209,7 @@ class GetNotSyncOrdersAction extends \yii\rest\Action
         }
 
 
-        return $aOrdersData;
+        //return $aOrdersData;
+        return [];
     }
 }

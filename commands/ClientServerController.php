@@ -319,6 +319,7 @@ class ClientServerController extends Controller
                         }*/
 
                         $order = self::orderUpdateClientextData($order, $client_ext);
+                        echo "order1:<pre>"; print_r($order); echo "</pre>";
                         if(!$order->save(false)) {
                             throw new ErrorException('Не удалось сохранить заказ 322');
                         }
@@ -383,6 +384,7 @@ class ClientServerController extends Controller
                         }*/
 
                         $order = self::orderUpdateClientextData($order, $client_ext);
+                        echo "order2:<pre>"; print_r($order); echo "</pre>";
                         if(!$order->save(false)) {
                             throw new ErrorException('Не удалось сохранить заказ 388');
                         }

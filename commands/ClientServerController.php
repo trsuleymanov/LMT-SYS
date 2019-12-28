@@ -724,7 +724,7 @@ class ClientServerController extends Controller
 
         if(count($aSqlUpdates) > 0) {
 
-            $aSqlFieldsValues = '';
+            $aSqlFieldsValues = [];
             foreach ($aSqlUpdates as $field => $value) {
                 $aSqlFieldsValues[] = $field.'="'.$value.'"';
             }

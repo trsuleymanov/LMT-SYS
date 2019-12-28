@@ -25,6 +25,9 @@ class GetNotSyncSettingAction extends \yii\rest\Action
         if($setting != null) {
             $aSetting = [
                 'count_hours_before_trip_to_cancel_order' => $setting->count_hours_before_trip_to_cancel_order,
+                'max_time_short_trip_AK' => $setting->max_time_short_trip_AK,
+                'max_time_short_trip_KA' => $setting->max_time_short_trip_KA,
+                'loyalty_switch' => $setting->loyalty_switch,
             ];
 
         }

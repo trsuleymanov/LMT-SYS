@@ -420,7 +420,8 @@ class ClientServerController extends Controller
         }
 
         $order->client_id = $client->id;
-        $order->client_name = $client->name;
+        //$order->client_name = $client->name;
+        $order->client_name = $server_client_ext['fio'];
 
         $order->status_id = 0;
         $order->trip_id = $server_client_ext['trip_id'];

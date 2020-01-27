@@ -110,7 +110,8 @@ class GetMapDataAction extends \yii\rest\Action
 
                 'paid_summ' => $order->paid_summ,
                 'used_cash_back' => $order->used_cash_back,
-                'cash_received' => $order->cash_received_time > 0 ? true : false,
+                //'cash_received' => $order->cash_received_time > 0 ? true : false,
+                'cash_received_time' => $order->cash_received_time,
                 //'is_paid' => $order->is_paid,
                 'paid_time' => $order->paid_time,
 

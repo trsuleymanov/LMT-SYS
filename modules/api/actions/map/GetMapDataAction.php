@@ -102,8 +102,16 @@ class GetMapDataAction extends \yii\rest\Action
                 }
             }
 
+            $aStatuses = [
+                0 => '',
+                1 => 'created',
+                2 => 'canceled',
+                3 => 'sent'
+            ];
+
             $pointsOrdersData[$key]['orders'][] = [
                 'id' => $order->id,
+                'status' => $aStatuses[intval($order->status_id)],
                 'client_name' => ($order->client != null ? $order->client->name : ''),
                 'client_mobile' => ($order->client != null ? $order->client->mobile_phone : ''),
                 'price' => $order->price,

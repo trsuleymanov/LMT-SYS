@@ -112,7 +112,7 @@ class GetMapDataAction extends \yii\rest\Action
             $pointsOrdersData[$key]['orders'][] = [
                 'id' => $order->id,
                 'status' => $aStatuses[intval($order->status_id)],
-                'status_setting_time' => $order->status_setting_time,
+                'status_setting_time' => intval($order->status_setting_time),
                 'client_name' => ($order->client != null ? $order->client->name : ''),
                 'client_mobile' => ($order->client != null ? $order->client->mobile_phone : ''),
                 'price' => $order->price,

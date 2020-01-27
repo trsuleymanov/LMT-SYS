@@ -59,7 +59,7 @@ class SetCashReceivedAction extends \yii\rest\Action
 //
 //        LiteboxOperation::makeOperationSell($order); // запрос на создание чека
 
-        // делаем заказ оплаченным
+        // делаем заказ как бы оплаченным
         $order->cash_received_time = time();
         $order->setField('cash_received_time', $order->cash_received_time);
         $order->setPay();
@@ -69,6 +69,8 @@ class SetCashReceivedAction extends \yii\rest\Action
             SocketDemon::sendOutBrowserMessageInstant('/trip/trip-orders', ['trip_id' => $order->trip_id], 'updateTripOrdersPage()', []);
         }
 
-        return;
+        return [
+            'cash_received_time' => $order->cash_received_time,
+        ];
     }
 }

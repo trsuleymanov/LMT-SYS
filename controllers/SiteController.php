@@ -960,9 +960,10 @@ class SiteController extends Controller
 //        echo 'кэш-бэк = '.$order->getCalculateUsedCashBack()."<br />";
 //        echo 'цена с вычетом кэш-бэка = '.$order->getCalculatePrice()."<br /><br />";
 
+        echo date("d.m.Y H:i", 1580111246);
 
-        $order = Order::find()->where(['id' => 206584])->one();
-        echo $order->getCalculateAccrualCashBack($order->price);
+        //$order = Order::find()->where(['id' => 206584])->one();
+        //echo $order->getCalculateAccrualCashBack($order->price);
         //echo 'AccrualCashBack = '.$order->getCalculateAccrualCashBack($order->price)."<br />";
 
     }

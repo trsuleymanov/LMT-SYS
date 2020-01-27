@@ -59,7 +59,7 @@ class SetCashReceivedAction extends \yii\rest\Action
 //
 //        LiteboxOperation::makeOperationSell($order); // запрос на создание чека
 
-        // делаем заказ как бы оплаченным
+        // делаем заказ оплаченным
         $order->cash_received_time = time();
         $order->setField('cash_received_time', $order->cash_received_time);
         $order->setPay();

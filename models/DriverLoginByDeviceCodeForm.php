@@ -74,7 +74,7 @@ class DriverLoginByDeviceCodeForm extends Model
                 ->where(['IN', 'trip_id', ArrayHelper::map($today_trips, 'id', 'id')])
                 ->andWhere(['driver_id' => $driver->id])
                 //->andWhere(['status_id' => 0])
-                ->andWhere(['>', 'date_sended', time() - 1440])
+                ->andWhere(['>', 'date_sended', time() - 14400])
                 ->one();
             if($this->active_trip_transport == null) {
                 $this->addError($attribute_name, 'Сегодня водитель не записан на рейсы');

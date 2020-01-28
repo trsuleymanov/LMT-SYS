@@ -76,7 +76,7 @@ class DriverLoginByDeviceCodeForm extends Model
                 //->andWhere(['status_id' => 0])
                 ->andWhere([
                     'OR',
-                    ['>', 'date_sended', time() - 14400],
+                    ['>', 'date_sended', time() - 144],
                     ['date_sended' => 0],
                     ['date_sended' => NULL],
                 ])

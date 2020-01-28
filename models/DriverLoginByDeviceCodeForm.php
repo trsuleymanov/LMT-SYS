@@ -69,13 +69,14 @@ class DriverLoginByDeviceCodeForm extends Model
             $today_trips = Trip::find()->where(['date' => strtotime(date('d.m.Y'))])->all();
 
             // нахожу все! сегодняшние trip_transports привязанные к текущему водителю, но еще не отправленные
+            // date_sended
             $this->active_trip_transport = TripTransport::find()
                 ->where(['IN', 'trip_id', ArrayHelper::map($today_trips, 'id', 'id')])
                 ->andWhere(['driver_id' => $driver->id])
-                ->andWhere(['status_id' => 0])
+                //->andWhere(['status_id' => 0])
+                ->andWhere(['<', 'date_sended', time() + 14400])
                 ->one();
             if($this->active_trip_transport == null) {
-                //throw new ForbiddenHttpException('Сегодня водитель не записан на рейсы');
                 $this->addError($attribute_name, 'Сегодня водитель не записан на рейсы');
             }else {
                 return true;

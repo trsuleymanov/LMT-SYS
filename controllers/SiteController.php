@@ -967,21 +967,20 @@ class SiteController extends Controller
         //echo $order->getCalculateAccrualCashBack($order->price);
         //echo 'AccrualCashBack = '.$order->getCalculateAccrualCashBack($order->price)."<br />";
 
-        $litebox_operation = LiteboxOperation::find()->where(['id' => $order_id])->one();
+        $litebox_operation = LiteboxOperation::find()->where(['order_id' => $order_id])->one();
 
         $litebox_operation->checkSellStatusAndUpdate(true);
     }
 
-    public function actionTest2()
+    public function actionTest2($order_id)
     {
-        $order_id=216174;
         $order = Order::find()->where(['id' => $order_id])->one();
 
-        if($order->trip_id > 0) {
-            $trip = $order->trip;
-            SocketDemon::updateMainPages($trip->id, $trip->date);
-            echo "отработала SocketDemon::updateMainPages для рейса ".$trip->id."<br />";
-        }
+        // делаем заказ оплаченным
+        $order->cash_received_time = time();
+        $order->setField('cash_received_time', $order->cash_received_time);
+        $order->setPay();
+
     }
 
     public function actionTest3($call_id)

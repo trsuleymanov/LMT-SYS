@@ -513,7 +513,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 //        exit;
 
         $result = json_decode($response);
-        // echo "aResult:<pre>"; print_r($aResult); echo "</pre>";
+        echo "aResult:<pre>"; print_r($result); echo "</pre>";
 
 
         if(isset($result->error) && !empty($result->error)) {

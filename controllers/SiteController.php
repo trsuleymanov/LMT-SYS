@@ -950,7 +950,7 @@ class SiteController extends Controller
     }
 
 
-    public function actionTest() {
+    public function actionTest($order_id) {
 
         //echo 'max_time_short_trip_AK='.Yii::$app->setting->max_time_short_trip_AK;
 
@@ -960,12 +960,16 @@ class SiteController extends Controller
 //        echo 'кэш-бэк = '.$order->getCalculateUsedCashBack()."<br />";
 //        echo 'цена с вычетом кэш-бэка = '.$order->getCalculatePrice()."<br /><br />";
 
-        echo date("d.m.Y H:i", 1580111246);
+        //echo date("d.m.Y H:i", 1580111246);
+        //echo date("d.m.Y H:i:s", time());
 
         //$order = Order::find()->where(['id' => 206584])->one();
         //echo $order->getCalculateAccrualCashBack($order->price);
         //echo 'AccrualCashBack = '.$order->getCalculateAccrualCashBack($order->price)."<br />";
 
+        $litebox_operation = LiteboxOperation::find()->where(['id' => $order_id])->one();
+
+        $litebox_operation->checkSellStatusAndUpdate(true);
     }
 
     public function actionTest2()

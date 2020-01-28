@@ -76,13 +76,13 @@ class DriverLoginByDeviceCodeForm extends Model
                 //->andWhere(['status_id' => 0])
                 ->andWhere([
                     'OR',
-                    ['>', 'date_sended', time() - 144],
+                    ['>', 'date_sended', time() - 13200],
                     ['date_sended' => 0],
                     ['date_sended' => NULL],
                 ])
                 ->one();
             if($this->active_trip_transport == null) {
-                $this->addError($attribute_name, 'Сегодня водитель не записан на рейсы');
+                $this->addError($attribute_name, 'Сегодня водитель не записан на рейс или доступ устарел');
             }else {
                 return true;
             }

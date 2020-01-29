@@ -80,6 +80,7 @@ class DriverLoginByDeviceCodeForm extends Model
                     ['date_sended' => 0],
                     ['date_sended' => NULL],
                 ])
+                ->andWhere(['>', 'CHARACTER_LENGTH(access_key)', 0])
                 ->one();
             if($this->active_trip_transport == null) {
                 $this->addError($attribute_name, 'Сегодня водитель не записан на рейс или доступ устарел');

@@ -231,9 +231,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'timestamp' => date("d.m.Y H:i:s", $litebox_operation->sell_at),
             'receipt' => [
                 'client' => [
-                    'email' => $order->client->email,
+                    //'email' => $order->client->email,
                     //'phone' => $order->client->mobile_phone,
-                    'phone' => '79661128006',
+                    //'phone' => '79661128006',
+                    'email' => '79661128006',
                     //'phone' => '79179397393',
                     //'phone' => '+79661128006',
                     //'phone' => '9661128006',

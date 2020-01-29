@@ -123,6 +123,8 @@ class GetMapDataAction extends \yii\rest\Action
                 'cash_received_time' => intval($order->cash_received_time),
                 //'is_paid' => $order->is_paid,
                 'paid_time' => intval($order->paid_time),
+                'time_sat' => intval($order->time_sat),
+                'confirmed_time_sat' => intval($order->confirmed_time_sat),
 
                 'places_count' => intval($order->places_count),
                 'student_count' => intval($order->student_count),

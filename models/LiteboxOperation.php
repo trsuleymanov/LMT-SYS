@@ -433,8 +433,11 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'timestamp' => date("d.m.Y H:i:s", $this->sell_refund_at),
             'receipt' => [
                 'client' => [
-                    'email' => $order->client->email,
-                    'phone' => $order->client->mobile_phone,
+                    // 'email' => $order->client->email,
+                    // 'phone' => $order->client->mobile_phone,
+
+                    // в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
+                    'email' => $order->client->mobile_phone,
                 ],
                 'company' => [
                     'email' => "417417t@gmail.com",

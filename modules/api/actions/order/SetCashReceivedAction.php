@@ -73,8 +73,8 @@ class SetCashReceivedAction extends \yii\rest\Action
         }
 
         return [
-            'cash_received_time' => $order->cash_received_time,
-            'paid_time' => $order->paid_time,
+            'cash_received_time' => intval($order->cash_received_time),
+            'paid_time' => intval($order->paid_time),
         ];
     }
 }

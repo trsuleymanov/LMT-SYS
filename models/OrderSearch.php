@@ -37,7 +37,7 @@ class OrderSearch extends Order
                 'places_count', 'student_count', 'child_count', 'bag_count', 'suitcase_count', 'oversized_count',
                 'is_not_places', 'informer_office_id', 'yandex_point_from_id', 'yandex_point_to_id',
                 'yandex_point_from_lat', 'yandex_point_to_lat', 'yandex_point_from_long', 'yandex_point_to_long',
-                'litebox_uuid', 'litebox_fn_number', 'litebox_fiscal_document_number', 'litebox_fiscal_document_attribute'
+                'litebox_uuid', 'litebox_fiscal_document_number', 'litebox_fiscal_document_attribute'
             ], 'integer'],
             [['price', 'paid_summ', 'paid_time', 'accrual_cash_back', 'used_cash_back', 'penalty_cash_back', 'cash_received_time'], 'number'],
             [['comment', 'additional_phone_1', 'additional_phone_2', 'additional_phone_3',
@@ -46,7 +46,8 @@ class OrderSearch extends Order
                 // 'time_vpz',
                 'client_name_phone', 'client_name', 'fact_transport_id', 'plan_transport_id',
                 'penalty', 'places_student_child_count', 'yandex_point_from_name', 'yandex_point_to_name',
-                'first_writedown_click_time', 'status_id', 'payment_source'], 'safe'],
+                'first_writedown_click_time', 'status_id', 'payment_source', 'litebox_fn_number',
+                'litebox_ecr_registration_number'], 'safe'],
         ];
     }
 

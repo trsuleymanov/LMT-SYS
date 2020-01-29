@@ -30,7 +30,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             [['order_id', 'sell_status_setting_time', 'sell_refund_status_setting_time', 'sell_at', 'sell_refund_at', ], 'integer'],
             [['sell_status', 'sell_refund_status'], 'string'],
             [['sell_uuid', 'sell_refund_uuid'], 'string', 'max' => 36],
-            [['fn_number'], 'string', 'max' => 16],
+            [['fn_number', 'ecr_registration_number'], 'string', 'max' => 16],
             [['fiscal_document_number', 'fiscal_document_attribute'], 'string', 'max' => 10],
         ];
     }
@@ -55,8 +55,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'sell_refund_status_setting_time' => 'Время установка статуса "Возврат прихода"',
 
             'fn_number' => 'ФН номер (номер фискального накопителя)',
-            'fiscal_document_number' => 'Фискальный номер документа',
-            'fiscal_document_attribute' => 'Фискальный признак документа',
+            'fiscal_document_number' => 'Номер_ФД',
+            'ecr_registration_number' => 'Регистрационный номер ККТ (РНККТ)',
+            'fiscal_document_attribute' => 'Фискальный признак достумента (ФПД)',
         ];
     }
 
@@ -231,7 +232,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'receipt' => [
                 'client' => [
                     'email' => $order->client->email,
-                    'phone' => $order->client->mobile_phone,
+                    //'phone' => $order->client->mobile_phone,
+                    'phone' => '79661128006',
                     //'phone' => '79179397393',
                     //'phone' => '+79661128006',
                     //'phone' => '9661128006',
@@ -554,6 +556,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 if($result->payload != null) {
                     $this->fn_number = $result->payload->fn_number;
                     $this->fiscal_document_number = $result->payload->fiscal_document_number;
+                    $this->ecr_registration_number = $result->payload->ecr_registration_number;
                     $this->fiscal_document_attribute = $result->payload->fiscal_document_attribute;
                 }
 
@@ -576,6 +579,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 $order->litebox_fn_number = $this->fn_number;
                 $order->litebox_fiscal_document_number = $this->fiscal_document_number;
                 $order->litebox_fiscal_document_attribute = $this->fiscal_document_attribute;
+                $this->litebox_ecr_registration_number = $this->ecr_registration_number;
                 if (!$order->save(false)) {
                     if ($is_console == true) {
                         ClientServerController::sendMessageToAdmin('Ошибка', 'LiteboxOperation::checkStatusAndUpdate Не удалось сохранить данные по заказу');
@@ -656,6 +660,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 if($result->payload != null) {
                     $this->fn_number = $result->payload->fn_number;
                     $this->fiscal_document_number = $result->payload->fiscal_document_number;
+                    $this->ecr_registration_number = $result->payload->ecr_registration_number;
                     $this->fiscal_document_attribute = $result->payload->fiscal_document_attribute;
                 }
 
@@ -677,6 +682,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 $order = Order::find()->where(['id' => $this->order_id])->one();
                 $order->litebox_fn_number = $this->fn_number;
                 $order->litebox_fiscal_document_number = $this->fiscal_document_number;
+                $order->litebox_ecr_registration_number = $this->ecr_registration_number;
                 $order->litebox_fiscal_document_attribute = $this->fiscal_document_attribute;
                 if (!$order->save(false)) {
                     if ($is_console == true) {

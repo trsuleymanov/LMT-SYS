@@ -714,9 +714,10 @@ class Order extends \yii\db\ActiveRecord
             'paid_summ' => 'Оплачено',
             'litebox_uuid' => 'uuid операции, возвращенный сервером',
             'litebox_fn_number' => 'ФН номер (номер фискального накопителя)',
-            'litebox_fiscal_document_number' => 'Фискальный номер документа',
+            'litebox_fiscal_document_number' => 'Номер_ФД',
+            'litebox_ecr_registration_number' => 'Регистрационный номер ККТ (РНККТ)',
             //'litebox_fiscal_receipt_number' => 'Номер чека в смене',
-            'litebox_fiscal_document_attribute' => 'Фискальный признак документа',
+            'litebox_fiscal_document_attribute' => 'Фискальный признак документа (ФПД)',
 
             'paid_time' => 'Время оплаты',
             'payment_source' => 'Источник оплаты',

@@ -62,7 +62,10 @@ class SetCashReceivedAction extends \yii\rest\Action
         // делаем заказ оплаченным
         $order->cash_received_time = time();
         $order->setField('cash_received_time', $order->cash_received_time);
-        $order->setPay();
+        $aFields = [
+            'payment_source' => 'application'
+        ];
+        $order->setPay(true, $aFields);
 
         if($order->trip_id > 0) {
             // передаем сообщение в браузер

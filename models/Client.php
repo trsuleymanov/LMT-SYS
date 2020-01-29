@@ -42,9 +42,10 @@ class Client extends \yii\db\ActiveRecord
         }
 
         $client = Client::find()->where(['mobile_phone' => $mobile_phone])->one();
-        if($client == null) {
-            throw new ErrorException('клиент не найден. Телефон: '.$mobile_phone);
-        }
+        // здесь не нужно выводить ошибку
+//        if($client == null) {
+//            throw new ErrorException('клиент не найден. Телефон: '.$mobile_phone);
+//        }
 
         return $client;
     }

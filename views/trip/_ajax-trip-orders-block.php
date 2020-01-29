@@ -673,7 +673,7 @@ $columns = ArrayHelper::merge($columns, [
                 }else {
                     $source = 'неопределен_'.date('ddMMyy_HH:mm', $model->paid_time);
                 }
-                $str .= '<span>Источник нажатия '.$source.'</span>';
+                $str .= '<span>Источник нажатия '.$source.'</span><br />';
             }
             $str .= 'Стоимость/Оплачено: <b>'.(intval($model->price) == 0 ? '0.00' : $model->price).' / '.($model->paid_summ == 0 ? '0.00' : $model->paid_summ).'</b>';
             if($model->informer_office_id > 0) {

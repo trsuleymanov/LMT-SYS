@@ -598,6 +598,8 @@ class TripTransport extends \yii\db\ActiveRecord
 //     - Дата, время, оператор выпуска (отправки) т/с
 //     - Неотмененным заказам - статус "Отправлено" и время отправки
 
+        $trip = $this->trip;
+
         // если есть на рейсе заказы не посаженные и не привязанные к текущей машине,
         // а текущая машина является последней не отправленной и машиной, то нельзя отправлять.
         $created_order_status = OrderStatus::getByCode('created');
@@ -611,6 +613,7 @@ class TripTransport extends \yii\db\ActiveRecord
             ->all();
 
         if(count($trip_created_orders) > 0) {
+
             // ищем хоть один не отправленный транспорт кроме текущего
             $not_sended_trip_transports = TripTransport::find()
                 ->where(['trip_id' => $this->trip_id])
@@ -620,6 +623,7 @@ class TripTransport extends \yii\db\ActiveRecord
                     ['date_sended' => NULL]
                 ])
                 ->andWhere(['!=', 'id', $this->id])->one();
+
             if($not_sended_trip_transports == null) {
                 throw new ForbiddenHttpException('Нельзя отправить последнюю на рейсе машину при наличии непосаженных пассажиров');
             }
@@ -630,7 +634,7 @@ class TripTransport extends \yii\db\ActiveRecord
         }
 
 
-        $trip = $this->trip;
+
         $fact_orders_without_canceled = $this->factOrdersWithoutCanceled;
         if(count($fact_orders_without_canceled) == 0)
         {
@@ -650,9 +654,21 @@ class TripTransport extends \yii\db\ActiveRecord
 
             $aNotConfirmTimeSat = [];
             foreach($fact_orders_without_canceled as $fact_order) {
-                if(empty($fact_order->time_sat)) {
-                    throw new ForbiddenHttpException('У вас есть непосаженные пассажиры, прикрепленные к этой машине');
+
+                if($trip->use_mobile_app == 1) {
+                    // можно отправлять машину если у заказов подтверждена посадка
+                    if(empty($fact_order->confirmed_time_sat)) {
+                        throw new ForbiddenHttpException('У вас есть непосаженные пассажиры, прикрепленные к этой машине');
+                    }
+
+                }else {
+                    if(empty($fact_order->time_sat)) {
+                        throw new ForbiddenHttpException('У вас есть непосаженные пассажиры, прикрепленные к этой машине');
+                    }
                 }
+
+
+
                 if(empty($fact_order->confirmed_time_sat)) {
                     $aNotConfirmTimeSat[$fact_order->id] = $fact_order->id;
                 }

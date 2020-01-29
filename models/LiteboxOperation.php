@@ -234,11 +234,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     //'email' => $order->client->email,
                     //'phone' => $order->client->mobile_phone,
                     //'phone' => '79661128006',
-                    'email' => '79661128006',
-                    //'phone' => '79179397393',
-                    //'phone' => '+79661128006',
-                    //'phone' => '9661128006',
-                    //'phone' => '9625559569',
+                    //'email' => '79661128006',
+
+                    // в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
+                    'email' => $order->client->mobile_phone,
                 ],
                 'company' => [
                     'email' => "417417t@gmail.com",

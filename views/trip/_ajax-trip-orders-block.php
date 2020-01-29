@@ -663,7 +663,17 @@ $columns = ArrayHelper::merge($columns, [
                 $str .= '<span>' . $model->comment . '</span><hr style="margin: 5px 0;" />';
             }
             if($model->cash_received_time > 0) {
-                $str .= '<span>Деньги получены водителем</span><br />';
+                //$str .= '<span>Деньги получены водителем</span><br />';
+                if($model->payment_source == 'application') {
+                    $source = 'ILS_'.date('dmY_H:i', $model->paid_time);
+                }elseif($model->payment_source == 'client_site') {
+                    $source = 'Client_site_'.date('ddMMyy_HH:mm', $model->paid_time);
+                }elseif($model->payment_source == 'crm') { //
+                    $source = 'CRM_'.date('ddMMyy_HH:mm', $model->paid_time);
+                }else {
+                    $source = 'неопределен_'.date('ddMMyy_HH:mm', $model->paid_time);
+                }
+                $str .= '<span>Источник нажатия '.$source.'</span>';
             }
             $str .= 'Стоимость/Оплачено: <b>'.(intval($model->price) == 0 ? '0.00' : $model->price).' / '.($model->paid_summ == 0 ? '0.00' : $model->paid_summ).'</b>';
             if($model->informer_office_id > 0) {

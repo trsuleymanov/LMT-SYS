@@ -118,6 +118,7 @@ class GetMapDataAction extends \yii\rest\Action
                 'price' => $order->price,
 
                 'paid_summ' => $order->paid_summ,
+                'payment_source' => $order->payment_source, // 'client_site', 'application', 'crm', ''
                 'used_cash_back' => $order->used_cash_back,
                 //'cash_received' => $order->cash_received_time > 0 ? true : false,
                 'cash_received_time' => intval($order->cash_received_time),

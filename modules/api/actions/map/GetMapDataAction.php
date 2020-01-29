@@ -139,7 +139,6 @@ class GetMapDataAction extends \yii\rest\Action
                 'yandex_point_from_name' => $order->yandex_point_from_name,
                 'yandex_point_from_lat' => $order->yandex_point_from_lat,
                 'yandex_point_from_long' => $order->yandex_point_from_long,
-                'confirmed_time_sat' => intval($order->confirmed_time_sat),
                 'vrpt' => date('H:i', $order->time_confirm),
                 'time_confirm' => $order->time_confirm,
                 'time_confirm_sort' => $order->time_confirm_sort,

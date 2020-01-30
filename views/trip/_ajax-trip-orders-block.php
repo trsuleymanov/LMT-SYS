@@ -667,11 +667,11 @@ $columns = ArrayHelper::merge($columns, [
                 if($model->payment_source == 'application') {
                     $source = 'ILS_'.date('dmY_H:i', $model->paid_time);
                 }elseif($model->payment_source == 'client_site') {
-                    $source = 'Client_site_'.date('ddMMyy_HH:mm', $model->paid_time);
+                    $source = 'Client_site_'.date('dmY_H:i', $model->paid_time);
                 }elseif($model->payment_source == 'crm') { //
-                    $source = 'CRM_'.date('ddMMyy_HH:mm', $model->paid_time);
+                    $source = 'CRM_'.date('dmY_H:i', $model->paid_time);
                 }else {
-                    $source = 'неопределен_'.date('ddMMyy_HH:mm', $model->paid_time);
+                    $source = 'неопределен_'.date('dmY_H:i', $model->paid_time);
                 }
                 $str .= '<span>Источник нажатия '.$source.'</span><br />';
             }

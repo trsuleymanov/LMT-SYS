@@ -231,13 +231,13 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'timestamp' => date("d.m.Y H:i:s", $litebox_operation->sell_at),
             'receipt' => [
                 'client' => [
-                    'email' => $order->client->email,
-                    'phone' => $order->client->mobile_phone,
+                    //'email' => $order->client->email,
+                    //'phone' => $order->client->mobile_phone,
                     //'phone' => '79661128006',
                     //'email' => '79661128006',
 
                     // в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
-                    //'email' => $order->client->mobile_phone,
+                    'email' => $order->client->mobile_phone,
                 ],
                 'company' => [
                     'email' => "417417t@gmail.com",

@@ -582,7 +582,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 $order->litebox_fn_number = $this->fn_number;
                 $order->litebox_fiscal_document_number = $this->fiscal_document_number;
                 $order->litebox_fiscal_document_attribute = $this->fiscal_document_attribute;
-                $this->litebox_ecr_registration_number = $this->ecr_registration_number;
+                $order->litebox_ecr_registration_number = $this->ecr_registration_number;
                 if (!$order->save(false)) {
                     if ($is_console == true) {
                         ClientServerController::sendMessageToAdmin('Ошибка', 'LiteboxOperation::checkStatusAndUpdate Не удалось сохранить данные по заказу');

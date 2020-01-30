@@ -698,7 +698,7 @@ $columns = ArrayHelper::merge($columns, [
 
             // если заказ не оплачен, то оператор может отметить оплату с выдачей чека
             // и если после отправки т/с (заказа) прошло 30 минут
-            if($model->status_id == 3 && $model->is_paid == false && $model->status_setting_time + 1800 < time()) {
+            if($model->status_id == 3 && $model->is_paid == false && $model->status_setting_time + 180 < time()) {
                 $str .= ' <button class="but-pay-and-make-check" title="Заказ становиться оплаченным и выдается чек" style="margin: 0; padding: 0; line-height: 10px;"><i class="glyphicon glyphicon-piggy-bank"></i></button>';
             }
 

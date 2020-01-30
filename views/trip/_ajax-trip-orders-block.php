@@ -664,6 +664,7 @@ $columns = ArrayHelper::merge($columns, [
             }
             if($model->cash_received_time > 0) {
                 //$str .= '<span>Деньги получены водителем</span><br />';
+                $href = 'https://ofd.yandex.ru/vaucher/'.$model->litebox_ecr_registration_number.'/'.$model->litebox_fiscal_document_number.'/'.$model->litebox_fiscal_document_attribute;
                 if($model->payment_source == 'application') {
                     $source = 'ILS_'.date('dmY_H:i', $model->paid_time);
                 }elseif($model->payment_source == 'client_site') {
@@ -673,7 +674,7 @@ $columns = ArrayHelper::merge($columns, [
                 }else {
                     $source = 'неопределен_'.date('dmY_H:i', $model->paid_time);
                 }
-                $str .= '<span>Источник нажатия '.$source.'</span><br />';
+                $str .= '<span><a href="'.$href.'">'.$source.'</a></span><br />';
             }
             $str .= 'Стоимость/Оплачено: <b>'.(intval($model->price) == 0 ? '0.00' : $model->price).' / '.($model->paid_summ == 0 ? '0.00' : $model->paid_summ).'</b>';
             if($model->informer_office_id > 0) {

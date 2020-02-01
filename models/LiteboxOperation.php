@@ -141,84 +141,192 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         $total_price = 0;
 
-        $airport_count_sent = 0;
-        $yandexPointTo = $order->yandexPointTo;
-        $yandexPointFrom = $order->yandexPointFrom;
-        if(
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
-        ) { // едут в аэропорт или из аэропорта
-            $airport_count_sent++;
+        // нет мест - фискализацию не проводим
+        if($order->is_not_places == true) {
+            return true;
+        }
+        // для фикс.цены = 0
+        if($order->use_fix_price == true && $order->price == 0) {
+            return true;
+        }
+
+
+        $aItems = [];
+
+        // is_not_places, places_count, student_count, child_count, prize_trip_count
+        if($order->direction_id == 1) {
+            $direction = 'Альметьевск-Казань';
+        }else {
+            $direction = 'Казань-Альметьевск';
         }
 
 
         if($order->use_fix_price == true) {
-//        Пример для заказа с фикс.ценой:
-//        1. КА 12.07.2019 13:00 5 мест (СТ:0, ДЕТ:1, АЭР:0, ПРИЗ:0) – 0 руб
-//        2. ФИКС. ТАРИФ – 2500 руб.
 
-            $item1 = [
-                'name' => 'тест - '.$order->direction->sh_name.' '.date("d.m.Y", $order->trip->date).' '.$order->trip->name.' (СТ:'.$order->student_count.', ДЕТ:'.$order->child_count.', АЭР:'.$airport_count_sent.', ПРИЗ:'.$order->prize_trip_count.') – 0 руб',
-                'price' => 0, //intval($order->price),
-                'quantity' => 0,
-                'sum' => 0.00, //$order->price,
-                //'measurement_unit' => "Услуга",
-                'vat' => [ // налоги
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
+            if($order->places_count > 0) {
 
-            $item2 = [
-                'name' => 'тест - '.'ФИКС. ТАРИФ – '.$order->price.' руб.',
-                'price' => 1.00, //intval($order->price),
-                'quantity' => 1,
-                'sum' => 1.00, //$order->price,
-                //'measurement_unit' => "Услуга",
-                'vat' => [ // налоги
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
-
-            $total_price = $order->price;
-
+                $aItems[] = [
+                    'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД.',
+                    'price' => 1.00, //intval($order->price),
+                    'quantity' => 1,
+                    'sum' => 1.00, //$order->price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ]
+                ];
+            }
 
         }else {
-//        две позиции по маске:
-//        1. НПР ДАТА_РЕЙСА ВРПТ ВСЕГО_МЕСТ (СТ:1, ДЕТ:1, АЭР:1, ПРИЗ:1) - цена
-//        2. ФИКС.ЦЕНА - цена
-//
-//        Пример для заказа без фикс.цены:
-//        1. АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1) – 1850 руб
-//        2. ФИКС. ТАРИФ – 0 руб.
 
-            $item1 = [
-                'name' => 'тест - '.$order->direction->sh_name.' '.date("d.m.Y", $order->trip->date).' '.$order->trip->name.' (СТ:'.$order->student_count.', ДЕТ:'.$order->child_count.', АЭР:'.$airport_count_sent.', ПРИЗ:'.$order->prize_trip_count.') – '.intval($order->price).' руб',
-                'price' => 1, //intval($order->price),
-                'quantity' => 1,
-                'sum' => 1.00, // $order->price,
-                //'measurement_unit' => "Услуга",
-                'vat' => [
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
+            $common_places = $order->places_count - $order->student_count - $order->child_count - $order->prize_trip_count;
+            if($common_places > 0) {
 
-            $item2 = [
-                'name' => 'тест - '.'ФИКС. ТАРИФ – 0 руб.',
-                'price' => 0, //intval($order->price),
-                'quantity' => 0,
-                'sum' => 0.00, //$order->price,
-                //'measurement_unit' => "Услуга",
-                'vat' => [
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
+                if($order->trip->commercial == 1) {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ОБЩ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }else {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ОБЩ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }
 
-            $total_price = $order->price;
+            }
+
+            if($order->student_count > 0) {
+
+                if($order->trip->commercial == 1) {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.СТУД.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }else {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу СТУД.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }
+            }
+
+            if($order->child_count > 0) {
+
+                if($order->trip->commercial == 1) {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ДЕТ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }else {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }
+            }
+
+            if($order->prize_trip_count > 0) {
+
+                if($order->trip->commercial == 1) {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ПРИЗ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }else {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ПРИЗ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }
+            }
+
+            // если клиенту едут в аэропорт, то они считаются по иной формуле
+            $yandexPointTo = $order->yandexPointTo;
+            $yandexPointFrom = $order->yandexPointFrom;
+            if (
+                ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+            ) { // едут в аэропорт или из аэропорта
+
+
+                if($order->trip->commercial == 1) {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }else {
+                    $aItems[] = [
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ.',
+                        'price' => 1.00, //intval($order->price),
+                        'quantity' => 1,
+                        'sum' => 1.00, //$order->price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ]
+                    ];
+                }
+            }
+
         }
+
+
+
 
         $payments[0] = [
             'type' => 1,
@@ -245,10 +353,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     'sno' => "envd",
                     'payment_address' => "t417.ru"
                 ],
-                'items' => [
-                    $item1,
-                    $item2,
-                ],
+                'items' => $aItems,
                 'payments' => $payments,
                 'total' => 1.00, //$total_price,
                 'is_print' => false

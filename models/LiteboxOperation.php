@@ -123,6 +123,16 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             throw new ErrorException('У клиента не заполнен мобильный телефон');
         }
 
+        // нет мест - фискализацию не проводим
+        if($order->is_not_places == true) {
+            return true;
+        }
+        // для фикс.цены = 0
+        if($order->use_fix_price == true && $order->price == 0) {
+            return true;
+        }
+
+
         // проверяем наличие копий
         $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
         if($exist_litebox_operation != null) {
@@ -140,14 +150,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
 
-        // нет мест - фискализацию не проводим
-        if($order->is_not_places == true) {
-            return true;
-        }
-        // для фикс.цены = 0
-        if($order->use_fix_price == true && $order->price == 0) {
-            return true;
-        }
 
 
         $aItems = [];

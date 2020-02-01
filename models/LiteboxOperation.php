@@ -548,7 +548,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
-        if($order->use_fix_price == true) {
+        if($order->use_fix_price == 1) {
 
             if($order->places_count > 0) {
 

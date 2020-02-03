@@ -451,6 +451,7 @@ class ClientServerController extends Controller
         $order->yandex_point_to_long = $server_client_ext['yandex_point_to_long'];
 
         $order->time_air_train_arrival = $server_client_ext['time_air_train_arrival'];
+        $order->time_air_train_departure = $server_client_ext['time_air_train_departure'];
         
         $order->suitcase_count = $server_client_ext['suitcase_count'];
         $order->bag_count = $server_client_ext['bag_count'];
@@ -588,11 +589,15 @@ class ClientServerController extends Controller
             $order->yandex_point_to_lat = $server_client_ext['yandex_point_to_lat'];
             $aSqlUpdates['yandex_point_to_lat'] = $order->yandex_point_to_lat;
         }
-        if($order->yandex_point_to_long != $server_client_ext['yandex_point_to_long']) {
-            $order->yandex_point_to_long = $server_client_ext['yandex_point_to_long'];
-            $aSqlUpdates['yandex_point_to_long'] = $order->yandex_point_to_long;
+        if($order->time_air_train_departure != $server_client_ext['time_air_train_departure']) {
+            $order->time_air_train_departure = $server_client_ext['time_air_train_departure'];
+            $aSqlUpdates['time_air_train_departure'] = $order->time_air_train_departure;
         }
 
+        if($order->time_air_train_arrival != $server_client_ext['time_air_train_arrival']) {
+            $order->time_air_train_arrival = $server_client_ext['time_air_train_arrival'];
+            $aSqlUpdates['time_air_train_arrival'] = $order->time_air_train_arrival;
+        }
         if($order->time_air_train_arrival != $server_client_ext['time_air_train_arrival']) {
             $order->time_air_train_arrival = $server_client_ext['time_air_train_arrival'];
             $aSqlUpdates['time_air_train_arrival'] = $order->time_air_train_arrival;

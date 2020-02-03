@@ -183,6 +183,9 @@ class GetNotSyncOrdersAction extends \yii\rest\Action
                 'yandex_point_to_lat' => $order['yandex_point_to_lat'],
                 'yandex_point_to_long' => $order['yandex_point_to_long'],
 
+                'time_air_train_arrival' => $order['time_air_train_arrival'],
+                'time_air_train_departure' => $order['time_air_train_departure'],
+
                 'price' => $order['price'],
                 'paid_summ' => $order['paid_summ'],
                 'is_paid' => $order['is_paid'],

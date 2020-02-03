@@ -71,43 +71,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-
-    // ! нужно будет перед выгрузкой тестовые значение заменить на реальные
     public static function makeOperationSell($order) {
-
-
-//        две позиции по маске:
-//        1. НПР ДАТА_РЕЙСА ВРПТ ВСЕГО_МЕСТ (СТ:1, ДЕТ:1, АЭР:1, ПРИЗ:1) - цена
-//        2. ФИКС.ЦЕНА - цена
-//
-//        Пример для заказа без фикс.цены:
-//        1. АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1) – 1850 руб
-//        2. ФИКС. ТАРИФ – 0 руб.
-
-//        $item1 = [
-//            "name": "АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1)",
-//            "price": 1,
-//            "quantity": 2.0,
-//            "sum": 2.0,
-//            "vat":{
-//                "type": "none",
-//                "sum": 0.0
-//            }
-//        ];
-//        $item2 = [
-//            "name": "ФИКС. ТАРИФ",
-//            "price": 0,
-//            "quantity": 0.0,
-//            "sum": 0.0,
-//            "vat":{
-//                "type": "none",
-//                "sum": 0.0
-//            }
-//        ];
-
-//        Пример для заказа с фикс.ценой:
-//        1. КА 12.07.2019 13:00 5 мест (СТ:0, ДЕТ:1, АЭР:0, ПРИЗ:0) – 0 руб
-//        2. ФИКС. ТАРИФ – 2500 руб.
 
 
         if($order->trip == null) {
@@ -167,7 +131,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             if($order->places_count > 0) {
 
                 $aItems[] = [
-                    'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД.',
+                    'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД. (МЕСТ: '.$order->places_count.')',
                     'price' => 1.00, //intval($order->price),
                     'quantity' => 1,
                     'sum' => 1.00, //$order->price,
@@ -185,7 +149,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ОБЩ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ОБЩ. (МЕСТ: '.$common_places.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $common_places,
                         'sum' => 1.00, //$order->price,
@@ -196,7 +160,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ОБЩ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ОБЩ. (МЕСТ: '.$common_places.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $common_places,
                         'sum' => 1.00, //$order->price,
@@ -213,7 +177,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.СТУД.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.СТУД. (МЕСТ: '.$order->student_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->student_count,
                         'sum' => 1.00, //$order->price,
@@ -224,7 +188,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу СТУД.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу СТУД. (МЕСТ: '.$order->student_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->student_count,
                         'sum' => 1.00, //$order->price,
@@ -240,7 +204,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ДЕТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ДЕТ. (МЕСТ: '.$order->child_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->child_count,
                         'sum' => 1.00, //$order->price,
@@ -251,7 +215,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ. (МЕСТ: '.$order->child_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->child_count,
                         'sum' => 1.00, //$order->price,
@@ -267,7 +231,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ПРИЗ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ПРИЗ. (МЕСТ: '.$order->prize_trip_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->prize_trip_count,
                         'sum' => 1.00, //$order->price,
@@ -278,7 +242,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ПРИЗ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ПРИЗ. (МЕСТ: '.$order->prize_trip_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->prize_trip_count,
                         'sum' => 1.00, //$order->price,
@@ -301,9 +265,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
                         'price' => 1.00, //intval($order->price),
-                        'quantity' => 1,
+                        'quantity' => $order->places_count,
                         'sum' => 1.00, //$order->price,
                         'vat' => [ // налоги
                             'type' => "none",
@@ -312,9 +276,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
                         'price' => 1.00, //intval($order->price),
-                        'quantity' => 1,
+                        'quantity' => $order->places_count,
                         'sum' => 1.00, //$order->price,
                         'vat' => [ // налоги
                             'type' => "none",
@@ -386,24 +350,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
         if(isset($result->error) && !empty($result->error)) {
-//            [payload] =>
-//            [error] => stdClass Object(
-//                [text] => В чеке не заполнено обязательное поле: "Оплаты"(payments). Тип поля "payments" должен быть массив
-//                [code] => 32
-//                [type] => system
-//                [uuid] => 8296393b-f2a7-47e7-83b7-c5fc1c7e0c83
-//            )
-
             throw new ErrorException($result->error->text);
 
         }else {
-
-//        stdClass Object
-//        (
-//            [status] => wait
-//            [uuid] => ba11c632-0058-4fac-b412-8787622ba110
-//            [error] =>
-//        )
 
             $litebox_operation->sell_uuid = $result->uuid;
             $litebox_operation->sell_status = $result->status;
@@ -446,90 +395,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
 
-        /*
-        $total_price = 0;
-
-        $airport_count_sent = 0;
-        $yandexPointTo = $order->yandexPointTo;
-        $yandexPointFrom = $order->yandexPointFrom;
-        if(
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
-        ) { // едут в аэропорт или из аэропорта
-            $airport_count_sent++;
-        }
-
-
-        if($order->use_fix_price == true) {
-//        Пример для заказа с фикс.ценой:
-//        1. КА 12.07.2019 13:00 5 мест (СТ:0, ДЕТ:1, АЭР:0, ПРИЗ:0) – 0 руб
-//        2. ФИКС. ТАРИФ – 2500 руб.
-
-            $item1 = [
-                'name' => 'тест - '.$order->direction->sh_name.' '.date("d.m.Y", $order->trip->date).' '.$order->trip->name.' (СТ:'.$order->student_count.', ДЕТ:'.$order->child_count.', АЭР:'.$airport_count_sent.', ПРИЗ:'.$order->prize_trip_count.') – 0 руб',
-                'price' => 0, //intval($order->price),
-                'quantity' => 0,
-                'sum' => 0.00, //$order->price,
-                'measurement_unit' => "Услуга",
-                'vat' => [ // налоги
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
-
-            $item2 = [
-                'name' => 'тест - '.'ФИКС. ТАРИФ – '.$order->price.' руб.',
-                'price' => 1.00, //intval($order->price),
-                'quantity' => 1,
-                'sum' => 1.00, //$order->price,
-                'measurement_unit' => "Услуга",
-                'vat' => [ // налоги
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
-
-            $total_price = $order->price;
-
-
-        }else {
-//        две позиции по маске:
-//        1. НПР ДАТА_РЕЙСА ВРПТ ВСЕГО_МЕСТ (СТ:1, ДЕТ:1, АЭР:1, ПРИЗ:1) - цена
-//        2. ФИКС.ЦЕНА - цена
-//
-//        Пример для заказа без фикс.цены:
-//        1. АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1) – 1850 руб
-//        2. ФИКС. ТАРИФ – 0 руб.
-
-            $item1 = [
-                'name' => 'тест - '.$order->direction->sh_name.' '.date("d.m.Y", $order->trip->date).' '.$order->trip->name.' (СТ:'.$order->student_count.', ДЕТ:'.$order->child_count.', АЭР:'.$airport_count_sent.', ПРИЗ:'.$order->prize_trip_count.') – '.intval($order->price).' руб',
-                'price' => 1, //intval($order->price),
-                'quantity' => 1,
-                'sum' => 1.00, // $order->price,
-                'measurement_unit' => "Услуга",
-                'vat' => [
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
-
-            $item2 = [
-                'name' => 'тест - '.'ФИКС. ТАРИФ – 0 руб.',
-                'price' => 0, //intval($order->price),
-                'quantity' => 0,
-                'sum' => 0.00, //$order->price,
-                'measurement_unit' => "Услуга",
-                'vat' => [
-                    'type' => "none",
-                    'sum' => 0.0
-                ]
-            ];
-
-            $total_price = $order->price;
-        }*/
-
-
-
         // нет мест - фискализацию не проводим
         if($order->is_not_places == true) {
             return true;
@@ -555,7 +420,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             if($order->places_count > 0) {
 
                 $aItems[] = [
-                    'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД.',
+                    'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД. (МЕСТ: '.$order->places_count.')',
                     'price' => 1.00, //intval($order->price),
                     'quantity' => 1,
                     'sum' => 1.00, //$order->price,
@@ -573,7 +438,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ОБЩ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ОБЩ. (МЕСТ: '.$common_places.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $common_places,
                         'sum' => 1.00, //$order->price,
@@ -584,7 +449,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ОБЩ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ОБЩ. (МЕСТ: '.$common_places.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $common_places,
                         'sum' => 1.00, //$order->price,
@@ -601,7 +466,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.СТУД.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.СТУД. (МЕСТ: '.$order->student_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->student_count,
                         'sum' => 1.00, //$order->price,
@@ -612,7 +477,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу СТУД.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу СТУД. (МЕСТ: '.$order->student_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->student_count,
                         'sum' => 1.00, //$order->price,
@@ -628,7 +493,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ДЕТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ДЕТ. (МЕСТ: '.$order->child_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->child_count,
                         'sum' => 1.00, //$order->price,
@@ -639,7 +504,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ. (МЕСТ: '.$order->child_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->child_count,
                         'sum' => 1.00, //$order->price,
@@ -655,7 +520,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ПРИЗ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ПРИЗ. (МЕСТ: '.$order->prize_trip_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->prize_trip_count,
                         'sum' => 1.00, //$order->price,
@@ -666,7 +531,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ПРИЗ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ПРИЗ. (МЕСТ: '.$order->prize_trip_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => $order->prize_trip_count,
                         'sum' => 1.00, //$order->price,
@@ -689,7 +554,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => 1,
                         'sum' => 1.00, //$order->price,
@@ -700,7 +565,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
                     $aItems[] = [
-                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ.',
+                        'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
                         'price' => 1.00, //intval($order->price),
                         'quantity' => 1,
                         'sum' => 1.00, //$order->price,

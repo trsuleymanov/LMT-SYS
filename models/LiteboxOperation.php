@@ -198,7 +198,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -213,7 +214,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
 
@@ -234,7 +236,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -249,7 +252,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -269,7 +273,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -284,7 +289,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -304,7 +310,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -319,7 +326,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -346,7 +354,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -361,7 +370,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -524,7 +534,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     'vat' => [ // налоги
                         'type' => "none",
                         'sum' => 0.0
-                    ]
+                    ],
+                    'payment_object' => 'service'
                 ];
             }
 
@@ -566,7 +577,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -581,7 +593,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
 
@@ -602,7 +615,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -617,7 +631,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -637,7 +652,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
 
                 }else {
@@ -653,7 +669,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -673,7 +690,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
 
                 }else {
@@ -689,7 +707,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }
@@ -716,7 +735,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }else {
 
@@ -731,7 +751,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
-                        ]
+                        ],
+                        'payment_object' => 'service'
                     ];
                 }
             }

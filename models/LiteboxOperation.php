@@ -5,6 +5,7 @@ namespace app\models;
 use app\commands\ClientServerController;
 use Yii;
 use yii\base\ErrorException;
+use yii\web\ForbiddenHttpException;
 
 
 class LiteboxOperation extends \yii\db\ActiveRecord
@@ -114,8 +115,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
 
-
-
         $aItems = [];
 
         // is_not_places, places_count, student_count, child_count, prize_trip_count
@@ -126,12 +125,27 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
+        $do_tariff = null;
+        if($order->client_id > 0) {
+            $do_tariff = $order->client->doTariff;
+        }
+        if($do_tariff == null) {
+            $informer_office = $order->informerOffice;
+            if ($informer_office != null) {
+                $do_tariff = $informer_office->doTariff;
+            }
+        }
+
+
+
+
         $total_price = 0;
-        if($order->use_fix_price == true) {
+        if($order->use_fix_price == true || $do_tariff != null || Yii::$app->setting->loyalty_switch == 'cash_back_on') {
 
             if($order->places_count > 0) {
 
-                $summ = 1.00 * 1;
+                //$summ = 1.00 * 1;
+                $summ = $order->price;
                 $total_price += $summ;
 
                 $aItems[] = [
@@ -148,17 +162,37 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         }else {
 
+
+            $trip = $order->trip;
+            if ($trip == null) {
+                throw new ForbiddenHttpException('Рейс не найден');
+            }
+            $tariff = $trip->tariff;
+            if ($tariff == null) {
+                throw new ForbiddenHttpException('Тариф не найден');
+            }
+
+            $T_RESERV = $tariff->unprepayment_reservation_cost; // стоимость бронирования
+            $T_COMMON = $tariff->unprepayment_common_price + $T_RESERV;  // цена по общему тарифу
+            $T_STUDENT = $tariff->unprepayment_student_price + $T_RESERV; // студенческий тариф
+            $T_BABY = $tariff->unprepayment_baby_price + $T_RESERV;    // детский тариф
+            $T_AERO = $tariff->unprepayment_aero_price + $T_RESERV;    // тариф аэропорт
+            $T_LOYAL = $tariff->unprepayment_loyal_price + $T_RESERV;   // тариф призовой поездки
+            $T_PARCEL = $tariff->unprepayment_parcel_price + $T_RESERV; // тариф отправки посылки (без места)
+
+
+
             $common_places = $order->places_count - $order->student_count - $order->child_count - $order->prize_trip_count;
             if($common_places > 0) {
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * ($common_places);
+                    $summ = $T_COMMON * ($common_places);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ОБЩ. (МЕСТ: '.$common_places.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_COMMON, //intval($order->price),
                         'quantity' => $common_places,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -168,12 +202,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * ($common_places);
+                    $summ = $T_COMMON * ($common_places);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ОБЩ. (МЕСТ: '.$common_places.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_COMMON, //intval($order->price),
                         'quantity' => $common_places,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -189,12 +223,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * ($order->student_count);
+                    $summ = $T_STUDENT * ($order->student_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.СТУД. (МЕСТ: '.$order->student_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_STUDENT, //intval($order->price),
                         'quantity' => $order->student_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -204,12 +238,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * ($order->student_count);
+                    $summ = $T_STUDENT * ($order->student_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу СТУД. (МЕСТ: '.$order->student_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_STUDENT, //intval($order->price),
                         'quantity' => $order->student_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -224,12 +258,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * ($order->child_count);
+                    $summ = $T_BABY * ($order->child_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ДЕТ. (МЕСТ: '.$order->child_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_BABY, //intval($order->price),
                         'quantity' => $order->child_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -239,12 +273,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * ($order->child_count);
+                    $summ = $T_BABY * ($order->child_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ. (МЕСТ: '.$order->child_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_BABY, //intval($order->price),
                         'quantity' => $order->child_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -259,12 +293,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * ($order->prize_trip_count);
+                    $summ = $T_LOYAL * ($order->prize_trip_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.ПРИЗ. (МЕСТ: '.$order->prize_trip_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_LOYAL, //intval($order->price),
                         'quantity' => $order->prize_trip_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -274,12 +308,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * ($order->prize_trip_count);
+                    $summ = $T_LOYAL * ($order->prize_trip_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ПРИЗ. (МЕСТ: '.$order->prize_trip_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_LOYAL, //intval($order->price),
                         'quantity' => $order->prize_trip_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -301,12 +335,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * ($order->places_count);
+                    $summ = $T_AERO * ($order->places_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_AERO, //intval($order->price),
                         'quantity' => $order->places_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -316,12 +350,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * ($order->places_count);
+                    $summ = $T_AERO * ($order->places_count);
                     $total_price += $summ;
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
-                        'price' => 1.00, //intval($order->price),
+                        'price' => $T_AERO, //intval($order->price),
                         'quantity' => $order->places_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
@@ -458,12 +492,28 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             $direction = 'Казань-Альметьевск';
         }
 
+
+
+        $do_tariff = null;
+        if($order->client_id > 0) {
+            $do_tariff = $order->client->doTariff;
+        }
+        if($do_tariff == null) {
+            $informer_office = $order->informerOffice;
+            if ($informer_office != null) {
+                $do_tariff = $informer_office->doTariff;
+            }
+        }
+
+
+
         $total_price = 0;
-        if($order->use_fix_price == 1) {
+        if($order->use_fix_price == 1 || $do_tariff != null || Yii::$app->setting->loyalty_switch == 'cash_back_on') {
 
             if($order->places_count > 0) {
 
-                $summ = 1.00 * 1;
+                // $summ = 1.00 * 1;
+                $summ = $order->price;
                 $total_price += $summ;
 
                 $aItems[] = [

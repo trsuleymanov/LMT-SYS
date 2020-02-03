@@ -1750,9 +1750,11 @@ class Order extends \yii\db\ActiveRecord
 
             $prize_count = $this->prizeTripCount; // количество призовых поездок в текущем заказе
 
-            if ($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
-                $COST = 10;
-            } elseif ($this->is_not_places == 1) {
+            // Тимур: эта строчка из какого-то тестового случая, у нас в работе она точно не используется
+//            if ($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
+//                $COST = 10;
+//            } else
+            if ($this->is_not_places == 1) {
                 $COST = ($do_tariff != null ? $do_tariff->changePlacePrice($T_PARCEL, $this) : $T_PARCEL);
             } elseif (
                 ($yandexPointTo != null && $yandexPointTo->alias == 'airport')

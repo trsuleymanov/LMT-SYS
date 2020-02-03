@@ -576,9 +576,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу ДЕТ. (МЕСТ: '.$order->child_count.')',
-                        'price' => $summ, //intval($order->price),
+                        'price' => 1.00, //intval($order->price),
                         'quantity' => $order->child_count,
-                        'sum' => 1.00, //$order->price,
+                        'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
                             'type' => "none",
                             'sum' => 0.0
@@ -640,7 +640,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
                         'price' => 1.00, //intval($order->price),
-                        'quantity' => 1,
+                        'quantity' => $order->places_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
                             'type' => "none",
@@ -655,7 +655,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     $aItems[] = [
                         'name' => 'Заказная перевозка в нпр.'.$direction.' по тарифу КОММ.АЭРОПОРТ. (МЕСТ: '.$order->places_count.')',
                         'price' => 1.00, //intval($order->price),
-                        'quantity' => 1,
+                        'quantity' =>  $order->places_count,
                         'sum' => $summ, //$order->price,
                         'vat' => [ // налоги
                             'type' => "none",

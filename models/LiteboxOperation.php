@@ -470,7 +470,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД. (МЕСТ: '.$order->places_count.')',
                     'price' => 1.00, //intval($order->price),
                     'quantity' => 1,
-                    'sum' => $total_price, //$order->price,
+                    'sum' => $summ, //$order->price,
                     'vat' => [ // налоги
                         'type' => "none",
                         'sum' => 0.0
@@ -485,7 +485,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $common_places;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -500,7 +500,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $common_places;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -521,7 +521,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->student_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -536,7 +536,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->student_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -556,7 +556,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->child_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -571,7 +571,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->child_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -591,7 +591,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->prize_trip_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -607,7 +607,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 }else {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->prize_trip_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -634,7 +634,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($order->trip->commercial == 1) {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->places_count;
                     $total_price += $summ;
 
                     $aItems[] = [
@@ -649,7 +649,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     ];
                 }else {
 
-                    $summ = 1.00 * 1;
+                    $summ = 1.00 * $order->places_count;
                     $total_price += $summ;
 
                     $aItems[] = [

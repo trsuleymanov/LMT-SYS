@@ -156,7 +156,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     'vat' => [ // налоги
                         'type' => "none",
                         'sum' => 0.0
-                    ]
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
                 ];
             }
 
@@ -199,7 +202,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -215,7 +220,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
 
@@ -237,7 +244,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -253,7 +262,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -274,7 +285,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -290,7 +303,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -311,7 +326,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -327,7 +344,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -355,7 +374,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -371,7 +392,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -535,7 +558,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'type' => "none",
                         'sum' => 0.0
                     ],
-                    'payment_object' => 'service'
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
                 ];
             }
 
@@ -578,7 +603,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -594,7 +621,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
 
@@ -616,7 +645,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -632,7 +663,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -653,7 +686,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
 
                 }else {
@@ -670,7 +705,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -691,7 +728,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
 
                 }else {
@@ -708,7 +747,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }
@@ -736,7 +777,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }else {
 
@@ -752,7 +795,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                             'type' => "none",
                             'sum' => 0.0
                         ],
-                        'payment_object' => 'service'
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
                     ];
                 }
             }

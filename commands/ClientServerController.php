@@ -394,11 +394,12 @@ class ClientServerController extends Controller
         $order->sync_date = time(); // если стоит дата синхронизации, то данные этой заявки не попадут / не обновят связанную заявку
 
         $client = null;
-        if(!empty($server_client_ext['email'])) {
-            $client = \app\models\Client::find()
-                ->where(['email' => $server_client_ext['email']])
-                ->one();
-        }
+        // ищем пользователя только по телефону, иначе могут быть проблемы с правильной идентификацией
+//        if(!empty($server_client_ext['email'])) {
+//            $client = \app\models\Client::find()
+//                ->where(['email' => $server_client_ext['email']])
+//                ->one();
+//        }
         if($client == null) {
             $client = \app\models\Client::find()
                 ->where(['mobile_phone' => $server_client_ext['phone']])
@@ -501,11 +502,12 @@ class ClientServerController extends Controller
         $aSqlUpdates = [];
 
         $client = null;
-        if(!empty($server_client_ext['email'])) {
-            $client = \app\models\Client::find()
-                ->where(['email' => $server_client_ext['email']])
-                ->one();
-        }
+        // ищем пользователя только по телефону, иначе могут быть проблемы с правильной идентификацией
+//        if(!empty($server_client_ext['email'])) {
+//            $client = \app\models\Client::find()
+//                ->where(['email' => $server_client_ext['email']])
+//                ->one();
+//        }
         if($client == null) {
             $client = \app\models\Client::find()
                 ->where(['mobile_phone' => $server_client_ext['phone']])

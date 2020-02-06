@@ -217,7 +217,7 @@ class TripController extends Controller
 
 		$this->layout = 'ajax_layout1';
 
-		$model = Trip::findOne($trip_id);
+		$model = Trip::find()->where(['id' => $trip_id])->one();
 		$old_start_time = $model->start_time;
 		$old_mid_time = $model->mid_time;
 		$old_end_time = $model->end_time;
@@ -317,10 +317,11 @@ class TripController extends Controller
 		$model->date = $trips[0]->date;
 		$model->direction_id = $trips[0]->direction_id;
 
-		if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->save() && $model->mergeTrips($trips)) {
-			//Yii::$app->response->format = 'json';
-
-            // echo "post:<pre>"; print_r(Yii::$app->request->post()); echo "</pre>"; exit;
+		if ($model->load(Yii::$app->request->post())
+            && $model->validate()
+            && $model->save()
+            && $model->mergeTrips($trips)
+        ) {
 
 			$trip_operation = new TripOperation();
 			$trip_operation->type = 'merge';

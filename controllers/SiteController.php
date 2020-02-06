@@ -950,7 +950,7 @@ class SiteController extends Controller
     }
 
 
-    public function actionTest($order_id) {
+    public function actionTest() {
 
         //echo 'max_time_short_trip_AK='.Yii::$app->setting->max_time_short_trip_AK;
 
@@ -960,16 +960,20 @@ class SiteController extends Controller
 //        echo 'кэш-бэк = '.$order->getCalculateUsedCashBack()."<br />";
 //        echo 'цена с вычетом кэш-бэка = '.$order->getCalculatePrice()."<br /><br />";
 
-        //echo date("d.m.Y H:i", 1580111246);
+        echo date("d.m.Y H:i", 1581022800);
         //echo date("d.m.Y H:i:s", time());
 
         //$order = Order::find()->where(['id' => 206584])->one();
         //echo $order->getCalculateAccrualCashBack($order->price);
         //echo 'AccrualCashBack = '.$order->getCalculateAccrualCashBack($order->price)."<br />";
 
-        $litebox_operation = LiteboxOperation::find()->where(['order_id' => $order_id])->one();
+//        $litebox_operation = LiteboxOperation::find()->where(['order_id' => $order_id])->one();
+//        $litebox_operation->checkSellStatusAndUpdate(true);
 
-        $litebox_operation->checkSellStatusAndUpdate(true);
+
+        // Allowed memory size of 134 217 728 bytes exhausted (tried to allocate 330 235 200 bytes)
+        //$order = Order::find()->one();
+        //echo "order:<pre>"; print_r($order); echo "</pre>";
     }
 
     public function actionTest2($order_id)

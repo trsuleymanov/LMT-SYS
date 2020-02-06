@@ -41,6 +41,60 @@ class Trip extends \yii\db\ActiveRecord
 
 	private $_tripTransportList = null;
 
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['date', 'direction_id', 'created_at', 'updated_at',
+                'date_start_sending', 'start_sending_user_id',
+                'date_sended', 'sended_user_id', 'commercial', 'date_issued_by_operator',
+                'issued_by_operator_id', 'has_free_places',
+                'start_time_unixtime', 'mid_time_unixtime', 'end_time_unixtime'], 'integer'],
+            [['name'], 'string', 'max' => 50],
+            [['start_time', 'mid_time', 'end_time'], 'string', 'max' => 5],
+            [['date', 'direction_id', 'name', 'start_time', 'mid_time', 'end_time'], 'required'],
+            [['use_mobile_app', 'is_reserv'], 'boolean'],
+            [['point_interval'], 'safe']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Название',
+            'date' => 'Дата',
+            'direction_id' => 'Направление',
+            'commercial' => 'Коммерческий рейс',
+            'start_time' => 'Начало сбора',
+            'mid_time' => 'Середина сбора',
+            'end_time' => 'Конец сбора',
+            'start_time_unixtime' => 'Начало сбора',
+            'mid_time_unixtime' => 'Середина сбора',
+            'end_time_unixtime' => 'Конец сбора',
+            'date_start_sending' => 'Время начала отправки машины',
+            'start_sending_user_id' => 'Пользователь(оператор) начавший отправку машины',
+            'date_issued_by_operator' => 'Дата выпуска рейса оператором',
+            'issued_by_operator_id' => 'Оператор, отправка т/с которого выпустила рейс',
+            'has_free_places' => 'Есть свободные места в одном из т/с',
+            'date_sended' => 'Дата отправки рейса',
+            'sended_user_id' => 'Пользователь(оператор) отправивший машину',
+            'use_mobile_app' => 'Режим работы рейса: 0 - без водительского приложения, 1 - с водительским приложением',
+            'created_at' => 'Время создания',
+            'updated_at' => 'Время изменения',
+            'point_interval' => 'Интервал между точками',
+            'is_reserv' => 'Резервный рейс'
+        ];
+    }
+
+
+
 	public static function getTrips($unixdate, $direction_id)
 	{
 		return self::getTripsQuery($unixdate, $direction_id)->all();
@@ -63,13 +117,6 @@ class Trip extends \yii\db\ActiveRecord
 			->where(['direction_id' => $direction_id])
 			->andWhere(['date' => $correct_unixdate])
 			->orderBy(['end_time'=>SORT_ASC]);
-
-//		return (new Query())
-//			->from(self::tableName())
-//			->leftJoin(TripTransport::tableName(), TripTransport::tableName().'.trip_id='.self::tableName().'.id')
-//			->where(['direction_id' => $direction_id])
-//			->andWhere(['date' => $correct_unixdate])
-//			->orderBy(['end_time' => SORT_ASC]);
 	}
 
 	public static function createStandartTripList($unixdate, $direction_id)
@@ -101,6 +148,13 @@ class Trip extends \yii\db\ActiveRecord
 			$trip->date = strtotime(date('d.m.Y', $unixdate));
 			$trip->created_at = time();
 
+			$aStartTime = explode(':', $trip->start_time);
+            $aMidTime = explode(':', $trip->mid_time);
+            $aEndTime = explode(':', $trip->end_time);
+            $trip->start_time_unixtime = $trip->date + 60*intval($aStartTime[0]) + 3600*intval($aStartTime[1]);
+            $trip->mid_time_unixtime = $trip->date + 60*intval($aMidTime[0]) + 3600*intval($aMidTime[1]);
+            $trip->end_time_unixtime = $trip->date + 60*intval($aEndTime[0]) + 3600*intval($aEndTime[1]);
+
 			$trips[] = $trip;
 		}
 
@@ -127,6 +181,14 @@ class Trip extends \yii\db\ActiveRecord
 		$trip->start_time = $trip_times['start_time'];
 		$trip->mid_time = $trip_times['mid_time'];
 		$trip->end_time = $trip_times['end_time'];
+
+
+        $aStartTime = explode(':', $trip->start_time);
+        $aMidTime = explode(':', $trip->mid_time);
+        $aEndTime = explode(':', $trip->end_time);
+        $trip->start_time_unixtime = $trip->date + 60*intval($aStartTime[0]) + 3600*intval($aStartTime[1]);
+        $trip->mid_time_unixtime = $trip->date + 60*intval($aMidTime[0]) + 3600*intval($aMidTime[1]);
+        $trip->end_time_unixtime = $trip->date + 60*intval($aEndTime[0]) + 3600*intval($aEndTime[1]);
 
 		if(!$trip->save()){
 			return null;
@@ -203,100 +265,11 @@ class Trip extends \yii\db\ActiveRecord
 		$drivers = $drivers_query->orderBy(['fio'=>'ASC'])->all();
 
 
-//		if($selected_transport_id > 0){
-//
-//			$preliminary_result = [];
-//			if($selected_driver_id){
-//				$preliminary_result[] = Driver::findOne($selected_driver_id);// получение объекта "выбранного водителя"
-//
-//				// удаление выбранного водителя из списка незадействованных водителей
-//				foreach($drivers as $k => $item){
-//					if($item->id == $selected_driver_id){
-//						unset($drivers[$k]);
-//						break;
-//					}
-//				}
-//			}
-//
-//			$first_second_drivers_query = Driver::find()->where(['active' => 1])
-//				->andWhere([
-//					'OR',
-//					['primary_transport_id' => $selected_transport_id],
-//					['secondary_transport_id' => $selected_transport_id],
-//				]);
-//			if(!empty($selected_driver_id)) {
-//				$first_second_drivers_query = $first_second_drivers_query->andWhere(['!=', 'id', $selected_driver_id]);
-//			}
-//			$first_second_drivers = $first_second_drivers_query->orderBy(['fio'=>'ASC'])->all();
-//
-//			foreach($first_second_drivers as $first_second_driver) {
-//				foreach($drivers as $k => $item){
-//					if($item->id == $first_second_driver->id){
-//						unset($drivers[$k]);
-//						break;
-//					}
-//				}
-//			}
-//
-//			$total_result = [];
-//			$total_result = array_merge($total_result, $first_second_drivers);
-//			$total_result = array_merge($total_result, $drivers);
-//
-//		} else {
-//			$total_result = $drivers;
-//		}
-
 		$total_result = Trip::_getDriversList($drivers, $selected_transport_id, $selected_driver_id);
 
 		return $total_result;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function rules()
-	{
-		return [
-			[['date', 'direction_id', 'created_at', 'updated_at',
-				'date_start_sending', 'start_sending_user_id',
-				'date_sended', 'sended_user_id', 'commercial', 'date_issued_by_operator',
-                'issued_by_operator_id', 'has_free_places',], 'integer'],
-			[['name'], 'string', 'max' => 50],
-			[['start_time', 'mid_time', 'end_time'], 'string', 'max' => 5],
-			[['date', 'direction_id', 'name', 'start_time', 'mid_time', 'end_time'], 'required'],
-			[['use_mobile_app', 'is_reserv'], 'boolean'],
-			[['point_interval'], 'safe']
-		];
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => 'ID',
-			'name' => 'Название',
-			'date' => 'Дата',
-			'direction_id' => 'Направление',
-			'commercial' => 'Коммерческий рейс',
-			'start_time' => 'Начало сбора',
-			'mid_time' => 'Середина сбора',
-			'end_time' => 'Конец сбора',
-			'date_start_sending' => 'Время начала отправки машины',
-			'start_sending_user_id' => 'Пользователь(оператор) начавший отправку машины',
-            'date_issued_by_operator' => 'Дата выпуска рейса оператором',
-            'issued_by_operator_id' => 'Оператор, отправка т/с которого выпустила рейс',
-            'has_free_places' => 'Есть свободные места в одном из т/с',
-			'date_sended' => 'Дата отправки рейса',
-			'sended_user_id' => 'Пользователь(оператор) отправивший машину',
-			'use_mobile_app' => 'Режим работы рейса: 0 - без водительского приложения, 1 - с водительским приложением',
-			'created_at' => 'Время создания',
-			'updated_at' => 'Время изменения',
-			'point_interval' => 'Интервал между точками',
-            'is_reserv' => 'Резервный рейс'
-		];
-	}
 
 	public function beforeSave($insert)
 	{
@@ -306,8 +279,23 @@ class Trip extends \yii\db\ActiveRecord
 			$this->updated_at = time();
 		}
 
+
+		if(!empty($this->start_time)) {
+            $aStartTime = explode(':', $this->start_time);
+            $this->start_time_unixtime = $this->date + 60*intval($aStartTime[0]) + 3600*intval($aStartTime[1]);
+        }
+        if(!empty($this->mid_time)) {
+            $aMidTime = explode(':', $this->mid_time);
+            $this->mid_time_unixtime = $this->date + 60*intval($aMidTime[0]) + 3600*intval($aMidTime[1]);
+        }
+        if(!empty($this->end_time)) {
+            $aEndTime = explode(':', $this->end_time);
+            $this->end_time_unixtime = $this->date + 60*intval($aEndTime[0]) + 3600*intval($aEndTime[1]);
+        }
+
 		return parent::beforeSave($insert);
 	}
+
 
 	public function afterSave($insert, $changedAttributes)
 	{
@@ -622,33 +610,6 @@ class Trip extends \yii\db\ActiveRecord
                     $order->setField('used_cash_back', $used_cash_back);
                     $is_changed = true;
                 }
-
-                // кол-во мест в каждом заказе, как и настройки никак не меняются от слияния рейсов, значит призовые не пересчитываются
-//                $prizeTripCount = $order->prizeTripCount;
-//                if($order->prize_trip_count != $prizeTripCount) {
-//                    $order->setField('prize_trip_count', $prizeTripCount);
-//                }
-
-//				if($order->status_id == 2) { // canceled
-//
-//					$penalty_cash_back = $order->getCalculatePenaltyCashBack($price);
-//					if($penalty_cash_back != $order->penalty_cash_back) {
-//						$order->setField('penalty_cash_back', $penalty_cash_back);
-//					}
-//					if($order->accrual_cash_back > 0) {
-//						$order->setField('accrual_cash_back', 0);
-//					}
-//
-//				}else {
-//
-//					$accrual_cash_back = ($order->status_id == 2 ? 0 : $order->getCalculateAccrualCashBack($price));
-//					if($accrual_cash_back != $order->accrual_cash_back) {
-//						$order->setField('accrual_cash_back', $accrual_cash_back);
-//					}
-//					if($order->penalty_cash_back > 0) {
-//						$order->setField('penalty_cash_back', 0);
-//					}
-//				}
 
 
 				$time_confirm = $order->getYandexPointTimeConfirm();

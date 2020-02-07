@@ -47,4 +47,26 @@ class TripController extends Controller
     }
 
 
+    /*
+     * Генерируются рейсы на 30 дней вперед
+     */
+    public function actionGenerateTrips() {
+
+        $aDirections = [1, 2];
+
+        $today_unixtime = strtotime(date('d.m.Y', time()));
+        for($i = 0; $i < 31; $i++) {
+            $data_unixtime = $today_unixtime + $i*86400;
+
+            foreach ($aDirections as $direction_id) {
+                $trip = Trip::find()
+                    ->where(['direction_id' => $direction_id])
+                    ->andWhere(['date' => $data_unixtime])
+                    ->one();
+                if($trip == null) {
+                    Trip::createStandartTripList($data_unixtime, $direction_id);
+                }
+            }
+        }
+    }
 }

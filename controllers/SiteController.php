@@ -960,7 +960,7 @@ class SiteController extends Controller
 //        echo 'кэш-бэк = '.$order->getCalculateUsedCashBack()."<br />";
 //        echo 'цена с вычетом кэш-бэка = '.$order->getCalculatePrice()."<br /><br />";
 
-        echo date("d.m.Y H:i", 1581022800);
+        //echo date("d.m.Y H:i", 1581022800);
         //echo date("d.m.Y H:i:s", time());
 
         //$order = Order::find()->where(['id' => 206584])->one();
@@ -974,6 +974,24 @@ class SiteController extends Controller
         // Allowed memory size of 134 217 728 bytes exhausted (tried to allocate 330 235 200 bytes)
         //$order = Order::find()->one();
         //echo "order:<pre>"; print_r($order); echo "</pre>";
+
+
+        $aDirections = [1, 2];
+
+        $today_unixtime = strtotime(date('d.m.Y', time()));
+        for($i = 0; $i < 31; $i++) {
+            $data_unixtime = $today_unixtime + $i*86400;
+
+            foreach ($aDirections as $direction_id) {
+                $trip = Trip::find()
+                    ->where(['direction_id' => $direction_id])
+                    ->andWhere(['date' => $data_unixtime])
+                    ->one();
+                if($trip == null) {
+                    Trip::createStandartTripList($data_unixtime, $direction_id);
+                }
+            }
+        }
     }
 
     public function actionTest2($order_id)

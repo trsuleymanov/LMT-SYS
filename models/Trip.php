@@ -151,9 +151,9 @@ class Trip extends \yii\db\ActiveRecord
 			$aStartTime = explode(':', $trip->start_time);
             $aMidTime = explode(':', $trip->mid_time);
             $aEndTime = explode(':', $trip->end_time);
-            $trip->start_time_unixtime = $trip->date + 60*intval($aStartTime[0]) + 3600*intval($aStartTime[1]);
-            $trip->mid_time_unixtime = $trip->date + 60*intval($aMidTime[0]) + 3600*intval($aMidTime[1]);
-            $trip->end_time_unixtime = $trip->date + 60*intval($aEndTime[0]) + 3600*intval($aEndTime[1]);
+            $trip->start_time_unixtime = $trip->date + 3600*intval($aStartTime[0]) + 60*intval($aStartTime[1]);
+            $trip->mid_time_unixtime = $trip->date + 3600*intval($aMidTime[0]) + 60*intval($aMidTime[1]);
+            $trip->end_time_unixtime = $trip->date + 3600*intval($aEndTime[0]) + 60*intval($aEndTime[1]);
 
 			$trips[] = $trip;
 		}
@@ -186,9 +186,9 @@ class Trip extends \yii\db\ActiveRecord
         $aStartTime = explode(':', $trip->start_time);
         $aMidTime = explode(':', $trip->mid_time);
         $aEndTime = explode(':', $trip->end_time);
-        $trip->start_time_unixtime = $trip->date + 60*intval($aStartTime[0]) + 3600*intval($aStartTime[1]);
-        $trip->mid_time_unixtime = $trip->date + 60*intval($aMidTime[0]) + 3600*intval($aMidTime[1]);
-        $trip->end_time_unixtime = $trip->date + 60*intval($aEndTime[0]) + 3600*intval($aEndTime[1]);
+        $trip->start_time_unixtime = $trip->date + 3600*intval($aStartTime[0]) + 60*intval($aStartTime[1]);
+        $trip->mid_time_unixtime = $trip->date + 3600*intval($aMidTime[0]) + 60*intval($aMidTime[1]);
+        $trip->end_time_unixtime = $trip->date + 3600*intval($aEndTime[0]) + 60*intval($aEndTime[1]);
 
 		if(!$trip->save()){
 			return null;
@@ -282,15 +282,15 @@ class Trip extends \yii\db\ActiveRecord
 
 		if(!empty($this->start_time)) {
             $aStartTime = explode(':', $this->start_time);
-            $this->start_time_unixtime = $this->date + 60*intval($aStartTime[0]) + 3600*intval($aStartTime[1]);
+            $this->start_time_unixtime = $this->date + 3600*intval($aStartTime[0]) + 60*intval($aStartTime[1]);
         }
         if(!empty($this->mid_time)) {
             $aMidTime = explode(':', $this->mid_time);
-            $this->mid_time_unixtime = $this->date + 60*intval($aMidTime[0]) + 3600*intval($aMidTime[1]);
+            $this->mid_time_unixtime = $this->date + 3600*intval($aMidTime[0]) + 60*intval($aMidTime[1]);
         }
         if(!empty($this->end_time)) {
             $aEndTime = explode(':', $this->end_time);
-            $this->end_time_unixtime = $this->date + 60*intval($aEndTime[0]) + 3600*intval($aEndTime[1]);
+            $this->end_time_unixtime = $this->date + 3600*intval($aEndTime[0]) + 60*intval($aEndTime[1]);
         }
 
 		return parent::beforeSave($insert);

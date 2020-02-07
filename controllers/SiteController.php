@@ -993,6 +993,7 @@ class SiteController extends Controller
 //            }
 //        }
 
+        /*
         $direction_id = 2;
         $today_unixtime = strtotime(date('d.m.Y', time()));
         $data_unixtime = $today_unixtime + 2*86400;
@@ -1001,7 +1002,11 @@ class SiteController extends Controller
                 ->andWhere(['date' => $data_unixtime])
                 ->one();
 
-        echo "trip:<pre>"; print_r($trip); echo "</pre>";
+        echo "trip:<pre>"; print_r($trip); echo "</pre>";*/
+
+        echo "дата в заказе = ".(1581195600).'='.date('d.m.Y H:i', 1581195600)."<br />";
+        $d2 = strtotime(date('d.m.Y')) + 2*86400;
+        echo "сегодня + 2дня=".$d2.'='.date('d.m.Y H:i', $d2);
     }
 
     public function actionTest2($order_id)

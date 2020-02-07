@@ -69,5 +69,7 @@ class TripController extends Controller
                 }
             }
         }
+
+        echo "скрипт отработал\n";
     }
 }

@@ -976,22 +976,32 @@ class SiteController extends Controller
         //echo "order:<pre>"; print_r($order); echo "</pre>";
 
 
-        $aDirections = [1, 2];
+//        $aDirections = [1, 2];
+//
+//        $today_unixtime = strtotime(date('d.m.Y', time()));
+//        for($i = 0; $i < 31; $i++) {
+//            $data_unixtime = $today_unixtime + $i*86400;
+//
+//            foreach ($aDirections as $direction_id) {
+//                $trip = Trip::find()
+//                    ->where(['direction_id' => $direction_id])
+//                    ->andWhere(['date' => $data_unixtime])
+//                    ->one();
+//                if($trip == null) {
+//                    Trip::createStandartTripList($data_unixtime, $direction_id);
+//                }
+//            }
+//        }
 
+        $direction_id = 2;
         $today_unixtime = strtotime(date('d.m.Y', time()));
-        for($i = 0; $i < 31; $i++) {
-            $data_unixtime = $today_unixtime + $i*86400;
+        $data_unixtime = $today_unixtime + 2*86400;
+        $trip = Trip::find()
+                ->where(['direction_id' => $direction_id])
+                ->andWhere(['date' => $data_unixtime])
+                ->one();
 
-            foreach ($aDirections as $direction_id) {
-                $trip = Trip::find()
-                    ->where(['direction_id' => $direction_id])
-                    ->andWhere(['date' => $data_unixtime])
-                    ->one();
-                if($trip == null) {
-                    Trip::createStandartTripList($data_unixtime, $direction_id);
-                }
-            }
-        }
+        echo "trip:<pre>"; print_r($trip); echo "</pre>";
     }
 
     public function actionTest2($order_id)

@@ -34,7 +34,7 @@ class GetTripsAction extends \yii\rest\Action
             $aUnixDays = [];
             //$today_mktime = strtotime(date("d.m.Y"));
             $aUnixDays[] = strtotime(date("d.m.Y")); // today
-            for ($i = 1; $i <= 10; $i++) {
+            for ($i = 1; $i <= 30; $i++) {
                 $day_mktime = $aUnixDays[0] + $i * 86400;
                 $aUnixDays[$day_mktime] = $day_mktime;
             }

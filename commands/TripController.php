@@ -49,6 +49,7 @@ class TripController extends Controller
 
     /*
      * Генерируются рейсы на 30 дней вперед
+     * команда: php yii trip/generate-trips
      */
     public function actionGenerateTrips() {
 

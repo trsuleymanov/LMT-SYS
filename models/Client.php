@@ -85,7 +85,7 @@ class Client extends \yii\db\ActiveRecord
             ['email', 'email'],
             [['name'], 'string', 'max' => 255, 'min' => 3],
             [['mobile_phone', 'home_phone', 'alt_phone'], 'checkPhone'],
-            [['mobile_phone', 'email'], 'unique'],
+            [['mobile_phone', /*'email'*/], 'unique'],
             [['cashback'], 'safe']
         ];
     }

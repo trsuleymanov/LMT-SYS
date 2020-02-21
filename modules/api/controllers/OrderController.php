@@ -28,6 +28,7 @@ class OrderController extends \yii\rest\ActiveController
 
         $actions['setconfirmedtimesat']['class'] = 'app\modules\api\actions\order\SetConfirmedTimeSatAction';
         $actions['setcashreceived']['class'] = 'app\modules\api\actions\order\SetCashReceivedAction';
+        $actions['setcashreceivedconfirm']['class'] = 'app\modules\api\actions\order\SetCashReceivedConfirmAction';
 
         return $actions;
     }
@@ -36,6 +37,7 @@ class OrderController extends \yii\rest\ActiveController
         return [
             'setconfirmedtimesat' => ['GET', 'POST'],
             'setcashreceived' => ['GET', 'POST'],
+            'setcashreceivedconfirm' => ['GET', 'POST'],
         ];
     }
 

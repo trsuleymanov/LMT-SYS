@@ -59,23 +59,26 @@ class SetCashReceivedAction extends \yii\rest\Action
 //
 //        LiteboxOperation::makeOperationSell($order); // запрос на создание чека
 
-        // делаем заказ оплаченным
+        // отмечаем что
         $order->cash_received_time = time();
         $order->setField('cash_received_time', $order->cash_received_time);
-        $aFields = [
-            'payment_source' => 'application'
-        ];
-        $order->setPay(true, $aFields);
 
-        if($order->trip_id > 0) {
-            // передаем сообщение в браузер
-            SocketDemon::sendOutBrowserMessageInstant('/trip/trip-orders', ['trip_id' => $order->trip_id], 'updateTripOrdersPage()', []);
-        }
+//        $aFields = [
+//            'payment_source' => 'application'
+//        ];
+//        $order->setPay(true, $aFields);
+//
+//        if($order->trip_id > 0) {
+//            // передаем сообщение в браузер
+//            SocketDemon::sendOutBrowserMessageInstant('/trip/trip-orders', ['trip_id' => $order->trip_id], 'updateTripOrdersPage()', []);
+//        }
+
 
         return [
-            'cash_received_time' => intval($order->cash_received_time),
-            'paid_time' => intval($order->paid_time),
-            'payment_source' => $order->payment_source
+            'string' => 'ILS_'.date('dmY_H:i', $order->cash_received_time)
+            //'cash_received_time' => intval($order->cash_received_time),
+            //'paid_time' => intval($order->paid_time),
+            //'payment_source' => $order->payment_source
         ];
     }
 }

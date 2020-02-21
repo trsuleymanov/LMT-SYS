@@ -1003,10 +1003,35 @@ class SiteController extends Controller
                 ->one();
 
         echo "trip:<pre>"; print_r($trip); echo "</pre>";*/
+//        echo "".strtotime(date('d.m.Y'))."<br />";
+//        echo "дата в заказе = ".(1581195600).'='.date('d.m.Y H:i', 1581195600)."<br />";
+//        $d2 = strtotime(date('d.m.Y')) + 2*86400;
+//        echo "сегодня + 2дня=".$d2.'='.date('d.m.Y H:i', $d2);
 
-        echo "дата в заказе = ".(1581195600).'='.date('d.m.Y H:i', 1581195600)."<br />";
-        $d2 = strtotime(date('d.m.Y')) + 2*86400;
-        echo "сегодня + 2дня=".$d2.'='.date('d.m.Y H:i', $d2);
+        //echo date('d.m.Y H:i', 1581338121);
+
+        $val = '1admS7';
+        // SELECT * FROM `user` WHERE `id`=:qp0
+        //echo 'sql='.User::find()->where(['id' => $val])->createCommand()->getSql();
+        $user = User::find()->where(['username' => $val])->one();
+        echo "user:<pre>"; print_r($user); echo "</pre>";
+
+        /*
+        $user = new User();
+        $user->username = 'test19fev';
+        $user->firstname = 'test';
+        $user->lastname = 'fev';
+        $user->email = 'test19fev@gmail.com';
+        if(!$user->validate()){
+            $errors = $user->getErrors();
+            echo "errors:<pre>"; print_r($errors); echo "</pre>";
+
+            echo "user:<pre>"; print_r($user); echo "</pre>";
+
+        }else {
+            echo "валиден";
+        }*/
+
     }
 
     public function actionTest2($order_id)

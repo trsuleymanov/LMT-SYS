@@ -1036,12 +1036,12 @@ class SiteController extends Controller
 
     public function actionTest2($order_id)
     {
-        $order = Order::find()->where(['id' => $order_id])->one();
-
-        // делаем заказ оплаченным
-        $order->cash_received_time = time();
-        $order->setField('cash_received_time', $order->cash_received_time);
-        $order->setPay();
+//        $order = Order::find()->where(['id' => $order_id])->one();
+//
+//        // делаем заказ оплаченным
+//        $order->cash_received_time = time();
+//        $order->setField('cash_received_time', $order->cash_received_time);
+//        $order->setPay();
 
     }
 

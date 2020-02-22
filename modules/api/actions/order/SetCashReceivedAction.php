@@ -62,6 +62,7 @@ class SetCashReceivedAction extends \yii\rest\Action
         // отмечаем что
         $order->cash_received_time = time();
         $order->setField('cash_received_time', $order->cash_received_time);
+        $order->setField('cash_received_by_user_id', Yii::$app->user->id);
 
 //        $aFields = [
 //            'payment_source' => 'application'

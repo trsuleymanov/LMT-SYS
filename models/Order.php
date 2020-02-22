@@ -233,7 +233,7 @@ class Order extends \yii\db\ActiveRecord
             //[['is_mobile'], 'boolean'],
             [['time_confirm', 'time_confirm_auto', 'time_sat', 'created_at', 'updated_at', 'client_id',
                 'time_air_train_arrival', 'time_air_train_departure', 'use_fix_price', 'fix_price',
-                'price', 'paid_summ', 'paid_time', 'accrual_cash_back', 'penalty_cash_back', 'cash_received_time', 'used_cash_back',
+                'price', 'paid_summ', 'paid_time', 'accrual_cash_back', 'penalty_cash_back', 'cash_received_time', 'cash_received_by_user_id', 'used_cash_back',
                 'forced', 'trip_transport_id', 'time_confirm_sort',
                 'fact_trip_transport_car_reg', 'client_name', 'is_test', 'external_type', 'external_created_at', 'is_paid',
                 'canceled_by', 'payment_source'], 'safe'],
@@ -611,6 +611,7 @@ class Order extends \yii\db\ActiveRecord
             'accrual_cash_back',
             'penalty_cash_back', // 'used_cash_back',
             'cash_received_time',
+            'cash_received_by_user_id',
             //'client_ext_id'
         ];
 
@@ -622,6 +623,7 @@ class Order extends \yii\db\ActiveRecord
             'accrual_cash_back',
             'penalty_cash_back',
             'cash_received_time',
+            'cash_received_by_user_id',
             'used_cash_back',
         ];
 
@@ -725,6 +727,7 @@ class Order extends \yii\db\ActiveRecord
             'penalty_cash_back' => 'Списанный кэш-бэк как штраф',
             'used_cash_back' => 'Использованный кэш-бэк для оплаты заказа',
             'cash_received_time' => 'Деньги за заказ получены',
+            'cash_received_by_user_id' => 'Пользователь (водитель или оператор), нажавший кнопку "Деньги получены"',
             'is_paid' => 'Заказ полностью оплачен - да/нет',
             'fix_price' => 'Фикс. цена',
             'first_opened_form_time' => 'Время первого открытия формы заказа',

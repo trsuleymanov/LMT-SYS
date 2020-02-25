@@ -1097,7 +1097,7 @@ class SiteController extends Controller
 
     public function actionTest3()
     {
-        $operation = LiteboxOperation::find()->where(['id' => 134])->one();
+        $operation = LiteboxOperation::find()->where(['id' => 136])->one();
         $operation->checkSellStatusAndUpdate(true);
     }
 

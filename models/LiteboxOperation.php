@@ -459,7 +459,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }*/
 
 
-        $total_price = $order->price;
+        $total_price = intval($order->price);
 
         // если клиенту едут в аэропорт, то они считаются по иной формуле
         $yandexPointTo = $order->yandexPointTo;
@@ -968,7 +968,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }*/
 
 
-        $total_price = $order->price;
+        $total_price = intval($order->price);
 
         // если клиенту едут в аэропорт, то они считаются по иной формуле
         $yandexPointTo = $order->yandexPointTo;

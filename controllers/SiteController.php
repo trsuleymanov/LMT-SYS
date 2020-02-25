@@ -1095,19 +1095,10 @@ class SiteController extends Controller
 
     }
 
-    public function actionTest3($call_id)
+    public function actionTest3()
     {
-        $start = microtime(true);
-
-        $call = Call::find()->where(['id' => $call_id])->one();
-
-        $html = $call->getCallWindowThroughController($call->handling_call_operator_id);
-
-        // для звонка id=1 на локальном сайте: 7.41, 2.35, 3.53, 4.16, 5.23
-        // для звонка id=174 на сайте 8900: 0.12, 0.12,
-        // но для звонка id-174 на 8900 если есть 2 заказа с номером операнда в поле "другой" и в поле "Доп.тел.1":
-        // 4.8, 0.15, 0.13
-        echo (microtime(true) - $start).' сек.';
+        $operation = LiteboxOperation::find()->where(['id' => 134])->one();
+        $operation->checkSellStatusAndUpdate(true);
     }
 
 

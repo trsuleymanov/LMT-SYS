@@ -99,17 +99,17 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
         // проверяем наличие копий
-//        $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
-//        if($exist_litebox_operation != null) {
-//            throw new ErrorException('Операция "Приход" уже создавалась ранее');
-//        }
+        $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
+        if($exist_litebox_operation != null) {
+            throw new ErrorException('Операция "Приход" уже создавалась ранее');
+        }
 
         $litebox_operation = new LiteboxOperation();
-//        $litebox_operation->order_id = $order->id;
-//        $litebox_operation->sell_at = time();
-//        if(!$litebox_operation->save(false)) {
-//            throw new ErrorException('Не удалось создать LiteboxOperation');
-//        }
+        $litebox_operation->order_id = $order->id;
+        $litebox_operation->sell_at = time();
+        if(!$litebox_operation->save(false)) {
+            throw new ErrorException('Не удалось создать LiteboxOperation');
+        }
 
 
 
@@ -150,7 +150,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 $aItems[] = [
                     'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД. (МЕСТ: '.$order->places_count.')',
-                    'price' => 1.00, //intval($order->price),
+                    'price' => $total_price, //intval($order->price),
                     'quantity' => 1,
                     'sum' => $summ, //$order->price,
                     'vat' => [ // налоги
@@ -437,12 +437,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             ],
         ];
 
-        echo "data:<pre>"; print_r($data); echo "</pre>";
+        //echo "data:<pre>"; print_r($data); echo "</pre>";
 
         // пример:
         // curl -i -H "Authorization: Token d8881c694429e766c7a36db089d1391148616178" "Accept:application/json" -H "Content-Type:application/json" -XPOST "https://in.litebox.ru/fiscalization/v1/shops/3563/sell" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"external_id\": \"1558921554_1\",  \"timestamp\": \"12.07.17 22:00:00\",  \"receipt\": {    \"client\": {      \"email\": \"vlad.shetinin@gmail.com\"    },    \"company\": {      \"email\": \"417417t@gmail.com\",      \"inn\": \"165711720197\",      \"sno\": \"envd\",      \"payment_address\": \"t417.ru\"    },    \"items\": [      {        \"name\": \"АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1)\",        \"price\": 1,        \"quantity\": 2.0,        \"sum\": 2.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      },       {        \"name\": \"ФИКС. ТАРИФ\",        \"price\": 0,        \"quantity\": 0.0,        \"sum\": 0.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      }    ],    \"payments\": [      {        \"type\": 1,        \"sum\": 2.0      }    ],    \"total\": 2.0,    \"is_print\": false  }}"
 
-/*
+
         $headers[] = 'Authorization: Token '.self::$token;
         $headers[] = 'Content-Type: application/json; charset=UTF-8';
 
@@ -475,7 +475,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             }
 
             $order->setField('litebox_uuid', $result->uuid);
-        }*/
+        }
     }
 
 
@@ -553,7 +553,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 $aItems[] = [
                     'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД. (МЕСТ: '.$order->places_count.')',
-                    'price' => 1.00, //intval($order->price),
+                    'price' => $total_price, //intval($order->price),
                     'quantity' => 1,
                     'sum' => $summ, //$order->price,
                     'vat' => [ // налоги
@@ -903,7 +903,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 //        exit;
 
         $result = json_decode($response);
-        echo "aResult:<pre>"; print_r($result); echo "</pre>";
+//        echo "aResult:<pre>"; print_r($result); echo "</pre>";
 
 
         if(isset($result->error) && !empty($result->error)) {

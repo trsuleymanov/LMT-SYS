@@ -99,17 +99,17 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
         // проверяем наличие копий
-        $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
-        if($exist_litebox_operation != null) {
-            throw new ErrorException('Операция "Приход" уже создавалась ранее');
-        }
+//        $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
+//        if($exist_litebox_operation != null) {
+//            throw new ErrorException('Операция "Приход" уже создавалась ранее');
+//        }
 
         $litebox_operation = new LiteboxOperation();
-        $litebox_operation->order_id = $order->id;
-        $litebox_operation->sell_at = time();
-        if(!$litebox_operation->save(false)) {
-            throw new ErrorException('Не удалось создать LiteboxOperation');
-        }
+//        $litebox_operation->order_id = $order->id;
+//        $litebox_operation->sell_at = time();
+//        if(!$litebox_operation->save(false)) {
+//            throw new ErrorException('Не удалось создать LiteboxOperation');
+//        }
 
 
 

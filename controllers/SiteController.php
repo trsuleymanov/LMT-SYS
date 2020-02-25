@@ -1034,10 +1034,58 @@ class SiteController extends Controller
 
     }
 
-    public function actionTest2($order_id)
+    public function actionTest2()
     {
-//        $order = Order::find()->where(['id' => $order_id])->one();
-//
+        $order = Order::find()->where(['id' => 216401])->one();
+
+        $or2 = new Order();
+        $or2->client_id = 64316;
+        $or2->status_id = 1;
+        $or2->status_setting_time = time();
+        $or2->date = 1582578000;
+        $or2->direction_id = 1;
+        $or2->yandex_point_from_id = 200;
+        $or2->yandex_point_from_name = "Лента, Ленина";
+        $or2->yandex_point_from_lat = 54.906945388945;
+        $or2->yandex_point_from_long = 52.252717250476;
+        $or2->yandex_point_to_id = 2;
+        $or2->yandex_point_to_name = "ЖД Центральный";
+        $or2->yandex_point_to_lat = 55.789558734666;
+        $or2->yandex_point_to_long = 49.102293394195;
+        $or2->trip_id = 41078;
+        $or2->informer_office_id = 11;
+        $or2->is_not_places = 0;
+        $or2->places_count = 4;
+        $or2->prize_trip_count = 0;
+        $or2->time_sat = 1582542146;
+        $or2->time_satter_user_id = 45;
+        $or2->confirmed_time_sat = 1582542199;
+        $or2->confirmed_time_satter_user_id = 49;
+        $or2->source_price = 10.00;
+        $or2->use_fix_price = 1;
+        $or2->price = 10.00;
+        $or2->time_confirm = time();
+        $or2->time_confirm_auto = time();
+        $or2->time_confirm_sort = 15400;
+        $or2->time_confirm_delta = 0;
+        $or2->is_confirmed = 1;
+        $or2->first_opened_form_time = time();
+        $or2->first_writedown_click_time = time();
+        $or2->first_opened_form_user_id = 45;
+        $or2->first_writedown_clicker_id = 45;
+        $or2->first_confirm_click_time = time();
+        $or2->first_confirm_clicker_id = 45;
+        $or2->radio_confirm_now = 1;
+        $or2->radio_group_1 = 2;
+        $or2->radio_group_3 = 2;
+        $or2->confirm_selected_transport = 1;
+        $or2->fact_trip_transport_id = 39346;
+        $or2->fact_trip_transport_car_reg = 936;
+        $or2->has_penalty = 0;
+        $or2->created_at = time();
+
+        $or2->save();
+
 //        // делаем заказ оплаченным
 //        $order->cash_received_time = time();
 //        $order->setField('cash_received_time', $order->cash_received_time);

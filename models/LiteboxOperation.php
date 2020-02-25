@@ -81,9 +81,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         if($order->client == null) {
             throw new ErrorException('Клиент не найден');
         }
-        if(empty($order->client->email)) {
-            throw new ErrorException('У клиента не заполнена почта');
-        }
+//        if(empty($order->client->email)) {
+//            throw new ErrorException('У клиента не заполнена почта');
+//        }
         if(empty($order->client->mobile_phone)) {
             throw new ErrorException('У клиента не заполнен мобильный телефон');
         }
@@ -491,9 +491,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         if($order->client == null) {
             throw new ErrorException('Клиент не найден');
         }
-        if(empty($order->client->email)) {
-            throw new ErrorException('У клиента не заполнена почта');
-        }
+//        if(empty($order->client->email)) {
+//            throw new ErrorException('У клиента не заполнена почта');
+//        }
         if(empty($order->client->mobile_phone)) {
             throw new ErrorException('У клиента не заполнен мобильный телефон');
         }

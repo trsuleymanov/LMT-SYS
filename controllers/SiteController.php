@@ -1036,7 +1036,7 @@ class SiteController extends Controller
 
     public function actionTest2()
     {
-        $order = Order::find()->where(['id' => 216401])->one();
+        //$order = Order::find()->where(['id' => 216401])->one();
 
         $or2 = new Order();
         $or2->client_id = 64316;
@@ -1084,7 +1084,9 @@ class SiteController extends Controller
         $or2->has_penalty = 0;
         $or2->created_at = time();
 
-        $or2->save();
+        if(!$or2->save(false)) {
+            echo "errors:<pre>"; print_r($or2->getErrors()); echo "</pre>";
+        }
 
 //        // делаем заказ оплаченным
 //        $order->cash_received_time = time();

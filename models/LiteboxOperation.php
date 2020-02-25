@@ -117,6 +117,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         $aItems = [];
 
+        /*
         // is_not_places, places_count, student_count, child_count, prize_trip_count
         if($order->direction_id == 1) {
             $direction = 'Альметьевск-Казань';
@@ -137,14 +138,11 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
-
-
         $total_price = 0;
         if($order->use_fix_price == true || $do_tariff != null || Yii::$app->setting->loyalty_switch == 'cash_back_on') {
 
             if($order->places_count > 0) {
 
-                //$summ = 1.00 * 1;
                 $summ = $order->price;
                 $total_price += $summ;
 
@@ -152,7 +150,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     'name' => 'Заказная перевозка в нпр.' . $direction . ' по тарифу ИНД. (МЕСТ: '.$order->places_count.')',
                     'price' => $total_price, //intval($order->price),
                     'quantity' => 1,
-                    'sum' => $summ, //$order->price,
+                    'sum' => $total_price, //$order->price,
                     'vat' => [ // налоги
                         'type' => "none",
                         'sum' => 0.0
@@ -175,6 +173,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 throw new ForbiddenHttpException('Тариф не найден');
             }
 
+
             $T_RESERV = $tariff->unprepayment_reservation_cost; // стоимость бронирования
             $T_COMMON = $tariff->unprepayment_common_price + $T_RESERV;  // цена по общему тарифу
             $T_STUDENT = $tariff->unprepayment_student_price + $T_RESERV; // студенческий тариф
@@ -186,6 +185,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
             $common_places = $order->places_count - $order->student_count - $order->child_count - $order->prize_trip_count;
+
             if($common_places > 0) {
 
                 if($order->trip->commercial == 1) {
@@ -206,6 +206,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'payment_method' => 'full_payment',
                         'measurement_unit' => 'мест'
                     ];
+
                 }else {
 
                     $summ = $T_COMMON * ($common_places);
@@ -225,8 +226,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'measurement_unit' => 'мест'
                     ];
                 }
-
             }
+
 
             if($order->student_count > 0) {
 
@@ -360,6 +361,24 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             ) { // едут в аэропорт или из аэропорта
 
 
+                if($yandexPointTo != null && $yandexPointTo->alias == 'airport') {
+
+                    if($order->direction_id == 1) {
+                        $direction = 'Альметьевск Казань-Аэропорт';
+                    }else {
+                        $direction = 'Казань Альметьевск-Аэропорт';
+                    }
+
+                }else {
+
+                    if($order->direction_id == 1) {
+                        $direction = 'Альметьевск-Аэропорт Казань';
+                    }else {
+                        $direction = 'Казань-Аэропорт Альметьевск';
+                    }
+                }
+
+
                 if($order->trip->commercial == 1) {
 
                     $summ = $T_AERO * ($order->places_count);
@@ -378,6 +397,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'payment_method' => 'full_payment',
                         'measurement_unit' => 'мест'
                     ];
+
+
                 }else {
 
                     $summ = $T_AERO * ($order->places_count);
@@ -396,9 +417,150 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         'payment_method' => 'full_payment',
                         'measurement_unit' => 'мест'
                     ];
+
+                }
+
+            }else {
+
+                if($order->trip->commercial == 1) {
+
+                    $aItems[] = [
+                        'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                        'price' => $total_price,
+                        'quantity' => 1,
+                        'sum' => $total_price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ],
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
+                    ];
+
+                }else {
+
+                    $aItems[] = [
+                        'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                        'price' => $total_price,
+                        'quantity' => 1,
+                        'sum' => $total_price,
+                        'vat' => [ // налоги
+                            'type' => "none",
+                            'sum' => 0.0
+                        ],
+                        'payment_object' => 'service',
+                        'payment_method' => 'full_payment',
+                        'measurement_unit' => 'мест'
+                    ];
                 }
             }
 
+        }*/
+
+
+        $total_price = $order->price;
+
+        // если клиенту едут в аэропорт, то они считаются по иной формуле
+        $yandexPointTo = $order->yandexPointTo;
+        $yandexPointFrom = $order->yandexPointFrom;
+        if (
+            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+        ) { // едут в аэропорт или из аэропорта
+
+
+            if($yandexPointTo != null && $yandexPointTo->alias == 'airport') {
+
+                if($order->direction_id == 1) {
+                    $direction = 'Альметьевск Казань-Аэропорт';
+                }else {
+                    $direction = 'Казань Альметьевск-Аэропорт';
+                }
+
+            }else {
+
+                if($order->direction_id == 1) {
+                    $direction = 'Альметьевск-Аэропорт Казань';
+                }else {
+                    $direction = 'Казань-Аэропорт Альметьевск';
+                }
+            }
+
+
+            if($order->trip->commercial == 1) {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+
+            }else {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+            }
+
+        }else {
+
+            if($order->direction_id == 1) {
+                $direction = 'Альметьевск-Казань';
+            }else {
+                $direction = 'Казань-Альметьевск';
+            }
+
+            if($order->trip->commercial == 1) {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+
+            }else {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+            }
         }
 
 
@@ -410,8 +572,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         ];
         $data = [
             'external_id' => $litebox_operation->sell_at.'_'.$litebox_operation->order_id , // 17052917561851307
-            //'timestamp' => date("d.m.y H:i:s", $litebox_operation->sell_at),
-            // нужен формат времени теперь: %d.%m.%Y %H:%M:%S
             'timestamp' => date("d.m.Y H:i:s", $litebox_operation->sell_at),
             'receipt' => [
                 'client' => [
@@ -520,6 +680,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         $aItems = [];
 
+        /*
         // is_not_places, places_count, student_count, child_count, prize_trip_count
         if($order->direction_id == 1) {
             $direction = 'Альметьевск-Казань';
@@ -804,9 +965,112 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 }
             }
 
+        }*/
+
+
+        $total_price = $order->price;
+
+        // если клиенту едут в аэропорт, то они считаются по иной формуле
+        $yandexPointTo = $order->yandexPointTo;
+        $yandexPointFrom = $order->yandexPointFrom;
+        if (
+            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+        ) { // едут в аэропорт или из аэропорта
+
+
+            if($yandexPointTo != null && $yandexPointTo->alias == 'airport') {
+
+                if($order->direction_id == 1) {
+                    $direction = 'Альметьевск Казань-Аэропорт';
+                }else {
+                    $direction = 'Казань Альметьевск-Аэропорт';
+                }
+
+            }else {
+
+                if($order->direction_id == 1) {
+                    $direction = 'Альметьевск-Аэропорт Казань';
+                }else {
+                    $direction = 'Казань-Аэропорт Альметьевск';
+                }
+            }
+
+
+            if($order->trip->commercial == 1) {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+
+            }else {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+            }
+
+        }else {
+
+            if($order->direction_id == 1) {
+                $direction = 'Альметьевск-Казань';
+            }else {
+                $direction = 'Казань-Альметьевск';
+            }
+
+            if($order->trip->commercial == 1) {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+
+            }else {
+
+                $aItems[] = [
+                    'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
+                    'price' => $total_price,
+                    'quantity' => 1,
+                    'sum' => $total_price,
+                    'vat' => [ // налоги
+                        'type' => "none",
+                        'sum' => 0.0
+                    ],
+                    'payment_object' => 'service',
+                    'payment_method' => 'full_payment',
+                    'measurement_unit' => 'мест'
+                ];
+            }
         }
-
-
 
 
         $payments[0] = [

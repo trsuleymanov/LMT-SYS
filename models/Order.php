@@ -2323,12 +2323,25 @@ class Order extends \yii\db\ActiveRecord
                 throw new ForbiddenHttpException('По заказу уже производился один платеж');
             }
 
-            $this->scenario = 'pay_or_cancel_pay';
+            //$this->scenario = 'pay_or_cancel_pay';
             $this->paid_summ = $this->price;
             $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
             $this->payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
             $this->is_paid = true;
-            if (!$this->save(false)) {
+
+            // здесь нелья сохранять через save() так как пересчитаются цена и кол-во призовых поездок
+//            if (!$this->save(false)) {
+//                throw new ForbiddenHttpException('Заказ не удалось сохранить');
+//            }
+
+            $sql =
+                'UPDATE `'.self::tableName().'` SET paid_summ = '.$this->paid_summ.', 
+                    paid_time = '.$this->paid_time.',
+                    payment_source = "'.$this->payment_source.'",
+                    is_paid = '.$this->is_paid.' 
+                WHERE id = '.$this->id;
+
+            if(!Yii::$app->db->createCommand($sql)->execute()) {
                 throw new ForbiddenHttpException('Заказ не удалось сохранить');
             }
 
@@ -2363,7 +2376,19 @@ class Order extends \yii\db\ActiveRecord
         $this->paid_time = 0;
         $this->is_paid = false;
         $this->payment_source = '';
-        if(!$this->save(false)) {
+
+//        if(!$this->save(false)) {
+//            throw new ForbiddenHttpException('Заказ не удалось сохранить');
+//        }
+
+        $sql =
+            'UPDATE `'.self::tableName().'` SET paid_summ = '.$this->paid_summ.', 
+                    paid_time = '.$this->paid_time.',
+                    payment_source = "'.$this->payment_source.'",
+                    is_paid = '.$this->is_paid.' 
+                WHERE id = '.$this->id;
+
+        if(!Yii::$app->db->createCommand($sql)->execute()) {
             throw new ForbiddenHttpException('Заказ не удалось сохранить');
         }
 

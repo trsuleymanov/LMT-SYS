@@ -2330,7 +2330,7 @@ class Order extends \yii\db\ActiveRecord
                 throw new ForbiddenHttpException('По заказу уже производился один платеж');
             }
 
-            //$this->scenario = 'pay_or_cancel_pay';
+            $this->scenario = 'pay_or_cancel_pay';
             $this->paid_summ = $this->price;
             $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
             $this->payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');

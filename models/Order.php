@@ -2330,20 +2330,20 @@ class Order extends \yii\db\ActiveRecord
             $this->is_paid = true;
 
             // здесь нелья сохранять через save() так как пересчитаются цена и кол-во призовых поездок
-//            if (!$this->save(false)) {
-//                throw new ForbiddenHttpException('Заказ не удалось сохранить');
-//            }
-
-            $sql =
-                'UPDATE `'.self::tableName().'` SET paid_summ = '.$this->paid_summ.', 
-                    paid_time = '.$this->paid_time.',
-                    payment_source = "'.$this->payment_source.'",
-                    is_paid = '.$this->is_paid.' 
-                WHERE id = '.$this->id;
-
-            if(!Yii::$app->db->createCommand($sql)->execute()) {
+            if (!$this->save(false)) {
                 throw new ForbiddenHttpException('Заказ не удалось сохранить');
             }
+
+//            $sql =
+//                'UPDATE `'.self::tableName().'` SET paid_summ = '.$this->paid_summ.',
+//                    paid_time = '.$this->paid_time.',
+//                    payment_source = "'.$this->payment_source.'",
+//                    is_paid = '.$this->is_paid.'
+//                WHERE id = '.$this->id;
+//
+//            if(!Yii::$app->db->createCommand($sql)->execute()) {
+//                throw new ForbiddenHttpException('Заказ не удалось сохранить');
+//            }
 
         }
 
@@ -2377,20 +2377,20 @@ class Order extends \yii\db\ActiveRecord
         $this->is_paid = false;
         $this->payment_source = '';
 
-//        if(!$this->save(false)) {
-//            throw new ForbiddenHttpException('Заказ не удалось сохранить');
-//        }
-
-        $sql =
-            'UPDATE `'.self::tableName().'` SET paid_summ = '.$this->paid_summ.', 
-                    paid_time = '.$this->paid_time.',
-                    payment_source = "'.$this->payment_source.'",
-                    is_paid = '.$this->is_paid.' 
-                WHERE id = '.$this->id;
-
-        if(!Yii::$app->db->createCommand($sql)->execute()) {
+        if(!$this->save(false)) {
             throw new ForbiddenHttpException('Заказ не удалось сохранить');
         }
+
+//        $sql =
+//            'UPDATE `'.self::tableName().'` SET paid_summ = '.$this->paid_summ.',
+//                    paid_time = '.$this->paid_time.',
+//                    payment_source = "'.$this->payment_source.'",
+//                    is_paid = '.$this->is_paid.'
+//                WHERE id = '.$this->id;
+//
+//        if(!Yii::$app->db->createCommand($sql)->execute()) {
+//            throw new ForbiddenHttpException('Заказ не удалось сохранить');
+//        }
 
         // сообщим браузерам что надо обновить страницу рейсов
         if($this->trip_id > 0) {

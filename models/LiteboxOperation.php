@@ -1235,6 +1235,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             if(!empty($this->fn_number)) {
 
                 $order = Order::find()->where(['id' => $this->order_id])->one();
+                $this->scenario = 'litebox_set_status';
                 $order->litebox_fn_number = $this->fn_number;
                 $order->litebox_fiscal_document_number = $this->fiscal_document_number;
                 $order->litebox_fiscal_document_attribute = $this->fiscal_document_attribute;
@@ -1339,6 +1340,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             if(!empty($this->fn_number)) {
 
                 $order = Order::find()->where(['id' => $this->order_id])->one();
+                $this->scenario = 'litebox_set_status';
                 $order->litebox_fn_number = $this->fn_number;
                 $order->litebox_fiscal_document_number = $this->fiscal_document_number;
                 $order->litebox_ecr_registration_number = $this->ecr_registration_number;

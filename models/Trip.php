@@ -1430,6 +1430,25 @@ class Trip extends \yii\db\ActiveRecord
         return true;
     }
 
+    /*
+     * Отправка запросов в litebox по отправленным заказам по которым не были созданы запросы в litebox
+     */
+    protected function resendOrdersFiscalization()
+    {
+        $order_sent_status = OrderStatus::getByCode('sent');
+        $fact_orders_without_canceled = Order::find()
+            ->where(['trip_id' => $this->id])
+            ->andWhere(['status_id' => $order_sent_status->id])
+            ->andWhere(['litebox_uuid' => NULL])
+            ->all();
+
+        if(count($fact_orders_without_canceled) > 0) {
+            foreach ($fact_orders_without_canceled as $order) {
+                echo "id=".$order->id."<br />";
+            }
+        }
+    }
+
 
     public function cancelSend() {
 
@@ -1625,333 +1644,6 @@ class Trip extends \yii\db\ActiveRecord
     }
 
 
-	public function sendOld() {
-
-		if($this->canSend() == false) {
-			throw new ForbiddenHttpException('Рейс не может быть отправлен');
-		}
-
-		$this->date_sended = time();
-		$this->sended_user_id = Yii::$app->user->id;
-		if(!$this->save(false)) {
-			throw new ErrorException('Не удалось сохранить рейс');
-		}
-
-		// пересчет отмененных заказов
-		$cancel_order_status = OrderStatus::getByCode('canceled');
-		$cancel_orders = Order::find()
-			->where(['trip_id' => $this->id])
-			->andWhere(['status_id' => $cancel_order_status->id])
-			->all();
-		foreach($cancel_orders as $order) {
-			$client = $order->client;
-			if($client != null) {
-				$client->canceled_orders_places_count = $client->canceled_orders_places_count + $order->places_count;
-				$client->setField('canceled_orders_places_count', $client->canceled_orders_places_count);
-
-//                $client->cashback = $client->cashback - $order->penalty_cash_back;
-//                $client->setField('cashback', $client->cashback);
-			}
-		}
-
-		// клиентам всех заказов (в том числе отменных) пересчитываем счета кэш-бэков
-		$trip_orders = $this->orders;
-//		$aClientsOrders = [];
-//		foreach($trip_orders as $order) {
-//			$aClientsOrders[$order->client_id][] = $order;
-//		}
-//		$clients = Client::find()->where(['id' => ArrayHelper::map($trip_orders, 'client_id', 'client_id')])->all();
-//		foreach($clients as $client) {
-//			foreach($aClientsOrders[$client->id] as $order) {
-//				$client->cashback = $client->cashback
-//					+ $order->accrual_cash_back
-//					- $order->penalty_cash_back
-//					- $order->used_cash_back;
-//			}
-//			$client->setField('cashback', $client->cashback);
-//			$client->setField('sync_date', null);
-//		}
-
-		// обращения связанные со всеми заказами рейса (в том числе отмененными) закрываются
-		//$orders = Order::find()->where(['trip_id' => $this->id])->all();
-		if(count($trip_orders) > 0) {
-			// not_completed -> completed_by_trip_sending
-			$sql = 'UPDATE `'.CallCase::tableName().'` SET status = "completed_by_trip_sending" WHERE order_id IN('.implode(',', ArrayHelper::map($trip_orders, 'id', 'id')).')';
-			Yii::$app->db->createCommand($sql)->execute();
-
-            // где-то здесь нужно пересчитать для заказов: accrual_cash_back, penalty_cash_back,
-            //    used_cash_back-это пока не используется
-            foreach ($trip_orders as $trip_order) {
-
-				if($trip_order->status_id == 2) { // canceled
-
-					$penalty_cash_back = $trip_order->getCalculatePenaltyCashBack($trip_order->price);
-					if($penalty_cash_back != $trip_order->penalty_cash_back) {
-                        $trip_order->setField('penalty_cash_back', $penalty_cash_back);
-                        $trip_order->setField('sync_date', NULL);
-                        $trip_order->penalty_cash_back = $penalty_cash_back;
-					}
-					if($trip_order->accrual_cash_back > 0) {
-                        $trip_order->setField('accrual_cash_back', 0);
-                        $trip_order->setField('sync_date', NULL);
-                        $trip_order->accrual_cash_back = 0;
-					}
-
-				}else {
-
-					$accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
-					if($accrual_cash_back != $trip_order->accrual_cash_back) {
-                        $trip_order->setField('accrual_cash_back', $accrual_cash_back);
-                        $trip_order->setField('sync_date', NULL);
-                        $trip_order->accrual_cash_back = $accrual_cash_back;
-					}
-					if($trip_order->penalty_cash_back > 0) {
-                        $trip_order->setField('penalty_cash_back', 0);
-                        $trip_order->setField('sync_date', NULL);
-                        $trip_order->penalty_cash_back = 0;
-					}
-				}
-            }
-
-
-			$clients = Client::find()->where(['id' => ArrayHelper::map($trip_orders, 'client_id', 'client_id')])->all();
-			if(count($clients) > 0) {
-
-			    $aClients = ArrayHelper::index($clients, 'id');
-			    foreach ($trip_orders as $trip_order) {
-                    if(isset($aClients[$trip_order->client_id])) {
-
-                        $client = $aClients[$trip_order->client_id];
-                        if($trip_order->accrual_cash_back > 0) {
-                            $client->cashback += $trip_order->accrual_cash_back;
-                        }
-
-                        if($trip_order->penalty_cash_back > 0) {
-                            $client->cashback -= $trip_order->penalty_cash_back;
-                        }
-
-                        if($trip_order->used_cash_back > 0) {
-                            $client->cashback -= $trip_order->used_cash_back;
-                        }
-
-                        if($trip_order->accrual_cash_back > 0 || $trip_order->penalty_cash_back > 0 || $trip_order->used_cash_back > 0) {
-                            $client->setField('cashback', $client->cashback);
-                            $client->setField('sync_date', NULL);
-                        }
-                    }
-                }
-            }
-
-		}
-
-
-		$day_report_trip_transports = $this->dayReportTripTransports;
-		foreach($day_report_trip_transports as $day_report_trip_transport) {
-			$day_report_trip_transport->trip_date_sended = $this->date_sended;
-			$day_report_trip_transport->trip_sender_id = Yii::$app->user->id;
-
-			$current_user = User::findOne(Yii::$app->user->id);
-			$day_report_trip_transport->trip_sender_fio = $current_user->lastname.' '.$current_user->firstname;
-			if(!$day_report_trip_transport->save(false)) {
-				throw new ErrorException('Не удалось создать запись в отчет отображаемого дня');
-			}
-		}
-
-
-		$trip_operation = new TripOperation();
-		$trip_operation->type = 'send';
-		$trip_operation->comment = 'Отправка рейса '.($this->direction_id==1 ? 'АК ' : 'КА ').$this->name;
-		if(!$trip_operation->save(false)) {
-			throw new ErrorException('Не удалось сохранить в историю операцию с рейсом');
-		}
-
-
-		SocketDemon::updateMainPages($this->id, $this->date);
-		IncomingOrdersWidget::updateActiveTripsModal();
-
-		return true;
-	}
-
-	public function cancelSendOld() {
-
-		$this->date_sended = NULL;
-		$this->sended_user_id = NULL;
-		$this->date_start_sending = NULL;
-		//$this->start_sending_user_id = NULL;
-		if(!$this->save(false)) {
-			throw new ErrorException('Не удалось сохранить рейс');
-		}
-
-
-		// пересчет отмененных заказов
-		$cancel_order_status = OrderStatus::getByCode('canceled');
-		$cancel_orders = Order::find()
-			->where(['trip_id' => $this->id])
-			->andWhere(['status_id' => $cancel_order_status->id])
-			->all();
-		foreach($cancel_orders as $order) {
-			$client = $order->client;
-			if($client != null) {
-				$client->canceled_orders_places_count = $client->canceled_orders_places_count - $order->places_count;
-				$client->setField('canceled_orders_places_count', $client->canceled_orders_places_count);
-			}
-		}
-
-
-		// клиентам всех заказов (в том числе отменных) пересчитываем счета кэш-бэков
-		$trip_orders = $this->orders;
-//		$aClientsOrders = [];
-//		foreach($trip_orders as $order) {
-//			$aClientsOrders[$order->client_id][] = $order;
-//		}
-//		$clients = Client::find()->where(['id' => ArrayHelper::map($trip_orders, 'client_id', 'client_id')])->all();
-//		foreach($clients as $client) {
-//			foreach($aClientsOrders[$client->id] as $order) {
-//				$client->cashback = $client->cashback
-//					- $order->accrual_cash_back
-//					+ $order->penalty_cash_back
-//					+ $order->used_cash_back;
-//			}
-//			$client->setField('cashback', $client->cashback);
-//			$client->setField('sync_date', null);
-//		}
-
-
-        foreach ($trip_orders as $trip_order) {
-
-            if($trip_order->status_id == 2) { // canceled
-
-                $penalty_cash_back = $trip_order->getCalculatePenaltyCashBack($trip_order->price);
-                if($penalty_cash_back != $trip_order->penalty_cash_back) {
-                    $trip_order->setField('penalty_cash_back', $penalty_cash_back);
-                    $trip_order->setField('sync_date', NULL);
-                }
-                if($trip_order->accrual_cash_back > 0) {
-                    $trip_order->setField('accrual_cash_back', 0);
-                    $trip_order->setField('sync_date', NULL);
-                }
-
-            }else {
-
-                $accrual_cash_back = $trip_order->getCalculateAccrualCashBack($trip_order->price);
-                if($accrual_cash_back != $trip_order->accrual_cash_back) {
-                    $trip_order->setField('accrual_cash_back', $accrual_cash_back);
-                    $trip_order->setField('sync_date', NULL);
-                }
-                if($trip_order->penalty_cash_back > 0) {
-                    $trip_order->setField('penalty_cash_back', 0);
-                    $trip_order->setField('sync_date', NULL);
-                }
-            }
-        }
-
-		// у обращений связанных со всеми заказами рейса (в том числе отмененными) отменяется закрытие
-		// completed_by_trip_sending -> not_completed
-		// $orders = Order::find()->where(['trip_id' => $this->id])->all();
-		if(count($trip_orders) > 0) {
-			$sql = 'UPDATE `'.CallCase::tableName().'` SET status = "not_completed" WHERE order_id IN('.implode(',', ArrayHelper::map($trip_orders, 'id', 'id')).')';
-			Yii::$app->db->createCommand($sql)->execute();
-
-            // где-то здесь нужно пересчитать для заказов: accrual_cash_back, penalty_cash_back,
-            //      used_cash_back-это пока не используется
-
-            $clients = Client::find()->where(['id' => ArrayHelper::map($trip_orders, 'client_id', 'client_id')])->all();
-            if(count($clients) > 0) {
-
-                $aClients = ArrayHelper::index($clients, 'id');
-                foreach ($trip_orders as $trip_order) {
-                    if(isset($aClients[$trip_order->client_id])) {
-
-                        $client = $aClients[$trip_order->client_id];
-                        if($trip_order->accrual_cash_back > 0) {
-                            $client->cashback -= $trip_order->accrual_cash_back;
-                        }
-
-                        if($trip_order->penalty_cash_back > 0) {
-                            $client->cashback += $trip_order->penalty_cash_back;
-                        }
-
-                        if($trip_order->used_cash_back > 0) {
-                            $client->cashback += $trip_order->used_cash_back;
-                        }
-
-                        if($trip_order->accrual_cash_back > 0 || $trip_order->penalty_cash_back > 0 || $trip_order->used_cash_back > 0) {
-                            $client->setField('cashback', $client->cashback);
-                            $client->setField('sync_date', NULL);
-                        }
-                    }
-                }
-            }
-
-
-            foreach ($trip_orders as $trip_order) {
-
-                if($trip_order->penalty_cash_back > 0) {
-                    $trip_order->setField('penalty_cash_back', 0);
-                    $trip_order->setField('sync_date', NULL);
-                }
-                if($trip_order->accrual_cash_back > 0) {
-                    $trip_order->setField('accrual_cash_back', 0);
-                    $trip_order->setField('sync_date', NULL);
-                }
-            }
-		}
-
-		$day_report_trip_transports = $this->dayReportTripTransports;
-		foreach($day_report_trip_transports as $day_report_trip_transport) {
-			$day_report_trip_transport->trip_date_sended = NULL;
-			$day_report_trip_transport->trip_sender_id = NULL;
-
-			$day_report_trip_transport->trip_sender_fio = NULL;
-			if(!$day_report_trip_transport->save(false)) {
-				throw new ErrorException('Не удалось изменить запись в отчет отображаемого дня');
-			}
-		}
-
-		DispatcherAccounting::createLog('cancel_trip_sended', 0, 0, 0, $this->id);
-
-
-		$trip_operation = new TripOperation();
-		$trip_operation->type = 'cancel_send';
-		$trip_operation->comment = 'Отмена отправки рейса '.($this->direction_id==1 ? 'АК ' : 'КА ').$this->name;
-		if(!$trip_operation->save(false)) {
-			throw new ErrorException('Не удалось сохранить в историю операцию с рейсом');
-		}
-
-
-		SocketDemon::updateMainPages($this->id, $this->date);
-
-		return true;
-	}
-
-	/*
-	public function canSend() {
-
-		if(empty($this->date_start_sending)) {
-			return false;
-		}
-
-		// все заказы на рейсе должны быть подтверждены и посажены или отменены
-		$cancel_order_status = OrderStatus::getByCode('canceled');
-		$trip_orders = $this->orders;
-		foreach($trip_orders as $trip_order) {
-			if((empty($trip_order->time_confirm) || empty($trip_order->time_sat)) && $trip_order->status_id != $cancel_order_status->id) {
-				return false;
-			}
-		}
-
-		// все машины на рейсе должны быть отправлены
-		$trip_transports = $this->tripTransports;
-		foreach($trip_transports as $trip_transport) {
-			if(empty($trip_transport->date_sended)) {
-				return false;
-			}
-		}
-
-		return true;
-	}*/
-
-
 	public function canUpdateOrders() {
 
 		// если есть на рейсе "отправленные заказы", то цены не пересчитываются - прерывание создаем
@@ -2139,6 +1831,9 @@ class Trip extends \yii\db\ActiveRecord
 
         return $this->date + 3600*intval($aHoursMinutes[0]) + 60*intval($aHoursMinutes[1]);
     }
+
+
+
 
 
     public function setField($field_name, $field_value)

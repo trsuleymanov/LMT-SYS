@@ -952,85 +952,9 @@ class SiteController extends Controller
 
     public function actionTest() {
 
-        //echo 'max_time_short_trip_AK='.Yii::$app->setting->max_time_short_trip_AK;
+        $trip = Trip::find()->where(['id' => 42029])->one();
 
-//        $order = Order::find()->where(['id' => $id])->one();
-//        echo "доступен ли кэш-бэк = ".$order->isAllowToUseCashback()."<br />";
-//        echo 'полная цена = '.$order->getCalculatePrice(true)."<br />";
-//        echo 'кэш-бэк = '.$order->getCalculateUsedCashBack()."<br />";
-//        echo 'цена с вычетом кэш-бэка = '.$order->getCalculatePrice()."<br /><br />";
-
-        //echo date("d.m.Y H:i", 1581022800);
-        //echo date("d.m.Y H:i:s", time());
-
-        //$order = Order::find()->where(['id' => 206584])->one();
-        //echo $order->getCalculateAccrualCashBack($order->price);
-        //echo 'AccrualCashBack = '.$order->getCalculateAccrualCashBack($order->price)."<br />";
-
-//        $litebox_operation = LiteboxOperation::find()->where(['order_id' => $order_id])->one();
-//        $litebox_operation->checkSellStatusAndUpdate(true);
-
-
-        // Allowed memory size of 134 217 728 bytes exhausted (tried to allocate 330 235 200 bytes)
-        //$order = Order::find()->one();
-        //echo "order:<pre>"; print_r($order); echo "</pre>";
-
-
-//        $aDirections = [1, 2];
-//
-//        $today_unixtime = strtotime(date('d.m.Y', time()));
-//        for($i = 0; $i < 31; $i++) {
-//            $data_unixtime = $today_unixtime + $i*86400;
-//
-//            foreach ($aDirections as $direction_id) {
-//                $trip = Trip::find()
-//                    ->where(['direction_id' => $direction_id])
-//                    ->andWhere(['date' => $data_unixtime])
-//                    ->one();
-//                if($trip == null) {
-//                    Trip::createStandartTripList($data_unixtime, $direction_id);
-//                }
-//            }
-//        }
-
-        /*
-        $direction_id = 2;
-        $today_unixtime = strtotime(date('d.m.Y', time()));
-        $data_unixtime = $today_unixtime + 2*86400;
-        $trip = Trip::find()
-                ->where(['direction_id' => $direction_id])
-                ->andWhere(['date' => $data_unixtime])
-                ->one();
-
-        echo "trip:<pre>"; print_r($trip); echo "</pre>";*/
-//        echo "".strtotime(date('d.m.Y'))."<br />";
-//        echo "дата в заказе = ".(1581195600).'='.date('d.m.Y H:i', 1581195600)."<br />";
-//        $d2 = strtotime(date('d.m.Y')) + 2*86400;
-//        echo "сегодня + 2дня=".$d2.'='.date('d.m.Y H:i', $d2);
-
-        //echo date('d.m.Y H:i', 1581338121);
-
-        $val = '1admS7';
-        // SELECT * FROM `user` WHERE `id`=:qp0
-        //echo 'sql='.User::find()->where(['id' => $val])->createCommand()->getSql();
-        $user = User::find()->where(['username' => $val])->one();
-        echo "user:<pre>"; print_r($user); echo "</pre>";
-
-        /*
-        $user = new User();
-        $user->username = 'test19fev';
-        $user->firstname = 'test';
-        $user->lastname = 'fev';
-        $user->email = 'test19fev@gmail.com';
-        if(!$user->validate()){
-            $errors = $user->getErrors();
-            echo "errors:<pre>"; print_r($errors); echo "</pre>";
-
-            echo "user:<pre>"; print_r($user); echo "</pre>";
-
-        }else {
-            echo "валиден";
-        }*/
+        $trip->resendOrdersFiscalization();
 
     }
 

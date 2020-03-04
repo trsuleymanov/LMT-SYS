@@ -72,7 +72,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-    public static function makeOperationSell($order) {
+    public static function makeOperationSell($order, $litebox_operation = null) {
 
 
         if($order->trip == null) {
@@ -98,17 +98,28 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
-        // проверяем наличие копий
-        $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
-        if($exist_litebox_operation != null) {
-            throw new ErrorException('Операция "Приход" уже создавалась ранее');
-        }
 
-        $litebox_operation = new LiteboxOperation();
-        $litebox_operation->order_id = $order->id;
-        $litebox_operation->sell_at = time();
-        if(!$litebox_operation->save(false)) {
-            throw new ErrorException('Не удалось создать LiteboxOperation');
+        if($litebox_operation != null) {
+
+            $litebox_operation->order_id = $order->id;
+            $litebox_operation->sell_at = time();
+            if (!$litebox_operation->save(false)) {
+                throw new ErrorException('Не удалось обновить LiteboxOperation');
+            }
+        }else {
+
+            // проверяем наличие копий
+            $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
+            if($exist_litebox_operation != null) {
+                throw new ErrorException('Операция "Приход" уже создавалась ранее');
+            }
+
+            $litebox_operation = new LiteboxOperation();
+            $litebox_operation->order_id = $order->id;
+            $litebox_operation->sell_at = time();
+            if (!$litebox_operation->save(false)) {
+                throw new ErrorException('Не удалось создать LiteboxOperation');
+            }
         }
 
 

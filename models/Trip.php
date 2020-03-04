@@ -1446,8 +1446,16 @@ class Trip extends \yii\db\ActiveRecord
         if(count($fact_orders_without_canceled) > 0) {
             foreach ($fact_orders_without_canceled as $order) {
 
+
+                $litebox_operation = LiteboxOperation::find()
+                    ->where(['order_id' => $order->id])
+                    ->one();
+                if($litebox_operation != null && $litebox_operation->sell_status != NULL) {
+                    throw new ErrorException('Для заказа '.$order->id.' уже проводилась в litebox_operation операция запроса на фискализацию');
+                }
+
                 // запрос на создание чека
-                $uuid = LiteboxOperation::makeOperationSell($order);
+                $uuid = LiteboxOperation::makeOperationSell($order, $litebox_operation);
 
                 // сохраняем в комментарий к заказу полученный uuid
                 if(empty($order->comment)) {

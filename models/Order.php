@@ -2347,7 +2347,7 @@ class Order extends \yii\db\ActiveRecord
         }
 
         // запрос на создание чека
-        LiteboxOperation::makeOperationSell($this); // вторая операция прихода по заказу запрещена!
+        //LiteboxOperation::makeOperationSell($this); // вторая операция прихода по заказу запрещена!
     }
 
     function cancelPay() {

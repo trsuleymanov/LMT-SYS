@@ -1442,9 +1442,20 @@ class Trip extends \yii\db\ActiveRecord
             ->andWhere(['litebox_uuid' => NULL])
             ->all();
 
+        // есть еще отмененные заказы по которым могли происходить сбои при отмене, но для них я ничего не делал...
         if(count($fact_orders_without_canceled) > 0) {
             foreach ($fact_orders_without_canceled as $order) {
-                echo "id=".$order->id."<br />";
+
+                // запрос на создание чека
+                $uuid = LiteboxOperation::makeOperationSell($order);
+
+                // сохраняем в комментарий к заказу полученный uuid
+                if(empty($order->comment)) {
+                    $order->comment = $uuid;
+                }else {
+                    $order->comment = $order->comment.' '.$uuid;
+                }
+                $order->setField('comment', $order->comment);
             }
         }
     }

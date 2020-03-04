@@ -639,6 +639,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             }
 
             $order->setField('litebox_uuid', $result->uuid);
+
+            return $result->uuid;
         }
     }
 

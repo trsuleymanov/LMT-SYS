@@ -1433,7 +1433,7 @@ class Trip extends \yii\db\ActiveRecord
     /*
      * Отправка запросов в litebox по отправленным заказам по которым не были созданы запросы в litebox
      */
-    protected function resendOrdersFiscalization()
+    public function resendOrdersFiscalization()
     {
         $order_sent_status = OrderStatus::getByCode('sent');
         $fact_orders_without_canceled = Order::find()

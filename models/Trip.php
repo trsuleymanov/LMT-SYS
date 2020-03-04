@@ -1427,6 +1427,9 @@ class Trip extends \yii\db\ActiveRecord
         IncomingOrdersWidget::updateActiveTripsModal();
 
 
+        // 9. заказы рейсов в статусах "отправлены" которые не получили uuid, заново отправляют запрос в litebox
+        $this->resendOrdersFiscalization();
+
         return true;
     }
 
@@ -1459,9 +1462,9 @@ class Trip extends \yii\db\ActiveRecord
 
                 // сохраняем в комментарий к заказу полученный uuid
                 if(empty($order->comment)) {
-                    $order->comment = $uuid;
+                    $order->comment = 'uuid: '.$uuid;
                 }else {
-                    $order->comment = $order->comment.' '.$uuid;
+                    $order->comment = $order->comment.' uuid: '.$uuid;
                 }
                 $order->setField('comment', $order->comment);
             }

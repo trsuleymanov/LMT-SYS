@@ -952,9 +952,9 @@ class SiteController extends Controller
 
     public function actionTest() {
 
-        $trip = Trip::find()->where(['id' => 42029])->one();
-
-        $trip->resendOrdersFiscalization();
+//        $trip = Trip::find()->where(['id' => 42029])->one();
+//
+//        $trip->resendOrdersFiscalization();
 
     }
 

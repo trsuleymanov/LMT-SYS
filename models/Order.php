@@ -2330,6 +2330,9 @@ class Order extends \yii\db\ActiveRecord
                 throw new ForbiddenHttpException('По заказу уже производился один платеж');
             }
 
+            // запрос на создание чека - здесь есть условия при которых оплата не может пройти
+            LiteboxOperation::makeOperationSell($this); // вторая операция прихода по заказу запрещена!
+
             $this->scenario = 'pay_or_cancel_pay';
             $this->paid_summ = $this->price;
             $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
@@ -2345,9 +2348,6 @@ class Order extends \yii\db\ActiveRecord
             $trip = $this->trip;
             SocketDemon::updateMainPages($trip->id, $trip->date, false);
         }
-
-        // запрос на создание чека
-        LiteboxOperation::makeOperationSell($this); // вторая операция прихода по заказу запрещена!
     }
 
     function cancelPay() {

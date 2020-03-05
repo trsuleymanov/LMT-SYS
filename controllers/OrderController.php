@@ -1443,6 +1443,11 @@ class OrderController extends Controller
             if(!empty($order->paid_time)) {
                 $order->cancelPay();
             }
+
+            // отжимаем кнопку "Деньги за заказ получены" (или нажатие на свинку отменяем)
+            // делаем заказ оплаченным
+            $order->setField('cash_received_time', NULL);
+            $order->setField('cash_received_by_user_id', NULL);
         }
 
 

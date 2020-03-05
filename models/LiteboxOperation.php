@@ -108,8 +108,11 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             }
         }else {
 
-            // проверяем наличие копий
-            $exist_litebox_operation = LiteboxOperation::find()->where(['order_id' => $order->id])->one();
+            // проверяем наличие неотменненных копий
+            $exist_litebox_operation = LiteboxOperation::find()
+                ->where(['order_id' => $order->id])
+                ->andWhere(['sell_refund_status' => NULL])
+                ->one();
             if($exist_litebox_operation != null) {
                 throw new ErrorException('Операция "Приход" уже создавалась ранее');
             }

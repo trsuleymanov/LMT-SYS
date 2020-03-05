@@ -2360,6 +2360,14 @@ class Order extends \yii\db\ActiveRecord
         // отменяем оплату
         //$this->cash_received_time = 0; // пусть этот флаг останеться не тронутым для истории
 
+        $litebox_operation = LiteboxOperation::find()
+            ->where(['order_id' => $this->id])
+            ->andWhere(['sell_refund_status' => NULL])
+            ->one();
+        if($litebox_operation != null && empty($litebox_operation->sell_refund_at)) {
+            $litebox_operation->makeOperationSellRefund();
+        }
+
         if(empty($this->paid_time)) {
             //throw new ForbiddenHttpException('Нельзя отменить оплату, т.к. не было платежа');
             return false;
@@ -2381,10 +2389,6 @@ class Order extends \yii\db\ActiveRecord
             SocketDemon::updateMainPages($trip->id, $trip->date, false);
         }
 
-        $litebox_operation = LiteboxOperation::find()->where(['order_id' => $this->id])->one();
-        if($litebox_operation != null && empty($litebox_operation->sell_refund_at)) {
-            $litebox_operation->makeOperationSellRefund();
-        }
 
         return true;
     }

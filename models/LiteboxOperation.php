@@ -101,6 +101,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         if($litebox_operation != null) {
 
+            // повторный запрос той же операции в litebox (производиться если на первый запрос litebox не ответил на запрос)
             $litebox_operation->order_id = $order->id;
             $litebox_operation->sell_at = time();
             if (!$litebox_operation->save(false)) {

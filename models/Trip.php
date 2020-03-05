@@ -1452,6 +1452,7 @@ class Trip extends \yii\db\ActiveRecord
 
                 $litebox_operation = LiteboxOperation::find()
                     ->where(['order_id' => $order->id])
+                    ->andWhere(['sell_refund_status' => NULL])
                     ->one();
                 if($litebox_operation != null && $litebox_operation->sell_status != NULL) {
                     throw new ErrorException('Для заказа '.$order->id.' уже проводилась в litebox_operation операция запроса на фискализацию');

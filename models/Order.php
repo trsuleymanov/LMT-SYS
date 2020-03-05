@@ -2323,6 +2323,9 @@ class Order extends \yii\db\ActiveRecord
 
     function setPay($save_paid_data = true, $aFields = []) {
 
+        // запрос на создание чека - здесь есть условия при которых оплата не может пройти
+        LiteboxOperation::makeOperationSell($this);
+
         // $this->cash_received_time = time(); // здесь не нужно устанавливать
         if($save_paid_data) {
 
@@ -2330,8 +2333,6 @@ class Order extends \yii\db\ActiveRecord
                 throw new ForbiddenHttpException('По заказу уже производился один платеж');
             }
 
-            // запрос на создание чека - здесь есть условия при которых оплата не может пройти
-            LiteboxOperation::makeOperationSell($this); // вторая операция прихода по заказу запрещена!
 
             $this->scenario = 'pay_or_cancel_pay';
             $this->paid_summ = $this->price;

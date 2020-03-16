@@ -200,7 +200,6 @@ class ClientServerController extends Controller
                         $order = new Order();
                         $order = self::orderFillClientextData($order, $server_client_ext);
 
-                        //echo "order:<pre>"; print_r($order); echo "</pre>";
                         if (!$order->save(false)) {
 
                             $msg = '';
@@ -213,7 +212,6 @@ class ClientServerController extends Controller
                         }
 
                         self::orderSetPayData($order, $server_client_ext);
-                        //$order->setPay(false);
 
 
                         foreach($server_client_ext['passengers'] as $aPassenger) {
@@ -472,19 +470,18 @@ class ClientServerController extends Controller
         $order->penalty_cash_back = $server_client_ext['penalty_cash_back'];
         $order->used_cash_back = $server_client_ext['used_cash_back'];
 
-        /*
-        $order->source_price = $server_client_ext['price'];
-        $order->paid_summ = $server_client_ext['paid_summ'];
-        if($server_client_ext['is_paid'] == true) {
-            $order->use_fix_price = true;
-            $order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
-            $order->is_paid = true;
-            $order->paid_time = $server_client_ext['paid_time'];
-        }else {
-            $order->use_fix_price = false;
-            $order->is_paid = false;
-            $order->paid_time = 0;
-        }*/
+//        $order->source_price = $server_client_ext['price'];
+//        $order->paid_summ = $server_client_ext['paid_summ'];
+//        if($server_client_ext['is_paid'] == true) {
+//            $order->use_fix_price = true;
+//            $order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
+//            $order->is_paid = true;
+//            $order->paid_time = $server_client_ext['paid_time'];
+//        }else {
+//            $order->use_fix_price = false;
+//            $order->is_paid = false;
+//            $order->paid_time = 0;
+//        }
 
         if($server_client_ext['source_type'] == 'application') {
             $informer_office = InformerOffice::find()->where(['code' => 'mobile_app'])->one();
@@ -687,15 +684,7 @@ class ClientServerController extends Controller
     // заказу заполняются все данные связанные с ценой, оплатой, формируется чек при необходимости
     private static function orderSetPayData($order, $server_client_ext) {
 
-        // параметры уже ранее могли быть заполнены, либо первый раз заполняются
-        // параметры: +paid_summ, +is_paid, +paid_time, +use_fix_price, +price
-        // - измененные параметры нужно сразу сохранить в заказе
-        // $order->setPay(false); - устанавливаются: paid_summ=price, paid_time=time(), is_paid=true
-        // cancelPay() - вызывается при отмене заказа (paid_summ=0, paid_time=0, is_paid=false + LiteboxOperation)
-
-        //$to_save = false;
         if($order->source_price != $server_client_ext['price']) {
-            //$to_save = true;
             $order->source_price = $server_client_ext['price'];
             $order->setField('source_price', $order->source_price);
         }
@@ -703,12 +692,13 @@ class ClientServerController extends Controller
         if($server_client_ext['is_paid'] == true) {
 
             if($order->is_paid != true) {
-                // $to_save = true;
-                $order->use_fix_price = true;
-                $order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
-                // $order->is_paid = true;
-                // $order->paid_time = $server_client_ext['paid_time'];
-                $order->save(false);
+
+                //$order->use_fix_price = true;
+                //$order->price = $server_client_ext['price']; // сразу устанавливаем цену, ибо она уже меняться не будет
+                //$order->save(false);
+
+                $order->setField('use_fix_price', $order->use_fix_price);
+                $order->setField('price', $server_client_ext['price']);
 
                 $aFields = [
                     'paid_time' => $server_client_ext['paid_time'],
@@ -717,15 +707,6 @@ class ClientServerController extends Controller
                 $order->setPay(true, $aFields);
             }
         }
-        else {
-//
-//            if($order->is_paid == true) { // это случай отмены заказа / отмены оплаты - обрабатывается отдельно
-//                $order->use_fix_price = false;
-//                $order->is_paid = false;
-//                $order->paid_time = 0;
-//            }
-        }
-
 
 
         return true;

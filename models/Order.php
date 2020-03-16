@@ -634,12 +634,12 @@ class Order extends \yii\db\ActiveRecord
             'is_paid',
         ];
 
-        $scenarios['litebox_set_status'] = [
-            'litebox_fn_number',
-            'litebox_fiscal_document_number',
-            'litebox_fiscal_document_attribute',
-            'litebox_ecr_registration_number'
-        ];
+//        $scenarios['litebox_set_status'] = [
+//            'litebox_fn_number',
+//            'litebox_fiscal_document_number',
+//            'litebox_fiscal_document_attribute',
+//            'litebox_ecr_registration_number'
+//        ];
 
         return $scenarios;
     }
@@ -2334,14 +2334,22 @@ class Order extends \yii\db\ActiveRecord
             }
 
 
-            $this->scenario = 'pay_or_cancel_pay';
-            $this->paid_summ = $this->price;
-            $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
-            $this->payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
-            $this->is_paid = true;
-            if (!$this->save(false)) {
-                throw new ForbiddenHttpException('Заказ не удалось сохранить');
-            }
+//            $this->scenario = 'pay_or_cancel_pay';
+//            $this->paid_summ = $this->price;
+//            $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
+//            $this->payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
+//            $this->is_paid = true;
+//            if (!$this->save(false)) {
+//                throw new ForbiddenHttpException('Заказ не удалось сохранить');
+//            }
+
+            $this->setField('paid_summ', $this->price);
+
+            $paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
+            $this->setField('paid_time', $paid_time);
+
+            $payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
+            $this->setField('payment_source', $payment_source);
         }
 
         // сообщим браузерам что надо обновить страницу рейсов
@@ -2373,15 +2381,19 @@ class Order extends \yii\db\ActiveRecord
             return false;
         }
 
-        $this->scenario = 'pay_or_cancel_pay';
-        $this->paid_summ = 0;
-        $this->paid_time = 0;
-        $this->is_paid = false;
-        $this->payment_source = '';
-        if(!$this->save(false)) {
-            throw new ForbiddenHttpException('Заказ не удалось сохранить');
-        }
+//        $this->scenario = 'pay_or_cancel_pay';
+//        $this->paid_summ = 0;
+//        $this->paid_time = 0;
+//        $this->is_paid = false;
+//        $this->payment_source = '';
+//        if(!$this->save(false)) {
+//            throw new ForbiddenHttpException('Заказ не удалось сохранить');
+//        }
 
+        $this->setField('paid_summ', 0);
+        $this->setField('paid_time', 0);
+        $this->setField('is_paid', false);
+        $this->setField('payment_source', '');
 
         // сообщим браузерам что надо обновить страницу рейсов
         if($this->trip_id > 0) {

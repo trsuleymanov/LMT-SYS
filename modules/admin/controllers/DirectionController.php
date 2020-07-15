@@ -82,7 +82,26 @@ class DirectionController extends Controller
         $searchScheduleModel = new ScheduleSearch();
         $dataScheduleProvider = $searchScheduleModel->search(Yii::$app->request->queryParams, $model->id);
 
-        $last_order = Order::find()->where(['direction_id' => $model->id])->orderBy(['date' => SORT_DESC])->one();
+        // выбор заказа последнего с наибольшей date с сортировкой по date сильно много жрет ресурсов
+        // $last_order = Order::find()->where(['direction_id' => $model->id])->orderBy(['date' => SORT_DESC])->one();
+
+        // поэтому выберу заказ с наибольшей date из последних созданных 200 заказов
+        $last_orders = Order::find()
+            ->where(['direction_id' => $model->id])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit(1000)
+            ->all();
+        $last_order = null;
+        $last_date = 0;
+        if(count($last_orders) > 0) {
+            foreach ($last_orders as $order) {
+                if($order->date > $last_date) {
+                    $last_date = $order->date;
+                    $last_order = $order;
+                }
+            }
+        }
+
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);

@@ -958,7 +958,7 @@ class SiteController extends Controller
 
         $order = Order::find()->where(['id' => 244057])->one();
 
-
+        echo "order:<pre>"; print_r($order); echo "</pre>";
     }
 
     public function actionTest2()

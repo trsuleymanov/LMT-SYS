@@ -75,10 +75,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
     public static function makeOperationSell($order, $litebox_operation = null) {
 
         // вместо uuid временно верну id последней записи  litebox_operation
-        $last_litebox_operation = LiteboxOperation::find()->orderBy(['id' => 'SORT_DESC'])->one();
-        return $last_litebox_operation->id;
-
-        return $result->uuid;
+//        $last_litebox_operation = LiteboxOperation::find()->orderBy(['id' => 'SORT_DESC'])->one();
+//        return $last_litebox_operation->id;
+//
+//        return $result->uuid;
 
         if($order->trip == null) {
             throw new ErrorException('Рейс не найден');
@@ -672,8 +672,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
     public function makeOperationSellRefund() {
 
         // вместо uuid временно верну id последней записи  litebox_operation
-        $last_litebox_operation = LiteboxOperation::find()->orderBy(['id' => 'SORT_DESC'])->one();
-        return $last_litebox_operation->id;
+//        $last_litebox_operation = LiteboxOperation::find()->orderBy(['id' => 'SORT_DESC'])->one();
+//        return $last_litebox_operation->id;
 
         $order = Order::find()->where(['id' => $this->order_id])->one();
 

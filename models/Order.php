@@ -2350,6 +2350,8 @@ class Order extends \yii\db\ActiveRecord
 
             $payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
             $this->setField('payment_source', $payment_source);
+
+            $this->setField('is_paid', true);
         }
 
         // сообщим браузерам что надо обновить страницу рейсов

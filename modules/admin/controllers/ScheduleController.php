@@ -46,7 +46,12 @@ class ScheduleController extends Controller
         $model = new Schedule();
         $model->direction_id = $direction->id;
 
-        $last_order = Order::find()->where(['direction_id' => $model->direction_id])->orderBy(['date' => SORT_DESC])->one();
+        // выбор заказа последнего с наибольшей date с сортировкой по date сильно много жрет ресурсов
+        //$last_order = Order::find()->where(['direction_id' => $model->direction_id])->orderBy(['date' => SORT_DESC])->one();
+
+        // поэтому выберем заказ с наибольшей date из последних созданных 200 заказов
+        $last_order = Order::getOrderWithLastDate($model->id);
+
         $model->start_date = ($last_order != null && $last_order->date > time() ? date('d.m.Y', $last_order->date + 86400) : date('d.m.Y', time() + 86400));
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

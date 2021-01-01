@@ -610,7 +610,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 'company' => [
                     'email' => "417417t@gmail.com",
                     'inn' => "165711720197",
-                    'sno' => "envd",
+                    //'sno' => "envd",
+                    'sno' => "patent",
                     'payment_address' => "t417.ru"
                 ],
                 'items' => $aItems,
@@ -1126,7 +1127,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 'company' => [
                     'email' => "417417t@gmail.com",
                     'inn' => "165711720197",
-                    'sno' => "envd",
+                    //'sno' => "envd",
+                    'sno' => "patent",
                     'payment_address' => "t417.ru"
                 ],
                 'items' => $aItems,

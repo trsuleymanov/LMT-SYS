@@ -153,8 +153,8 @@ class Loyality extends \yii\db\ActiveRecord
         $canceled_order_status_id = OrderStatus::getByCode('canceled')->id;
         $sent_order_status_id = OrderStatus::getByCode('sent')->id;
 
-        //$delimiter_data = "01.01.".date("Y");
-        $delimiter_data = "01.01.2020";
+        $delimiter_data = "01.01.".date("Y");
+        //$delimiter_data = "01.01.2020";
         $unixtime_delimiter_data = strtotime($delimiter_data);
         // Дублирую код 1 -->
 

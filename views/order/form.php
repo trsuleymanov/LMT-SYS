@@ -105,7 +105,7 @@ $form = ActiveForm::begin([
             <label class="label-horizontal">НПР</label>
             <div class="elem-horizontal" style="height: 30px;">
                 <?= $form->field($order, 'direction_id', ['errorOptions' => ['style' => 'display:none;']])
-                    ->dropDownList([0 => '---'] + ArrayHelper::map(Direction::find()->all(), 'id', 'sh_name'), [
+                    ->dropDownList([0 => '---'] + ArrayHelper::map(Direction::find()->where(['hide' => 0])->all(), 'id', 'sh_name'), [
                         'id' => 'direction',
                         'class' => 'checkbox',
                         'disabled' => empty($order->date),

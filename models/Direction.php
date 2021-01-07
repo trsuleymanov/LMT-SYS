@@ -29,10 +29,14 @@ class Direction extends \yii\db\ActiveRecord
         return 'direction';
     }
 
-    public static function getDirectionsTrips($selected_unixdate) {
+    public static function getDirectionsTrips($selected_unixdate, $show_only_public = false) {
 
         $aDirections = [];
-        $direction_list = Direction::find()->all();
+        if($show_only_public == true) {
+            $direction_list = Direction::find()->where(['hide' => 0])->all();
+        }else {
+            $direction_list = Direction::find()->all();
+        }
         foreach($direction_list as $key => $direction)
         {
             $trips = Trip::getTrips($selected_unixdate, $direction->id);
@@ -53,7 +57,7 @@ class Direction extends \yii\db\ActiveRecord
     {
         return [
             [['sh_name'], 'required'],
-            [['city_from', 'city_to', 'distance', 'created_at', 'updated_at', ], 'integer'],
+            [['city_from', 'city_to', 'distance', 'created_at', 'updated_at', 'hide'], 'integer'],
             [['sh_name'], 'string', 'max' => 20],
         ];
     }
@@ -69,6 +73,7 @@ class Direction extends \yii\db\ActiveRecord
             'city_from' => 'Город отправления',
             'city_to' => 'Город назначения',
             'distance' => 'Дистанция, км',
+            'hide' => 'Скрыт',
             'created_at' => 'Время создания',
             'updated_at' => 'Время изменения',
         ];

@@ -91,6 +91,13 @@ $this->params['breadcrumbs'][] = $this->title;
 //                ],
 
                 [
+                    'attribute' => 'hide',
+                    'content' => function ($model) {
+                        return $model->hide == 0 ? '-' : 'Да';
+                    },
+                    'filter' => false
+                ],
+                [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',
                     'options' => ['style' => 'width: 50px;']

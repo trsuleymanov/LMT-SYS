@@ -32,6 +32,12 @@ $this->registerJsFile('js/admin/pages.js', ['depends' => 'app\assets\AdminAsset'
 
         <div class="row">
             <div class="col-sm-4 form-group form-group-sm">
+                <?= $form->field($model, 'hide')->checkbox() ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 form-group form-group-sm">
                 <?= $form->field($model, 'sh_name')->textInput(['maxlength' => true]) ?>
             </div>
         </div>

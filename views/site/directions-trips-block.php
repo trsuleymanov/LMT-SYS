@@ -129,9 +129,6 @@ if(count($aDirections) > 2) { ?>
                         $status = 'start_sending';
                     }
                     ?>
-                    <?php /*
-                    <div class="trip" is-start-sending="<?= !empty($trip->date_start_sending) ?>" is-sended="<?= !empty($trip->date_sended) ?>" commercial="<?= $trip->commercial ?>">
-                    */ ?>
                     <div class="trip" status="<?= $status ?>" has-free-places="<?= intval($trip->has_free_places) ?>" commercial="<?= $trip->commercial ?>" is-reserv="<?= $trip->is_reserv ?>">
                         <div class="trip-top">
                             <div class="trip-top-left">
@@ -139,12 +136,6 @@ if(count($aDirections) > 2) { ?>
                             </div>
                             <div class="trip-top-right"><?= Yii::$app->formatter->asDecimal($trip_price, 0) ?></div>
                         </div>
-                        <?php /*
-                        <div class="points">
-                            <div class="start-time"><?= $trip->start_time ?></div>
-                            <div class="mid-time"><?= $trip->mid_time ?></div>
-                            <div class="end-time"><?= $trip->end_time ?></div>
-                        </div>*/ ?>
                         <?php if($view == 'set_trip_list') { ?>
                             <div class="trip-checkbox">
                                 <?php if(empty($trip->date_sended)) { ?>
@@ -163,15 +154,6 @@ if(count($aDirections) > 2) { ?>
                                     <a title="ОСР - <?= $trip_price ?>" href="#"><?= $trip->name ?></a>
                                 <?php } ?>
                             <?php } ?>
-                            <?php /* if(empty($trip->date_sended)) { ?>
-                                <?php if($view == 'set_trip_list') { ?>
-                                    <span class="add_transport_plus" trip-id="<?= $trip->id ?>"><i class="glyphicon glyphicon-plus-sign"></i></span>
-                                <?php }else { // trip_list  ?>
-                                    <?php if(!in_array(Yii::$app->session->get('role_alias'), ['graph_operator', 'warehouse_turnover'])) { ?>
-                                        <span class="add-order-plus" trip-id="<?= $trip->id ?>"><i class="glyphicon glyphicon-plus-sign"></i></span>
-                                    <?php } ?>
-                                <?php } ?>
-                            <?php } */ ?>
                         </div>
                         <div class="transports-names">
                             <?php

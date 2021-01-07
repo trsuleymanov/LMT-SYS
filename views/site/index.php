@@ -19,10 +19,9 @@ $user = Yii::$app->user->identity;
 
 // $setting = Setting::find()->where(['id' => 1])->one();
 
-//echo "aDirections:<pre>"; print_r($aDirections); echo "</pre>";
+
 ?>
 <div id="main-page" class="row" test="777">
-    <!--<div class="col-tobus-left">&nbsp;</div>-->
 
     <div id="directions-trips-block"  class="col-tobus-center__">
         <?php
@@ -32,9 +31,6 @@ $user = Yii::$app->user->identity;
         ]); ?>
     </div>
 
-    <?php /*
-    <div class="col-tobus-right-1">&nbsp;</div>
-    */ ?>
 
     <div id="main-buttons-block" class="col-tobus-right-2-3__">
 

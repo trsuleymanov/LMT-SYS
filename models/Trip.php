@@ -953,7 +953,7 @@ class Trip extends \yii\db\ActiveRecord
 
 
 	/*
-	 * Отправка рейса и пересчет разных счетчиков, логирование и т.п.
+	 * Отправка рейса (кнопка "Закрыть рейс") и пересчет разных счетчиков, логирование и т.п.
 	 */
     public function send() {
 
@@ -1009,7 +1009,8 @@ class Trip extends \yii\db\ActiveRecord
             }
 
             if($client != null) {
-                $client->recountSendedCanceledReliabilityCounts($fact_order, 1, $fact_order->places_count, 0 , 0);
+                //$client->recountSendedCanceledReliabilityCounts($fact_order, 1, $fact_order->places_count, 0 , 0);
+                $client->recountSendedCanceledReliabilityCounts($fact_order, 'send');
             }
         }
 
@@ -1449,7 +1450,7 @@ class Trip extends \yii\db\ActiveRecord
         if(count($fact_orders_without_canceled) > 0) {
             foreach ($fact_orders_without_canceled as $order) {
 
-
+                /* <!-- старый код - правка с чеками */
                 $litebox_operation = LiteboxOperation::find()
                     ->where(['order_id' => $order->id])
                     ->andWhere(['sell_refund_status' => NULL])
@@ -1460,6 +1461,16 @@ class Trip extends \yii\db\ActiveRecord
 
                 // запрос на создание чека
                 $uuid = LiteboxOperation::makeOperationSell($order, $litebox_operation);
+                /* старый код - правка с чеками --> */
+
+                /* новый код - правка с чеками */
+                /*
+                $aUuids = LiteboxOperation::makeOperationSell($order);
+                if(count($aUuids) > 0) {
+                    $uuid = implode(',', $aUuids);
+                }else {
+                    $uuid = '';
+                }*/
 
                 // сохраняем в комментарий к заказу полученный uuid
                 if(empty($order->comment)) {
@@ -1527,7 +1538,8 @@ class Trip extends \yii\db\ActiveRecord
             }
 
             if($client != null) {
-                $client->recountSendedCanceledReliabilityCounts($fact_order, -1, -$fact_order->places_count, 0 , 0);
+                // $client->recountSendedCanceledReliabilityCounts($fact_order, -1, -$fact_order->places_count, 0 , 0);
+                $client->recountSendedCanceledReliabilityCounts($fact_order, 'cancel_send');
             }
         }
 

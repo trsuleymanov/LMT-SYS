@@ -62,7 +62,12 @@ class Client extends \yii\db\ActiveRecord
                 'updated_at', 'sended_fixprice_orders_places_count', 'sended_informer_beznal_orders_places_count', 'canceled_orders_places_count',
                 'sended_is_not_places_order_count', 'do_tariff_id',
 
-                'current_year_sended_places', 'current_year_sended_orders', 'current_year_canceled_places',
+                'current_year_sended_places', 'current_year_sended_orders',
+                'current_year_sended_standart_places', 'current_year_sended_standart_orders',
+                'current_year_sended_commercial_places', 'current_year_sended_commercial_orders',
+                'current_year_sended_113_places', 'current_year_sended_113_orders',
+
+                'current_year_canceled_places',
                 'current_year_canceled_orders',
                 'current_year_canceled_orders_1h', 'current_year_canceled_orders_12h',
                 'current_year_sended_prize_places', 'current_year_penalty', 'current_year_sended_fixprice_places',
@@ -122,6 +127,15 @@ class Client extends \yii\db\ActiveRecord
 
             'current_year_sended_places' => 'Число отправленных мест',
             'current_year_sended_orders' => 'Число отправленных заказов',
+
+            'current_year_sended_standart_places' => 'Число отправленных мест на стандартных рейсах',
+            'current_year_sended_standart_orders' => 'Число отправленных заказов на стандартсных рейсах',
+            'current_year_sended_commercial_places' => 'Число отправленных мест на коммерческих рейсах',
+            'current_year_sended_commercial_orders' => 'Число отправленных заказов на коммерческих рейсах',
+            'current_year_sended_113_places' => 'Число отправленных мест всего с 1 по 13 января включительно',
+            'current_year_sended_113_orders' => 'Число отправленных заказов всего с 1 по 13 января включительно',
+
+
             'current_year_canceled_places' => 'Число отмененных мест',
             'current_year_canceled_orders' => 'Число отмененных заказов',
 
@@ -203,9 +217,8 @@ class Client extends \yii\db\ActiveRecord
         }
     }
 
-
+/*
     public function recountSendedCanceledReliabilityCounts($order, $add_sended_orders_count = 0, $add_sended_places_count = 0, $add_canceled_orders_count = 0, $add_canceled_places_count = 0) {
-
 
         if($add_sended_orders_count != 0) {
             $this->current_year_sended_orders += $add_sended_orders_count;
@@ -253,6 +266,127 @@ class Client extends \yii\db\ActiveRecord
                   current_year_canceled_orders_1h='.intval($this->current_year_canceled_orders_1h).',
                   current_year_canceled_orders_12h='.intval($this->current_year_canceled_orders_12h).'
                   WHERE id='.$this->id;
+        return Yii::$app->db->createCommand($sql)->execute();
+    }*/
+
+    public function recountSendedCanceledReliabilityCounts($order, $operation)
+    {
+        if(!in_array($operation, ['send', 'cancel_send', 'cancel'])) {
+            throw new ErrorException('Unknown operation');
+        }
+
+        // рейс коммерческий или нет?   $trip->commercial = 0/1
+        $trip = $order->trip;
+
+        // дата заказа попадает в диапозон текущего года от 1 января до 13 января (до 14 января 0:00:00)
+        $unixdate_1jan = strtotime('01.01.'.date('Y'));
+        $unixdate_14jan = strtotime('14.01.'.date('Y'));
+
+        if($operation == 'send') {
+
+            $this->current_year_sended_orders += 1;
+            $this->current_year_sended_places += $order->places_count;
+
+            if($order->date > $unixdate_1jan && $order->date < $unixdate_14jan) {
+
+                $this->current_year_sended_113_orders += 1;
+                $this->current_year_sended_113_places += $order->places_count;
+
+            }else {
+
+                if($trip->commercial == true) {
+
+                    $this->current_year_sended_commercial_orders += 1;
+                    $this->current_year_sended_commercial_places += $order->places_count;
+
+                }else {
+
+                    $this->current_year_sended_standart_orders += 1;
+                    $this->current_year_sended_standart_places += $order->places_count;
+                }
+            }
+
+            $sql = 'UPDATE `client` SET
+                  current_year_sended_orders='.$this->current_year_sended_orders.',
+                  current_year_sended_places='.$this->current_year_sended_places.',
+                  current_year_sended_standart_orders='.$this->current_year_sended_standart_orders.',
+                  current_year_sended_standart_places='.$this->current_year_sended_standart_places.',
+                  current_year_sended_commercial_orders='.$this->current_year_sended_commercial_orders.',
+                  current_year_sended_commercial_places='.$this->current_year_sended_commercial_places.',
+                  current_year_sended_113_orders='.$this->current_year_sended_113_orders.',
+                  current_year_sended_113_places='.$this->current_year_sended_113_places.'
+                  WHERE id='.$this->id;
+
+        }elseif($operation == 'cancel_send') {
+
+            $this->current_year_sended_orders -= 1;
+            $this->current_year_sended_places -= $order->places_count;
+
+            if($order->date > $unixdate_1jan && $order->date < $unixdate_14jan) {
+
+                $this->current_year_sended_113_orders -= 1;
+                $this->current_year_sended_113_places -= $order->places_count;
+
+            }else {
+
+                if($trip->commercial == true) {
+
+                    $this->current_year_sended_commercial_orders -= 1;
+                    $this->current_year_sended_commercial_places -= $order->places_count;
+
+                }else {
+
+                    $this->current_year_sended_standart_orders -= 1;
+                    $this->current_year_sended_standart_places -= $order->places_count;
+                }
+            }
+
+            $sql = 'UPDATE `client` SET
+                  current_year_sended_orders='.$this->current_year_sended_orders.',
+                  current_year_sended_places='.$this->current_year_sended_places.',
+                  current_year_sended_standart_orders='.$this->current_year_sended_standart_orders.',
+                  current_year_sended_standart_places='.$this->current_year_sended_standart_places.',
+                  current_year_sended_commercial_orders='.$this->current_year_sended_commercial_orders.',
+                  current_year_sended_commercial_places='.$this->current_year_sended_commercial_places.',
+                  current_year_sended_113_orders='.$this->current_year_sended_113_orders.',
+                  current_year_sended_113_places='.$this->current_year_sended_113_places.'
+                  WHERE id='.$this->id;
+
+
+        }elseif($operation == 'cancel') {
+
+            $this->current_year_canceled_orders += 1;
+            $this->current_year_canceled_places += $order->places_count;
+
+            if($order->cancellation_click_time > 0) {
+
+                list($trip_hours, $trip_mins) = explode(':', $trip->start_time);
+                $trip_start_time = $trip->date + 3600*intval($trip_hours) + 60*intval($trip_mins);
+
+                if(
+                    ($trip_start_time - $order->cancellation_click_time < 3600)
+                    && ($trip_start_time - $order->cancellation_click_time > -10800)
+                ) {
+                    $this->current_year_canceled_orders_1h += 1;
+                }
+
+                // количество отмененных заказов менее чем за 12 часов до последней точки рейса
+                list($trip_hours, $trip_mins) = explode(':', $trip->end_time);
+                $trip_end_time = $trip->date + 3600*intval($trip_hours) + 60*intval($trip_mins);
+
+                if($trip_end_time - $order->cancellation_click_time < 43200) { // 12 часов
+                    $this->current_year_canceled_orders_12h += 1;
+                }
+            }
+
+            $sql = 'UPDATE `client` SET
+                  current_year_canceled_orders='.$this->current_year_canceled_orders.',
+                  current_year_canceled_places='.$this->current_year_canceled_places.',
+                  current_year_canceled_orders_1h='.intval($this->current_year_canceled_orders_1h).',
+                  current_year_canceled_orders_12h='.intval($this->current_year_canceled_orders_12h).'
+                  WHERE id='.$this->id;
+        }
+
         return Yii::$app->db->createCommand($sql)->execute();
     }
 

@@ -1060,37 +1060,6 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
-    // не вижу смысла обновлять данные заявок на основном сервере
-//    public function setClientExtStatus() {
-//
-//        if(!empty($this->client_ext_id)) {
-//
-//            $client_ext = $this->clientExt;
-//
-//            $aOrderStatuses = ArrayHelper::map(OrderStatus::find()->all(), 'id', 'code');
-//
-//            if($this->status_id > 0 && $aOrderStatuses[$this->status_id] == 'created') {
-//                if (empty($this->time_confirm)) {
-//                    $client_ext->status = 'pending_call';
-//                } else {
-//                    $client_ext->status = 'pending_send';
-//                }
-//            }elseif($aOrderStatuses[$this->status_id] == 'canceled') {
-//                $client_ext->status = 'canceled';
-//            }elseif($aOrderStatuses[$this->status_id] == 'sent') {
-//                $client_ext->status = 'sended';
-//            }else {
-//                $client_ext->status = 'unknown';
-//            }
-//
-//            if(!$client_ext->save(false)) {
-//                throw new ErrorException('Не удалось обновить статус заявки');
-//            }
-//        }
-//
-//        return true;
-//    }
-
     public function setField($field_name, $field_value)
     {
         if(!empty($field_value)) {
@@ -1395,7 +1364,6 @@ class Order extends \yii\db\ActiveRecord
 
     public function getPrizeTripCount()
     {
-        //$setting = Setting::find()->where(['id' => 1])->one();
         if(Yii::$app->setting->loyalty_switch == 'cash_back_on') {
             return 0;
         }
@@ -1411,22 +1379,22 @@ class Order extends \yii\db\ActiveRecord
         $client = $this->client;
 
         if($client == null) {
+
             $sended_orders_places_count = 0;
             $sended_prize_trip_count = 0;
             $penalty = 0;
+
         }else {
 
-            //$sended_orders_places_count = $client->sended_orders_places_count;
-            //$sended_orders_places_count = $client->past_years_sended_places + $client->current_year_sended_places;
             $sended_orders_places_count = $client->current_year_sended_places;
-
-            //$sended_prize_trip_count = $client->sended_prize_trip_count;
-            //$sended_prize_trip_count = $client->past_years_sended_prize_places + $client->current_year_sended_prize_places;
             $sended_prize_trip_count = $client->current_year_sended_prize_places;
-            //$penalty = $client->penalty;
-            //$penalty = $client->past_years_penalty + $client->current_year_penalty;
-            $penalty = $client->current_year_penalty;
+            //$penalty = $client->current_year_penalty;
+//            $sended_orders_places_count = 0;
+            $sended_prize_trip_count = 0;
+            $penalty = 0;
 
+            /*
+            // Этот блок создает путаницу ! - считаем только совершенные поездки!
             // к количеству отправленных призовых поездок добавим поездки из "новых" заказов (но количество отправленных заказов оставим без изменения)
             $created_order_status = OrderStatus::getByCode('created');
             $created_orders_query = Order::find()
@@ -1440,8 +1408,11 @@ class Order extends \yii\db\ActiveRecord
             $created_orders = $created_orders_query->all();
             // echo "created_orders:<pre>"; print_r($created_orders); echo "</pre>";
 
+
+
             if(count($created_orders) > 0) {
                 foreach($created_orders as $order) {
+                    echo "order_id=".$order->id."<br />";
                     if($order->external_type == "client_site" && $order->is_paid == true) {
                         continue;
                     }else {
@@ -1449,7 +1420,11 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
+            */
         }
+
+        //echo "sended_orders_places_count=".$sended_orders_places_count." sended_prize_trip_count=".$sended_prize_trip_count;
+
 
 
         $P = intval($this->places_count); // количество мест в текущем заказе
@@ -1457,11 +1432,11 @@ class Order extends \yii\db\ActiveRecord
         if($this->is_not_places == 1)  // если отправляется посылка, то призовой поездки не предоставляется
             return 0;
         else {
-            
-            // echo "<br />sended_orders_places_count=$sended_orders_places_count sended_prize_trip_count=$sended_prize_trip_count penalty=$penalty<br />";
-            
+
             if($P < 5) {
                 $prize_count = floor(($sended_orders_places_count - 5*($sended_prize_trip_count + $penalty) + $P)/5);
+//                echo "prize_count=$prize_count ";
+//                exit();
                 if($prize_count > 1) {
                     $prize_count = 1;
                 }
@@ -1477,69 +1452,6 @@ class Order extends \yii\db\ActiveRecord
         }
     }
 
-
-    /*
-     * Функция возвращает кэшбэк только для каждого 5-го места (при наличии других доп.условий)
-     */
-    /*public function getCalculateUsedCashBack($price) {
-
-        if(Yii::$app->setting->loyalty_switch == 'fifth_place_prize') {
-            return 0;
-        }
-
-        if($this->client == null) {
-            return 0;
-        }
-
-
-        if($this->client->cashback > 0) {
-            if($this->client->cashback > $price) {
-                $used_cash_back = intval($price);
-            }else {
-                $used_cash_back = intval($this->client->cashback);
-            }
-        }else {
-            $used_cash_back = 0;
-        }
-
-        if($used_cash_back == 0) {
-            return 0;
-        }
-
-        // проверяем выполнение условие "5-е место подряд в заказах - дает право на списание кэш-бэка"
-        if($this->places_count >= 5) {
-            return $used_cash_back;
-        }else {
-            // ищем последний отправленный заказ на котором есть списанный кэш-бэк
-            $last_order = Order::find()
-                ->where(['client_id' => $this->client_id])
-                ->andWhere(['status_id' => 3]) // отправлен
-                ->andWhere(['>', 'used_cash_back', 0])
-                ->andWhere(['use_fix_price' => 0])
-                ->orderBy(['id' => SORT_DESC])
-                ->one();
-            if($last_order == null){
-                return 0;
-            }else {
-                $all_last_orders = Order::find()
-                    ->where(['>=', 'id', $last_order->id])
-                    ->andWhere(['status_id' => 3]) // отправлен
-                    ->andWhere(['use_fix_price' => 0])
-                    ->all();
-
-                $all_last_places_count = 0;
-                foreach ($all_last_orders as $order) {
-                    $all_last_places_count += $order->places_count;
-                }
-
-                if($all_last_places_count >= 5) {
-                    return $used_cash_back;
-                }else {
-                    return 0;
-                }
-            }
-        }
-    }*/
 
 
     /*
@@ -2213,7 +2125,8 @@ class Order extends \yii\db\ActiveRecord
 
                 // счетчики клиента нужно обновить, и пересчитать кэш-бэк штрафной
                 $order = Order::find()->where(['id' => $this->id])->one();
-                $client->recountSendedCanceledReliabilityCounts($order, 0, 0, 1, $order->places_count);
+                // $client->recountSendedCanceledReliabilityCounts($order, 0, 0, 1, $order->places_count);
+                $client->recountSendedCanceledReliabilityCounts($order, 'cancel');
 
                 $order->penalty_cash_back = $order->getCalculatePenaltyCashBack($order->price);
                 if($order->penalty_cash_back > 0) {
@@ -2407,310 +2320,6 @@ class Order extends \yii\db\ActiveRecord
         return true;
     }
 
-    /*
-    public function sendToTrip() {
-
-        $day_report_trip_transport = DayReportTripTransport::find()
-            ->where(['trip_transport_id' => $this->fact_trip_transport_id])
-            ->one();
-        if($day_report_trip_transport == null) {
-            throw new ForbiddenHttpException('Отчет дня связанный с т/с заказа - не найден');
-        }
-
-        $trip = $this->trip;
-        if($trip == null) {
-            throw new ForbiddenHttpException('Рейс не найден');
-        }
-
-        if($this->factTripTransport == null) {
-            throw new ForbiddenHttpException('Машина привязанная к заказу не найдена');
-        }
-
-        $direction = $this->direction;
-        if($direction == null) {
-            throw new ForbiddenHttpException('Направление не найдено');
-        }
-
-        $transport = $this->factTripTransport->transport;
-        if($transport == null) {
-            throw new ForbiddenHttpException('Машина не найдена');
-        }
-
-        $driver = $this->factTripTransport->driver;
-        if($driver == null) {
-            throw new ForbiddenHttpException('Водитель');
-        }
-
-        // все заказы привязанные "фактически" к отправляемой машине перевожу в статус "Отправлен"
-        // Yii::$app->db->createCommand('UPDATE `order` SET status_id = ' . $order_status->id . ', status_setting_time=' . time() . ', updated_at=' . time() . ' WHERE id IN (' . implode(',', $aFactOrdersId) . ')')->execute();
-
-        $order_status = OrderStatus::getByCode('sent');
-        $this->status_id = $order_status->id;
-        $this->status_setting_time = time();
-        $this->updated_at = time();
-
-        // всем заказам с неподтвержденной посадкой устанавливаем подтвержденность посадки
-//        if(count($aNotConfirmTimeSat) > 0) {
-//            Yii::$app->db->createCommand('UPDATE `order` SET confirmed_time_sat = ' . time() . ' WHERE id IN (' . implode(',', $aNotConfirmTimeSat) . ')')->execute();
-//        }
-        if(empty($this->confirmed_time_sat)) {
-            $this->confirmed_time_sat = time();
-        }
-
-        // Когда заказы переходят в статус "Отправлен", то в таблице клиентов пересчитываются: order_count++, prize_trip_count?++
-        $client = $this->client;
-
-        if($this->prize_trip_count > 0) {
-            $client->current_year_sended_prize_places += $this->prize_trip_count;
-            $client->setField('current_year_sended_prize_places', $client->current_year_sended_prize_places);
-        }
-        if($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
-
-            $client->current_year_sended_informer_beznal_places += $this->places_count;
-            $client->setField('current_year_sended_informer_beznal_places', $client->current_year_sended_informer_beznal_places);
-
-            $client->current_year_sended_informer_beznal_orders += 1;
-            $client->setField('current_year_sended_informer_beznal_orders', $client->current_year_sended_informer_beznal_orders);
-
-        }elseif($this->is_not_places == 1) { // или счетчик "посылок" (нет места) инкрементируется
-
-            $client->current_year_sended_isnotplaces_orders++;
-            $client->setField('current_year_sended_isnotplaces_orders', $client->current_year_sended_isnotplaces_orders);
-
-        }elseif($this->use_fix_price == 1) { // или увеличивается счетчик мест отправленных фикс. заказов
-
-            $client->current_year_sended_fixprice_places += $this->places_count;
-            $client->setField('current_year_sended_fixprice_places', $client->current_year_sended_fixprice_places);
-
-            $client->current_year_sended_fixprice_orders += 1;
-            $client->setField('current_year_sended_fixprice_orders', $client->current_year_sended_fixprice_orders);
-        }
-
-        if($client != null) {
-            $client->recountSendedCanceledReliabilityCounts($this, 1, $this->places_count, 0 , 0);
-        }
-
-
-        // "логируем" данные
-        // $day_report_trip_transport = new DayReportTripTransport();
-        // - тут идет куча пересчета
-//        $day_report_trip_transport = DayReportTripTransport::find()
-//            ->where(['trip_transport_id' => $this->fact_trip_transport_id])
-//            ->one();
-//        if($day_report_trip_transport == null) {
-//            throw new ForbiddenHttpException('Отчет дня связанный с т/с заказа - не найден');
-//        }
-
-        $day_report_trip_transport->places_count_sent += $this->places_count;
-        $day_report_trip_transport->child_count_sent += $this->child_count;
-        $day_report_trip_transport->student_count_sent += $this->student_count;
-        $day_report_trip_transport->prize_trip_count_sent += $this->prize_trip_count;
-        $day_report_trip_transport->bag_count_sent += $this->bag_count;
-        $day_report_trip_transport->suitcase_count_sent += $this->suitcase_count;
-        $day_report_trip_transport->oversized_count_sent += $this->oversized_count;
-        $day_report_trip_transport->is_not_places_count_sent += $this->is_not_places;
-        $day_report_trip_transport->proceeds += $this->price;
-        $day_report_trip_transport->paid_summ += $this->paid_summ;
-
-        $informer_office = InformerOffice::find()->where(['code' => 'without_record'])->one();
-        if($informer_office == null) {
-            throw new ForbiddenHttpException('Источник "Без записи" не найден');
-        }
-        if($this->informer_office_id == $informer_office->id) {
-            $day_report_trip_transport->no_record++;
-        }
-
-        $yandexPointTo = $this->yandexPointTo;
-        $yandexPointFrom = $this->yandexPointFrom;
-        if(
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
-        ) { // едут в аэропорт или из аэропорта
-            $day_report_trip_transport->airport_count_sent++;
-        }
-
-        if($this->use_fix_price == 1) {
-            $day_report_trip_transport->fix_price_count_sent++;
-        }
-
-        if(!$day_report_trip_transport->save(false)) {
-            throw new ErrorException('Не удалось сохранить информацию в отчет отображаемого дня');
-        }
-
-        // записываем в "круги" отправленную машину
-        $trip_start_time = $trip->date + Helper::convertHoursMinutesToSeconds($trip->start_time);
-        $transport_circle = DayReportTransportCircle::find()
-            ->where(['transport_id' => $this->factTripTransport->id, 'state' => 0])
-            ->andWhere(['<', 'base_city_trip_start_time', $trip_start_time])
-            ->orderBy(['id' => SORT_DESC])
-            ->one();
-        if($transport_circle == null) {
-            throw new ForbiddenHttpException('Цикл транспорта не найден');
-        }
-        $transport_circle->total_proceeds = $day_report_trip_transport->proceeds;
-        $transport_circle->total_paid_summ = $day_report_trip_transport->paid_summ;
-        if(!$transport_circle->save()) {
-            throw new ForbiddenHttpException('Не удалось сохранить запись машины в таблице кругов');
-        }
-
-        // логируем отправленные заказы OrderReport
-        // запись в OrderReport::tableName(),
-        $aOrdersReports[] = [
-            'day_report_trip_transport_id' => $day_report_trip_transport->id,
-            'date_sended' => $day_report_trip_transport->date,
-            'order_id' => $this->id,
-            'client_id' => $this->client_id,
-            'client_name' => ($this->client != null ? $this->client->name : ''),
-            'date' => $this->date,
-            'direction_id' => $this->direction_id,
-            'direction_name' => ($direction != null ? $direction->sh_name : ''),
-
-            'street_id_from' => $this->street_id_from,
-            'street_from_name' => ($this->streetFrom != null ? $this->streetFrom->name : ''),
-            'point_id_from' => $this->point_id_from,
-            'point_from_name' => ($this->pointFrom != null ? $this->pointFrom->name : ''),
-
-            'yandex_point_from_id' => $this->yandex_point_from_id,
-            'yandex_point_from_name' => $this->yandex_point_from_name,
-            'yandex_point_from_lat' => $this->yandex_point_from_lat,
-            'yandex_point_from_long' => $this->yandex_point_from_long,
-
-            'time_air_train_arrival' => $this->time_air_train_arrival,
-            'street_id_to' => $this->street_id_to,
-            'street_to_name' => ($this->streetTo != null ? $this->streetTo->name : ''),
-            'point_id_to' => $this->point_id_to,
-            'point_to_name' => ($this->pointTo != null ? $this->pointTo->name : ''),
-
-            'yandex_point_to_id' => $this->yandex_point_to_id,
-            'yandex_point_to_name' => $this->yandex_point_to_name,
-            'yandex_point_to_lat' => $this->yandex_point_to_lat,
-            'yandex_point_to_long' => $this->yandex_point_to_long,
-
-            'time_air_train_departure' => $this->time_air_train_departure,
-            'trip_id' => $this->trip_id,
-            'trip_name' => ($this->trip != null ? $this->trip->name : ''),
-            'informer_office_id' => $this->informer_office_id,
-            'informer_office_name' => ($this->informerOffice != null ? $this->informerOffice->name : ''),
-            'is_not_places' => $this->is_not_places,
-            'places_count' => $this->places_count,
-            'student_count' => $this->student_count,
-            'child_count' => $this->child_count,
-            'bag_count' => $this->bag_count,
-            'suitcase_count' => $this->suitcase_count,
-            'oversized_count' => $this->oversized_count,
-            'prize_trip_count' => $this->prize_trip_count,
-            'comment' => $this->comment,
-            'additional_phone_1' => $this->additional_phone_1,
-            'additional_phone_2' => $this->additional_phone_2,
-            'additional_phone_3' => $this->additional_phone_3,
-            'time_sat' => $this->time_sat,
-            'use_fix_price' => $this->use_fix_price,
-            'price' => $this->price,
-            'time_confirm' => $this->time_confirm,
-            // 'time_vpz' => $fact_order->time_vpz, - это и есть поле first_writedown_click_time
-            'is_confirmed' => $this->is_confirmed,
-            'first_writedown_click_time' => $this->first_writedown_click_time,
-            'first_writedown_clicker_id' => $this->first_writedown_clicker_id,
-            'first_writedown_clicker_name' => ($this->firstWritedownClicker != null ? $this->firstWritedownClicker->fio : ''),
-            'first_confirm_click_time' => $this->first_confirm_click_time,
-            'first_confirm_clicker_id' => $this->first_confirm_clicker_id,
-            'first_confirm_clicker_name' => ($this->firstConfirmClicker != null ? $this->firstConfirmClicker->fio : ''),
-            'radio_confirm_now' => $this->radio_confirm_now,
-            'radio_group_1' => $this->radio_group_1,
-            'radio_group_2' => $this->radio_group_2,
-            'radio_group_3' => $this->radio_group_3,
-            'confirm_selected_transport' => $this->confirm_selected_transport,
-            'fact_trip_transport_id' => $this->fact_trip_transport_id,
-            'fact_trip_transport_car_reg' => ($transport != null ? $transport->car_reg : ''),
-            'fact_trip_transport_color' => ($transport != null ? $transport->color : ''),
-            'fact_trip_transport_model' => ($transport != null ? $transport->model : ''),
-            'fact_trip_transport_driver_id' => ($driver != null ? $driver->id : ''),
-            'fact_trip_transport_driver_fio' => ($driver != null ? $driver->fio : ''),
-            'has_penalty' => $this->has_penalty,
-            'relation_order_id' => $this->relation_order_id,
-        ];
-
-        Yii::$app->db->createCommand()->BatchInsert(
-            OrderReport::tableName(),
-            [
-                'day_report_trip_transport_id',
-                'date_sended',
-                'order_id',
-                'client_id',
-                'client_name',
-                'date',
-                'direction_id',
-                'direction_name',
-
-                'street_id_from',
-                'street_from_name',
-                'point_id_from',
-                'point_from_name',
-
-                'yandex_point_from_id',
-                'yandex_point_from_name',
-                'yandex_point_from_lat',
-                'yandex_point_from_long',
-
-                'time_air_train_arrival',
-
-                'street_id_to',
-                'street_to_name',
-                'point_id_to',
-                'point_to_name',
-
-                'yandex_point_to_id',
-                'yandex_point_to_name',
-                'yandex_point_to_lat',
-                'yandex_point_to_long',
-
-                'time_air_train_departure',
-                'trip_id',
-                'trip_name',
-                'informer_office_id',
-                'informer_office_name',
-                'is_not_places',
-                'places_count',
-                'student_count',
-                'child_count',
-                'bag_count',
-                'suitcase_count',
-                'oversized_count',
-                'prize_trip_count',
-                'comment',
-                'additional_phone_1',
-                'additional_phone_2',
-                'additional_phone_3',
-                'time_sat',
-                'use_fix_price',
-                'price',
-                'time_confirm',
-                //'time_vpz',
-                'is_confirmed',
-                'first_writedown_click_time',
-                'first_writedown_clicker_id',
-                'first_writedown_clicker_name',
-                'first_confirm_click_time',
-                'first_confirm_clicker_id',
-                'first_confirm_clicker_name',
-                'radio_confirm_now',
-                'radio_group_1',
-                'radio_group_2',
-                'radio_group_3',
-                'confirm_selected_transport',
-                'fact_trip_transport_id',
-                'fact_trip_transport_car_reg',
-                'fact_trip_transport_color',
-                'fact_trip_transport_model',
-                'fact_trip_transport_driver_id',
-                'fact_trip_transport_driver_fio',
-                'has_penalty',
-                'relation_order_id',
-            ],
-            $aOrdersReports
-        )->execute();
-
-    }*/
 
     public function sendWithTransport() {
 

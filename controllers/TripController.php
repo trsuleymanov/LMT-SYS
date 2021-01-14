@@ -446,8 +446,7 @@ class TripController extends Controller
 
 
 	/*
-	 * Отправка рейса (аналогично - "Закрытие рейса для редактирования")
-	 * - больше не нужна отправка от 11.11.2019
+	 * Отправка рейса ("Закрыть рейс")
 	 */
 	public function actionAjaxSendReis($trip_id)
 	{

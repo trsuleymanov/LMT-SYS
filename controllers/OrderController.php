@@ -659,9 +659,9 @@ class OrderController extends Controller
         //$order->last_writedown_click_time = time();
         //$order->last_writedown_clicker_id = Yii::$app->user->id; //User::getCookieId();
 
-        $was_canceled = false;
+        //$was_canceled = false;
         if($order->status != null && $order->status->code == 'canceled') {
-            $was_canceled = true;
+            //$was_canceled = true;
             $new_order_status = OrderStatus::getByCode('created');
             $order->status_id = $new_order_status->id;
         }
@@ -685,24 +685,21 @@ class OrderController extends Controller
                 throw new ErrorException('Не удалось сохранить заказ');
             }else {
 
-                // отмена отмененного заказа - надо делать через метод!!!
-                //$order_status = $order->status;
-                //if($order_status != null && $order_status->code == 'canceled') {
-                if($was_canceled == true) {
-                    //echo "status_code=".$order->status->code." \n";
-
-                    $order->setStatus('created');
-
-                    if($order->client_id > 0) {
-                        //Client::recountSendedCanceledReliabilityCounts($order->client_id, 0, 0, -1, -$order->places_count);
-                        $client = $order->client;
-                        //Client::recountSendedCanceledReliabilityCounts($order->client_id, 0, 0, -1, -$order->places_count);
-                        if($client != null) {
-                            $client->recountSendedCanceledReliabilityCounts($order, 0, 0, -1, -$order->places_count);
-                        }
-                    }
-                    /**/
-                }
+                // отмененный заказ становиться созданными - надо делать через метод!!!
+                // - не понятно в каком случае такой метор может сработать, если только через клиентский сайт
+//                if($was_canceled == true) {
+//
+//                    $order->setStatus('created');
+//
+//                    if($order->client_id > 0) {
+//
+//                        $client = $order->client;
+//                        if($client != null) {
+//                            // $client->recountSendedCanceledReliabilityCounts($order, 0, 0, -1, -$order->places_count);
+//                            $client->recountSendedCanceledReliabilityCounts($order, 'send');
+//                        }
+//                    }
+//                }
 
                 if(empty($order->first_writedown_click_time)) {
 
@@ -1829,7 +1826,7 @@ class OrderController extends Controller
 
     public function actionTest() {
 
-        echo date('d.m.Y H:i', 1506978000);
+        echo date('d.m.Y H:i', 1610398800);
 
 //        $role_alias = Yii::$app->session->get('role_alias');
 //        echo 'role_alias='.$role_alias;

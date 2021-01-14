@@ -15,6 +15,7 @@ use app\models\DayReportTransportCircle;
 use app\models\DayReportTransportCircleSearch;
 use app\models\Driver;
 use app\models\LiteboxOperation;
+use app\models\Loyality;
 use app\models\NotaccountabilityTransportReport;
 use app\models\OperatorBeelineSubscription;
 use app\models\Order;
@@ -60,33 +61,6 @@ class SiteController extends Controller
         $tomorrow = $today_unixtime + 86400;
         $selected_unixdate = (!empty($date) ? strtotime($date) : $today_unixtime);
 
-        /*
-        $setting = Setting::find()->where(['id' => 1])->one();
-        if(Yii::$app->session->get('role_alias') == 'editor') {
-
-            if($setting == null || intval($setting->create_orders_yesterday) == 0) {
-                $yesterday = $today_unixtime - 86400;
-                if ($selected_unixdate < $yesterday) {
-                    throw new ForbiddenHttpException('Доступ запрещен1');
-                }
-            }
-
-        }elseif(Yii::$app->session->get('role_alias') == 'manager') {
-            if ($selected_unixdate < $today_unixtime) {
-                throw new ForbiddenHttpException('Доступ запрещен2');
-            }
-
-        }elseif(in_array(Yii::$app->session->get('role_alias'), ['graph_operator', 'warehouse_turnover'])) {
-
-            if (($selected_unixdate < $today_unixtime) || ($selected_unixdate > $tomorrow)) {
-                throw new ForbiddenHttpException('Доступ запрещен3');
-            }
-
-        }elseif(!in_array(Yii::$app->session->get('role_alias'), ['root', 'admin', ])) {
-            throw new ForbiddenHttpException('Доступ запрещен4');
-        }
-        */
-
         if ($selected_unixdate < $today_unixtime) {
             if(!Access::hasUserAccess('past', 'page_part')) {
                 throw new ForbiddenHttpException('Доступ запрещен');
@@ -98,9 +72,7 @@ class SiteController extends Controller
         }
 
         return $this->render('index', [
-            //'selected_unixdate' => $selected_unixdate, // не используется
-            //'user' => Yii::$app->user->identity,
-            'aDirections' => Direction::getDirectionsTrips($selected_unixdate)
+            'aDirections' => Direction::getDirectionsTrips($selected_unixdate, true)
         ]);
     }
 
@@ -116,7 +88,7 @@ class SiteController extends Controller
         return [
             'success' => true,
             'html' => $this->renderPartial('/site/directions-trips-block', [
-                'aDirections' => Direction::getDirectionsTrips($selected_unixdate),
+                'aDirections' => Direction::getDirectionsTrips($selected_unixdate, true),
                 'view' => 'trip_list'
             ]),
         ];
@@ -956,9 +928,18 @@ class SiteController extends Controller
 //
 //        $trip->resendOrdersFiscalization();
 
-        $order = Order::find()->where(['id' => 244057])->one();
+//        $order = Order::find()->where(['id' => 244057])->one();
+//
+//        echo "order:<pre>"; print_r($order); echo "</pre>";
+        //echo '01.01.'.date('Y').' 00:00:00'."<br />";
+        $unixdate_31dec = strtotime('31.12.2020 23:59:59');
+        echo '1='.$unixdate_31dec."<br />";
 
-        echo "order:<pre>"; print_r($order); echo "</pre>";
+        $unixdate_1jan = strtotime('01.01.'.date('Y'));
+        echo '2='.$unixdate_1jan."<br />";
+
+        $unixdate_1jan = strtotime('01.01.2021 00:00:00');
+        echo '3='.$unixdate_1jan."<br />";
     }
 
     public function actionTest2()
@@ -1024,11 +1005,24 @@ class SiteController extends Controller
 
     public function actionTest3()
     {
-        $operation = LiteboxOperation::find()->where(['id' => 136])->one();
-        $operation->checkSellStatusAndUpdate(true);
+//        $operation = LiteboxOperation::find()->where(['id' => 136])->one();
+//        $operation->checkSellStatusAndUpdate(true);
 
-        //$order = Order::find()->where(['id' => 216418])->one();
-        //LiteboxOperation::makeOperationSell($order);
+        // $order = Order::find()->where(['id' => 216418])->one();
+        // LiteboxOperation::makeOperationSell($order);
+
+        $client_id_from = 0;
+        $current_step_last_client_id = Loyality::rewriteClientsCounters(1, $client_id_from);
+
+//        $user = User::find()->where(['id' => 38])->one();
+//        if($user == null) {
+//            throw new ErrorException('Не найден пользователь');
+//        }
+//        //$user->setPasswordHash('123456');
+//        $user->password_hash = Yii::$app->security->generatePasswordHash('123456');
+//        $user->save();
+//
+//        echo "user:<pre>"; print_r($user); echo "</pre>";
     }
 
 

@@ -42,4 +42,9 @@ class LiteboxController extends Controller
 
         echo "готово. Обработано $i записей \n";
     }
+
+    // лог запуска скрипта от 01.01.2021:
+
+//    sh: 1: /usr/sbin/sendmail: not found - 196 раз эта строка повторилась
+//    готово. Обработано 196 записей
 }

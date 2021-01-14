@@ -118,14 +118,13 @@ class Loyality extends \yii\db\ActiveRecord
         return $this->hasOne(Client::className(), ['id' => 'client_id']);
     }
 
-    // public static function rewriteClientsCounters($step = 0, $clients_count=1000) {
     public static function rewriteClientsCounters($limit, $client_id_from) {
 
         // <!-- Дублирую код 1
 //        $clients = Client::find()
-//            //->where(['id' => 24767])
-//            ->offset($step*$clients_count)
-//            ->limit($clients_count)
+//            ->where(['id' => 1])
+//            //->offset($step*$clients_count)
+//            //->limit($clients_count)
 //            ->all();
 
         $clients = Client::find()
@@ -158,12 +157,24 @@ class Loyality extends \yii\db\ActiveRecord
         $unixtime_delimiter_data = strtotime($delimiter_data);
         // Дублирую код 1 -->
 
+        // дата заказа попадает в диапозон текущего года от 1 января до 13 января (до 14 января 0:00:00)
+        $unixdate_1jan = strtotime('01.01.'.date('Y'));
+        $unixdate_14jan = strtotime('14.01.'.date('Y'));
+
         $aClientsData = [];
 
         $aFields = [
             //'id' => 0,
             'current_year_sended_places' => 0,//'Число отправленных мест',
             'current_year_sended_orders' => 0,//'Число отправленных заказов',
+
+            'current_year_sended_standart_places' => 0, // Число отправленных мест на стандартных рейсах
+            'current_year_sended_standart_orders' => 0, // Число отправленных заказов на стандартных рейсах
+            'current_year_sended_commercial_places' => 0, // Число отправленных мест на коммерческих рейсах
+            'current_year_sended_commercial_orders' => 0, // Число отправленных заказов на коммерческих рейсах
+            'current_year_sended_113_places' => 0, // Число отправленных мест всего с 1 по 13 января включительно
+            'current_year_sended_113_orders' => 0, // Число отправленных заказов всего с 1 по 13 января включительно
+
             'current_year_canceled_places' => 0,//'Число отмененных мест',
             'current_year_canceled_orders' => 0,//'Число отмененных заказов',
 
@@ -199,42 +210,11 @@ class Loyality extends \yii\db\ActiveRecord
             'past_years_sended_isnotplaces_orders' => 0,//'Количество посылок по прошлым периодам',
         ];
 
-        //$aNewClients = [];
-        foreach($clients as $client) {
 
-
-//            $client->current_year_sended_places = 0; //'Число отправленных мест',
-//            $client->current_year_sended_orders = 0; //'Число отправленных заказов',
-//            $client->current_year_canceled_places = 0; //'Число отмененных мест',
-//            $client->current_year_canceled_orders = 0; //'Число отмененных заказов',
-//            $client->current_year_places_reliability = 0; //'Надежность по местам в текущем году' -  отношение отправленных мест к общему количеству заказанных мест
-//            $client->current_year_orders_reliability = 0; //'Надежность по заказам в текущем году',
-//
-//            $client->current_year_sended_prize_places = 0; //'Число отправленных призовых поездок в текущем году',
-//            $client->current_year_penalty = 0; //'Число штрафов в текущем году',
-//            $client->current_year_sended_fixprice_places = 0; //'Число мест по фикс.цене отправленных в текущем году',
-//            $client->current_year_sended_fixprice_orders = 0; //'Число заказов по фикс.цене в текущем году',
-//            $client->current_year_sended_informer_beznal_places = 0; //'Число мест с безналичной оплатой в текущем году',
-//            $client->current_year_sended_informer_beznal_orders = 0; //'Число заказов с безналичной оплатой в текущем году',
-//            $client->current_year_sended_isnotplaces_orders = 0; //'Число посылок в текущем году',
-//
-//            $client->past_years_sended_places = 0; //'Число отправленных мест всего по прошлым периодам',
-//            $client->past_years_sended_orders = 0; //'Число отмененных мест всего по прошлым периодам',
-//            $client->past_years_canceled_places = 0; //'Число отправленных заказов по прошлым периодам',
-//            $client->past_years_canceled_orders = 0; //'Число отмененных заказов по прошлым периодам',
-//
-//            $client->past_years_sended_prize_places = 0; //'Количество отправленных призовых поездок по прошлым периодам',
-//            $client->past_years_penalty = 0; //'Количество штрафов по прошлым периодам',
-//            $client->past_years_sended_fixprice_places = 0; //'Количество мест по фикс.цене по прошлым периодам',
-//            $client->past_years_sended_fixprice_orders = 0; //'Количество заказов по фикс.цене по прошлым периодам',
-//
-//            $client->past_years_sended_informer_beznal_places = 0; //'Количество мест с безналичной оплатой по прошлым периодам',
-//            $client->past_years_sended_informer_beznal_orders = 0; //'Количество заказов с безналичной оплатой по прошлым периодам',
-//            $client->past_years_sended_isnotplaces_orders = 0; //'Количество посылок по прошлым периодам',
-
+        foreach($clients as $client)
+        {
             $aL = $aFields;
             $aL['id'] = $client->id;
-
 
             // <!-- копируем блок 2
             //$total_client_orders_i = 0;
@@ -245,11 +225,13 @@ class Loyality extends \yii\db\ActiveRecord
 
             // отсортируем заказа по времени создания
             if(count($aClientOrders) > 0) {
-                $aSortClientOrder = [];
 
+                $aSortClientOrder = [];
                 foreach($aClientOrders as $order) {
+
                     if(isset($aTrips[$order->trip_id])) {
-                        $aSortClientOrder[$order->trip_id] = $order;
+                        // $aSortClientOrder[$order->trip_id] = $order; // ошибка, схлопывание массива
+                        $aSortClientOrder[$order->trip_id.'_'.$order->id] = $order;
                     }
                 }
                 //echo "count_aSortClientOrder=".count($aSortClientOrder)."<br />";
@@ -262,8 +244,11 @@ class Loyality extends \yii\db\ActiveRecord
 
             $current_year_total_orders = 0;
             $current_year_total_places = 0;
-            foreach($aClientOrders as $order) {
-
+            foreach($aClientOrders as $order)
+            {
+                if(!isset($aTrips[$order->trip_id])) {
+                    throw new ErrorException('Рейс для заказа order_id='.$order->id);
+                }
                 $trip = isset($aTrips[$order->trip_id]) ? $aTrips[$order->trip_id] : null;
 
                 if($order->date < $unixtime_delimiter_data) { // заказы прошлых лет
@@ -299,6 +284,7 @@ class Loyality extends \yii\db\ActiveRecord
                     }
 
                     if($order->status_id == $canceled_order_status_id) {
+
                         $aL['past_years_canceled_orders'] += 1;
                         $aL['past_years_canceled_places'] += $order->places_count;
 
@@ -339,10 +325,31 @@ class Loyality extends \yii\db\ActiveRecord
                     //$aClientFields['current_year_sended_orders']++;
                     //$aClientFields['past_years_sended_places'] += $order->places_count;
 
-                    if($order->status_id == $sent_order_status_id) {
-
+                    if($order->status_id == $sent_order_status_id)
+                    {
                         $aL['current_year_sended_orders'] += 1;
                         $aL['current_year_sended_places'] += $order->places_count;
+
+
+                        if($order->date > $unixdate_1jan && $order->date < $unixdate_14jan) {
+
+                            $aL['current_year_sended_113_orders'] += 1;
+                            $aL['current_year_sended_113_places'] += $order->places_count;
+
+                        }else {
+
+                            if($trip->commercial == true) {
+
+                                $aL['current_year_sended_commercial_orders'] += 1;
+                                $aL['current_year_sended_commercial_places'] += $order->places_count;
+
+                            }else {
+
+                                $aL['current_year_sended_standart_orders'] += 1;
+                                $aL['current_year_sended_standart_places'] += $order->places_count;
+                            }
+                        }
+
 
                         if($order->use_fix_price == 1) {
                             $aL['current_year_sended_fixprice_orders'] += 1;
@@ -373,6 +380,7 @@ class Loyality extends \yii\db\ActiveRecord
                     }
 
                     if($order->status_id == $canceled_order_status_id) {
+
                         $aL['current_year_canceled_orders'] += 1;
                         $aL['current_year_canceled_places'] += $order->places_count;
 
@@ -413,6 +421,7 @@ class Loyality extends \yii\db\ActiveRecord
                 }
             }
 
+
             if($current_year_total_orders > 0) {
                 //$aL['current_year_orders_reliability'] = round(100*$aL['current_year_sended_orders'] / $current_year_total_orders, 2);
             }
@@ -422,57 +431,10 @@ class Loyality extends \yii\db\ActiveRecord
             }
 
 
-//            if(!$client->save(false)) {
-//                throw new ErrorException('Не удалось сохранить заказ');
-//            }
-
-
             $aClientsData[$client->id] = $aL;
-//            foreach($aL as $field => $value) {
-//                $client->$field = $value;
-//            }
-//            $aNewClients[] = $client;
         }
 
 
-        //Yii::$app->db->createCommand()->batchInsert('client', array_keys($aFields), $aClientsData)->execute();
-//        $aSqls = [];
-//
-//        foreach($aClientsData as $client_id => $aClientData) {
-//
-//            $aSqlFields = [];
-//            foreach($aClientData as $field => $value) {
-//                $aSqlFields[] = '`'.$field.'`='.$value;
-//            }
-//
-//            $aSqls[] = "UPDATE `client` SET ".implode(',', $aSqlFields)." WHERE id=".$client_id;
-//        }
-//
-//        $sql = implode("; ", $aSqls);
-//        //echo $sql;
-//        Yii::$app->db->createCommand($sql)->execute();
-
-        // Yii::$app->db->createCommand()->batchInsert('loyality', array_keys($aFields), $aLoyalities)->execute();
-
-//        $db = \Yii::$app->db;
-//        $sql = $db->queryBuilder->batchInsert('client', array_keys($aFields), $aNewClients);
-//        $sql = $sql . ' ON DUPLICATE KEY UPDATE';
-//        echo $sql;
-
-        //$db->createCommand($sql)->execute();
-
-
-        // построю свой update-запрос
-
-//UPDATE tbl_country
-//
-//SET price =
-//CASE
-//WHEN code = 1 THEN 123;
-//WHEN code = 2 THEN 456;
-//…
-//END
-//WHERE code IN (1,2,…)
 
         $aFieldsSqls = [];
         foreach($aFields as $field => $val) {

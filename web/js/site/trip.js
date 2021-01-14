@@ -883,7 +883,7 @@ $(document).ready(function()
     });
 
 
-    // кнопка "Отправить рейс"
+    // кнопка "Отправить рейс"  (Закрыть рейс)
     var allow_send_reis = true;
     $(document).on('click', '#trip-orders-page #send-reis', function()
     {

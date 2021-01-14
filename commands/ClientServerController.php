@@ -33,6 +33,8 @@ class ClientServerController extends Controller
      */
     public function actionGetUsers() {
 
+        exit('Отключено');
+
         $request_1 = new \yii\httpclient\Client(); // это клиент запроса, а не Клиент-человек
 
         $response = $request_1->createRequest()

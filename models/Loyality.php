@@ -159,7 +159,7 @@ class Loyality extends \yii\db\ActiveRecord
 
         // дата заказа попадает в диапозон текущего года от 1 января до 13 января (до 14 января 0:00:00)
         $unixdate_1jan = strtotime('01.01.'.date('Y'));
-        $unixdate_14jan = strtotime('14.01.'.date('Y'));
+        $unixdate_14jan = strtotime('13.01.'.date('Y').' 23:59:59');
 
         $aClientsData = [];
 
@@ -331,7 +331,7 @@ class Loyality extends \yii\db\ActiveRecord
                         $aL['current_year_sended_places'] += $order->places_count;
 
 
-                        if($order->date > $unixdate_1jan && $order->date < $unixdate_14jan) {
+                        if($order->date > $unixdate_1jan && $order->date <= $unixdate_14jan) {
 
                             $aL['current_year_sended_113_orders'] += 1;
                             $aL['current_year_sended_113_places'] += $order->places_count;

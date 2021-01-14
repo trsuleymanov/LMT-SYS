@@ -1380,6 +1380,114 @@ class Order extends \yii\db\ActiveRecord
 
         if($client == null) {
 
+            $sended_places_count = 0;
+            $sended_prize_count = 0;
+            $penalty = 0;
+
+        }else {
+
+            $sended_places_count = $client->current_year_sended_standart_places;
+            $sended_prize_count = $client->current_year_sended_prize_places;
+            $penalty = $client->current_year_penalty;
+
+
+
+            // к количеству отправленных призовых поездок добавим поездки из "новых" заказов (но количество отправленных заказов оставим без изменения)
+            $date_14jan = strtotime('13.01.'.date('Y').' 23:59:59');
+
+            $created_order_status = OrderStatus::getByCode('created');
+            $created_orders_query = Order::find()
+                ->where([
+                    'client_id' => $client->id,
+                    'status_id' => $created_order_status->id
+                ])->andWhere(['>', 'date', $date_14jan]);
+            if($this->id > 0) {
+                $created_orders_query = $created_orders_query->andWhere(['!=', 'id', $this->id]);
+            }
+            $created_orders = $created_orders_query->all();
+            // echo "created_orders:<pre>"; print_r($created_orders); echo "</pre>"; exit;
+
+
+            $informer_offices = InformerOffice::find()->all();
+            $aInformerOffices = ArrayHelper::map($informer_offices, 'id', 'cashless_payment');
+
+            if(count($created_orders) > 0) {
+                foreach($created_orders as $order) {
+                    // echo "order_id=".$order->id."<br />";
+                    if($order->external_type == "client_site" && $order->is_paid == true) {
+                        continue;
+                    }else {
+
+                        if($order->trip == null) {
+                            continue;
+                        }
+                        if($order->trip->commercial == true) {
+                            continue;
+                        }
+                        if($order->use_fix_price == true) {
+                            continue;
+                        }
+                        if($order->is_not_places == true) {
+                            continue;
+                        }
+                        if($order->informer_office_id > 0 && isset($aInformerOffices[$order->informer_office_id]) && $aInformerOffices[$order->informer_office_id] == 1) {
+                            continue;
+                        }
+
+                        $sended_places_count += $order->places_count;
+                        $sended_prize_count += $order->prize_trip_count;
+                        $penalty += $order->has_penalty;
+                    }
+                }
+            }
+
+        }
+
+//        echo "sended_orders_places_count=".$sended_places_count." sended_prize_count=".$sended_prize_count;
+//        exit;
+
+        $P = intval($this->places_count); // количество мест в текущем заказе
+
+        if($this->is_not_places == 1)  // если отправляется посылка, то призовой поездки не предоставляется
+            return 0;
+        else {
+
+            if($P < 5) {
+                $prize_count = floor(($sended_places_count - 5*($sended_prize_count + $penalty) + $P)/5);
+                if($prize_count > 1) {
+                    $prize_count = 1;
+                }
+                if($prize_count < 0) {
+                    $prize_count = 0;
+                }
+            }else {
+                $prize_count = floor($P/5); // считаем призовые только на основе текущего заказа без привязки к прошлым поездкам
+            }
+
+
+            return $prize_count;
+        }
+    }
+
+
+    public function getPrizeTripCountOld()
+    {
+        if(Yii::$app->setting->loyalty_switch == 'cash_back_on') {
+            return 0;
+        }
+
+        if($this->trip != null && $this->trip->commercial == 1) {
+            return 0;
+        }
+
+        if($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
+            return 0;
+        }
+
+        $client = $this->client;
+
+        if($client == null) {
+
             $sended_orders_places_count = 0;
             $sended_prize_trip_count = 0;
             $penalty = 0;
@@ -1388,12 +1496,8 @@ class Order extends \yii\db\ActiveRecord
 
             $sended_orders_places_count = $client->current_year_sended_places;
             $sended_prize_trip_count = $client->current_year_sended_prize_places;
-            //$penalty = $client->current_year_penalty;
-//            $sended_orders_places_count = 0;
-            $sended_prize_trip_count = 0;
-            $penalty = 0;
+            $penalty = $client->current_year_penalty;
 
-            /*
             // Этот блок создает путаницу ! - считаем только совершенные поездки!
             // к количеству отправленных призовых поездок добавим поездки из "новых" заказов (но количество отправленных заказов оставим без изменения)
             $created_order_status = OrderStatus::getByCode('created');
@@ -1409,10 +1513,8 @@ class Order extends \yii\db\ActiveRecord
             // echo "created_orders:<pre>"; print_r($created_orders); echo "</pre>";
 
 
-
             if(count($created_orders) > 0) {
                 foreach($created_orders as $order) {
-                    echo "order_id=".$order->id."<br />";
                     if($order->external_type == "client_site" && $order->is_paid == true) {
                         continue;
                     }else {
@@ -1420,7 +1522,6 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
-            */
         }
 
         //echo "sended_orders_places_count=".$sended_orders_places_count." sended_prize_trip_count=".$sended_prize_trip_count;

@@ -292,6 +292,14 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
 
     <br />
     <div class="row">
+        <div class="col-md-12">Мест/заказов с 1/1/<?= substr(date('Y'), 2) ?> по 13/1/<?= substr(date('Y'), 2) ?>: <?= intval($client->current_year_sended_113_places) ?> м / <?= intval($client->current_year_sended_113_orders) ?> з</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">Мест/заказов на комм.рейсах: <?= intval($client->current_year_sended_commercial_places) ?> м / <?= intval($client->current_year_sended_commercial_orders) ?> з</div>
+    </div>
+
+    <br />
+    <div class="row">
         <div class="col-md-12">Мест/заказов по фикс.цене: <?= intval($client->current_year_sended_fixprice_places) ?> м / <?= intval($client->current_year_sended_fixprice_orders) ?> з</div>
     </div>
     <div class="row">
@@ -377,6 +385,21 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                                     'title' => 'Состав рейса',
                                 ]
                             );
+                        }else {
+                            return '';
+                        }
+                    },
+                ],
+                [
+                    'attribute' => 'trip_commercial',
+                    'label' => 'ТР',
+                    'content' => function($model) {
+                        if($model->trip != null) {
+                            if($model->trip->commercial == true) {
+                                return 'КОММ';
+                            }else {
+                                return 'СТД';
+                            }
                         }else {
                             return '';
                         }
@@ -679,6 +702,21 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                                     'title' => 'Состав рейса',
                                 ]
                             );
+                        }else {
+                            return '';
+                        }
+                    },
+                ],
+                [
+                    'attribute' => 'trip_commercial',
+                    'label' => 'ТР',
+                    'content' => function($model) {
+                        if($model->trip != null) {
+                            if($model->trip->commercial == true) {
+                                return 'КОММ';
+                            }else {
+                                return 'СТД';
+                            }
                         }else {
                             return '';
                         }

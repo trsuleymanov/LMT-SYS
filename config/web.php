@@ -10,7 +10,9 @@ $config = [
     'sourceLanguage' => 'ru-RU',
     'timeZone' => 'Europe/Moscow',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        // 'log'
+    ],
     'as AccessBehavior' => [    // проверка прав доступа
         'class' => 'app\modules\access\behaviors\AccessBehavior',
     ],

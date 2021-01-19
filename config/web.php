@@ -11,7 +11,7 @@ $config = [
     'timeZone' => 'Europe/Moscow',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
-        // 'log'
+        'log'
     ],
     'as AccessBehavior' => [    // проверка прав доступа
         'class' => 'app\modules\access\behaviors\AccessBehavior',
@@ -110,6 +110,8 @@ $config = [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'maxLogFiles' => 10,
+                    'maxFileSize' => 5120
                 ],
             ],
         ],

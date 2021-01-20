@@ -2375,7 +2375,7 @@ class Order extends \yii\db\ActiveRecord
         $litebox_operations = LiteboxOperation::find()
             ->where(['order_id' => $this->id])
             ->andWhere(['>', 'sell_at', 0])
-            ->andWhere(['<', 'sell_refund_at', 1])
+            //->andWhere(['<', 'sell_refund_at', 1])
             ->all();
         if(count($litebox_operations) > 0) {
             foreach ($litebox_operations as $litebox_operation) {

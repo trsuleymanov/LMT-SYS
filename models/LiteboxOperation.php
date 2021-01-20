@@ -930,7 +930,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             ];
             $data = [
                 'external_id' => $litebox->id.'_'.$litebox->order_id.'_'.$litebox->sell_at,
-                'timestamp' => date("d.m.Y H:i:s", $litebox->sell_at),
+                'timestamp' => date("d.m.Y H:i:s", ($litebox->sell_at + 1)),
                 'receipt' => [
                     'client' => [
                         //'email' => $order->client->email,
@@ -1003,16 +1003,16 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 //                    exit;
 //                }
 
-                echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>";
+//                echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>";
+//
+//                echo "data:<pre>"; print_r($data); echo "</pre>";
 
-                echo "data:<pre>"; print_r($data); echo "</pre>";
-
-//                $litebox->sell_uuid = $result->uuid;
-//                $litebox->sell_status = $result->status;
-//                $litebox->sell_status_setting_time = time();
-//                if(!$litebox->save(false)) {
-//                    throw new ErrorException('Не удалось создать LiteboxOperation');
-//                }
+                $litebox->sell_uuid = $result->uuid;
+                $litebox->sell_status = $result->status;
+                $litebox->sell_status_setting_time = time();
+                if(!$litebox->save(false)) {
+                    throw new ErrorException('Не удалось создать LiteboxOperation');
+                }
 
                 // $order->setField('litebox_uuid', $result->uuid);
                 //return $result->uuid;

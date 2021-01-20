@@ -1489,7 +1489,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
      */
     public function makeOperationSellRefund()
     {
-        $order = Order::find()->where(['id' => $this->order_id])->one();
+        $order = Order::find()
+            ->where(['id' => $this->order_id])
+            ->limit(1)
+            ->one();
 
         if($order == null) {
             throw new ErrorException('Заказ не найден');

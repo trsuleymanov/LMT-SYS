@@ -1650,13 +1650,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         ]);
         $response = curl_exec($myCurl);
         curl_close($myCurl);
-
-//        echo "sell_uuid=".$this->sell_uuid."<br />";
-//        echo "response:<pre>"; print_r($response); echo "</pre>";
-//        exit;
-
         $result = json_decode($response);
-//        echo "aResult:<pre>"; print_r($result); echo "</pre>";
 
 
         if(isset($result->error) && !empty($result->error)) {
@@ -1713,27 +1707,15 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 }
             }
 
-            if(!empty($this->fn_number)) {
-
-                $order = Order::find()->where(['id' => $this->order_id])->one();
-//                $this->scenario = 'litebox_set_status';
-//                $order->litebox_fn_number = $this->fn_number;
-//                $order->litebox_fiscal_document_number = $this->fiscal_document_number;
-//                $order->litebox_fiscal_document_attribute = $this->fiscal_document_attribute;
-//                $order->litebox_ecr_registration_number = $this->ecr_registration_number;
-//                if (!$order->save(false)) {
-//                    if ($is_console == true) {
-//                        ClientServerController::sendMessageToAdmin('Ошибка', 'LiteboxOperation::checkStatusAndUpdate Не удалось сохранить данные по заказу');
-//                    } else {
-//                        throw new ErrorException('Не удалось сохранить данные по заказу');
-//                    }
-//                }
-
-                $order->setField('litebox_fn_number', $this->fn_number);
-                $order->setField('litebox_fiscal_document_number', $this->fiscal_document_number);
-                $order->setField('litebox_fiscal_document_attribute', $this->fiscal_document_attribute);
-                $order->setField('litebox_ecr_registration_number', $this->ecr_registration_number);
-            }
+//            if(!empty($this->fn_number)) {
+//
+//                $order = Order::find()->where(['id' => $this->order_id])->one();
+//
+//                $order->setField('litebox_fn_number', $this->fn_number);
+//                $order->setField('litebox_fiscal_document_number', $this->fiscal_document_number);
+//                $order->setField('litebox_fiscal_document_attribute', $this->fiscal_document_attribute);
+//                $order->setField('litebox_ecr_registration_number', $this->ecr_registration_number);
+//            }
         }
 
         return true;
@@ -1759,13 +1741,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         ]);
         $response = curl_exec($myCurl);
         curl_close($myCurl);
-
-//        echo "sell_uuid=".$this->sell_uuid."<br />";
-//        echo "response:<pre>"; print_r($response); echo "</pre>";
-//        exit;
-
         $result = json_decode($response);
-        // echo "aResult:<pre>"; print_r($aResult); echo "</pre>";
 
 
         if(isset($result->error) && !empty($result->error)) {
@@ -1823,34 +1799,16 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 }
             }
 
-            if(!empty($this->fn_number)) {
-
-                $order = Order::find()->where(['id' => $this->order_id])->one();
-//                $this->scenario = 'litebox_set_status';
-//                $order->litebox_fn_number = $this->fn_number;
-//                $order->litebox_fiscal_document_number = $this->fiscal_document_number;
-//                $order->litebox_ecr_registration_number = $this->ecr_registration_number;
-//                $order->litebox_fiscal_document_attribute = $this->fiscal_document_attribute;
-
-//                $order->litebox_uuid = NULL;
-//                $order->litebox_fn_number = NULL;
-//                $order->litebox_fiscal_document_number = NULL;
-//                $order->litebox_ecr_registration_number = NULL;
-//                $order->litebox_fiscal_document_attribute = NULL;
-//                if (!$order->save(false)) {
-//                    if ($is_console == true) {
-//                        ClientServerController::sendMessageToAdmin('Ошибка', 'LiteboxOperation::checkStatusAndUpdate Не удалось сохранить данные по заказу');
-//                    } else {
-//                        throw new ErrorException('Не удалось сохранить данные по заказу');
-//                    }
-//                }
-
-                $order->setField('litebox_uuid', NULL);
-                $order->setField('litebox_fn_number', NULL);
-                $order->setField('litebox_fiscal_document_number', NULL);
-                $order->setField('litebox_fiscal_document_attribute', NULL);
-                $order->setField('litebox_ecr_registration_number', NULL);
-            }
+//            if(!empty($this->fn_number)) {
+//
+//                $order = Order::find()->where(['id' => $this->order_id])->one();
+//
+//                $order->setField('litebox_uuid', NULL);
+//                $order->setField('litebox_fn_number', NULL);
+//                $order->setField('litebox_fiscal_document_number', NULL);
+//                $order->setField('litebox_fiscal_document_attribute', NULL);
+//                $order->setField('litebox_ecr_registration_number', NULL);
+//            }
         }
 
         return true;

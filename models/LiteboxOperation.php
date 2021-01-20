@@ -965,6 +965,14 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 //                [error] =>
 //            )
 
+            if(isset($result->uuid)) {
+                exit('есть uuid='.$result->uuid);
+            }
+
+            if(isset($result['uuid'])) {
+                exit('uuid - это свойство uuid='.$result->uuid);
+            }
+
 
             if(isset($result->error) && !empty($result->error)) {
                 throw new ErrorException($result->error->text);

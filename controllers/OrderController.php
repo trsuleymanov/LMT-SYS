@@ -1792,7 +1792,7 @@ class OrderController extends Controller
         // оплачиваем заказ с выдачей чеков
         if($order->setPay([], true)) {
 
-            $order->setField('cash_received_time', $order->cash_received_time);
+            $order->setField('cash_received_time', time());
             $order->setField('cash_received_by_user_id', Yii::$app->user->id);
         }
 

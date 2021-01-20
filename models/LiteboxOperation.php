@@ -1497,7 +1497,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($result->payload != null) {
                     $this->fn_number = $result->payload->fn_number;
-                    $this->fiscal_document_number = intval($result->payload->fiscal_document_number) - 1; //  приходит на 1 больше чем должно :)
+                    $this->fiscal_document_number = intval($result->payload->fiscal_document_number);
                     $this->ecr_registration_number = $result->payload->ecr_registration_number;
                     $this->fiscal_document_attribute = $result->payload->fiscal_document_attribute;
                 }
@@ -1607,7 +1607,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
                 if($result->payload != null) {
                     $this->fn_number = $result->payload->fn_number;
-                    $this->fiscal_document_number = intval($result->payload->fiscal_document_number) - 1; //  приходит на 1 больше чем должно :)
+                    $this->fiscal_document_number = intval($result->payload->fiscal_document_number);
                     $this->ecr_registration_number = $result->payload->ecr_registration_number;
                     $this->fiscal_document_attribute = $result->payload->fiscal_document_attribute;
                 }

@@ -845,8 +845,23 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
+        $aTestMobiles = [
+            '+7-111-111-1110',
+            '+7-111-111-1111',
+            '+7-111-111-1112',
+            '+7-111-111-1113',
+            '+7-111-111-1114',
+            '+7-111-111-1115',
+            '+7-111-111-1116',
+            '+7-111-111-1117',
+            '+7-111-111-1118',
+            '+7-111-111-1119',
+        ];
+        $i = 0;
         foreach ($aLiteboxes as $litebox)
         {
+            $i++;
+
             $litebox->sell_at = time();
             $litebox->save(false);
 
@@ -922,7 +937,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         //'phone' => $order->client->mobile_phone,
                         //'phone' => '79661128006',
                         //'email' => '79661128006',
-                        'email' => $order->client->mobile_phone,// в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
+
+                        //'email' => $order->client->mobile_phone,// в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
+                        'email' => $aTestMobiles[$i]
                     ],
                     'company' => [
                         'email' => "417417t@gmail.com",
@@ -979,7 +996,11 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             }else {
 
                 if(!isset($result->uuid)) {
-                    echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>"; exit;
+                    echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>";
+
+                    echo "data:<pre>"; print_r($data); echo "</pre>";
+
+                    exit;
                 }
 
                 $litebox->sell_uuid = $result->uuid;

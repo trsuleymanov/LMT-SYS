@@ -995,20 +995,24 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 throw new ErrorException($result->error->text);
             }else {
 
-                if(!isset($result->uuid)) {
-                    echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>";
+//                if(!isset($result->uuid)) {
+//                    echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>";
+//
+//                    echo "data:<pre>"; print_r($data); echo "</pre>";
+//
+//                    exit;
+//                }
 
-                    echo "data:<pre>"; print_r($data); echo "</pre>";
+                echo "uuid не получилось извлечь. result:<pre>"; print_r($result); echo "</pre>";
 
-                    exit;
-                }
+                echo "data:<pre>"; print_r($data); echo "</pre>";
 
-                $litebox->sell_uuid = $result->uuid;
-                $litebox->sell_status = $result->status;
-                $litebox->sell_status_setting_time = time();
-                if(!$litebox->save(false)) {
-                    throw new ErrorException('Не удалось создать LiteboxOperation');
-                }
+//                $litebox->sell_uuid = $result->uuid;
+//                $litebox->sell_status = $result->status;
+//                $litebox->sell_status_setting_time = time();
+//                if(!$litebox->save(false)) {
+//                    throw new ErrorException('Не удалось создать LiteboxOperation');
+//                }
 
                 // $order->setField('litebox_uuid', $result->uuid);
                 //return $result->uuid;

@@ -143,6 +143,8 @@ class ClientServerController extends Controller
      */
     public function actionGetNotSyncClientexts()
     {
+        exit('Отключено');
+
         $request_1 = new \yii\httpclient\Client(); // это клиент запроса, а не Клиент-человек
 
 
@@ -382,6 +384,8 @@ class ClientServerController extends Controller
      */
     private static function orderFillClientextData($order, $server_client_ext) {
 
+        exit('Отключено');
+
         $order->external_id = $server_client_ext['id'];
         if($server_client_ext['source_type'] == 'main_site') {
             $order->external_type = '';
@@ -497,6 +501,8 @@ class ClientServerController extends Controller
 
 
     private static function orderUpdateClientextData($order, $server_client_ext) {
+
+        exit('Отключено');
 
         $aSqlUpdates = [];
 
@@ -686,6 +692,10 @@ class ClientServerController extends Controller
     // заказу заполняются все данные связанные с ценой, оплатой, формируется чек при необходимости
     private static function orderSetPayData($order, $server_client_ext) {
 
+        exit('Отключено');
+
+        /*
+
         if($order->source_price != $server_client_ext['price']) {
             $order->source_price = $server_client_ext['price'];
             $order->setField('source_price', $order->source_price);
@@ -709,13 +719,15 @@ class ClientServerController extends Controller
                 $order->setPay(true, $aFields);
             }
         }
-
+        */
 
         return true;
     }
 
 
     public static function sendMessageToAdmin($theme, $msg = 'test') {
+
+        exit('Отключено');
 
         Yii::$app->mailer->compose()
             ->setFrom('admin@developer.almobus.ru')

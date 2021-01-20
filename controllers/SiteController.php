@@ -926,7 +926,7 @@ class SiteController extends Controller
 
 //        $trip = Trip::find()->where(['id' => 42029])->one();
 //
-//        $trip->resendOrdersFiscalization();
+//        $trip->setOrdersPay();
 
 //        $order = Order::find()->where(['id' => 244057])->one();
 //

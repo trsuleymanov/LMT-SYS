@@ -989,6 +989,8 @@ class OrderController extends Controller
         Yii::$app->response->format = 'json';
         $post = Yii::$app->request->post();
 
+        //echo "post:<pre>"; print_r($post); echo "</pre>";
+
         $order = new Order();
         $order->scenario = 'check_form_fields';
 
@@ -1787,11 +1789,12 @@ class OrderController extends Controller
             throw new ForbiddenHttpException('Не найдено транспортное средство связанное с заказом');
         }
 
-        // делаем заказ оплаченным
-        $order->cash_received_time = time();
-        $order->setField('cash_received_time', $order->cash_received_time);
-        $order->setField('cash_received_by_user_id', Yii::$app->user->id);
-        $order->setPay();
+        // оплачиваем заказ с выдачей чеков
+        if($order->setPay([], true)) {
+
+            $order->setField('cash_received_time', $order->cash_received_time);
+            $order->setField('cash_received_by_user_id', Yii::$app->user->id);
+        }
 
         // передаем сообщение в браузеры
         SocketDemon::sendOutBrowserMessageInstant('/trip/trip-orders', ['trip_id' => $order->trip_id], 'updateTripOrdersPage()', []);

@@ -1428,8 +1428,9 @@ class Trip extends \yii\db\ActiveRecord
         IncomingOrdersWidget::updateActiveTripsModal();
 
 
-        // 9. заказы рейсов в статусах "отправлены" которые не получили uuid, заново отправляют запрос в litebox
-        $this->resendOrdersFiscalization();
+        // 9. неплаченные заказы рейсов в статусах "отправлены", оплачиваются с выдачей чеков
+        //$this->resendOrdersFiscalization();
+        $this->setOrdersPay();
 
         return true;
     }
@@ -1437,20 +1438,21 @@ class Trip extends \yii\db\ActiveRecord
     /*
      * Отправка запросов в litebox по отправленным заказам по которым не были созданы запросы в litebox
      */
-    public function resendOrdersFiscalization()
+    public function setOrdersPay()
     {
         $order_sent_status = OrderStatus::getByCode('sent');
         $fact_orders_without_canceled = Order::find()
             ->where(['trip_id' => $this->id])
             ->andWhere(['status_id' => $order_sent_status->id])
-            ->andWhere(['litebox_uuid' => NULL])
+            //->andWhere(['litebox_uuid' => NULL])
+            ->andWhere(['is_paid' => false])
             ->all();
 
         // есть еще отмененные заказы по которым могли происходить сбои при отмене, но для них я ничего не делал...
         if(count($fact_orders_without_canceled) > 0) {
             foreach ($fact_orders_without_canceled as $order) {
 
-                /* <!-- старый код - правка с чеками */
+                /*
                 $litebox_operation = LiteboxOperation::find()
                     ->where(['order_id' => $order->id])
                     ->andWhere(['sell_refund_status' => NULL])
@@ -1461,16 +1463,7 @@ class Trip extends \yii\db\ActiveRecord
 
                 // запрос на создание чека
                 $uuid = LiteboxOperation::makeOperationSell($order, $litebox_operation);
-                /* старый код - правка с чеками --> */
 
-                /* новый код - правка с чеками */
-                /*
-                $aUuids = LiteboxOperation::makeOperationSell($order);
-                if(count($aUuids) > 0) {
-                    $uuid = implode(',', $aUuids);
-                }else {
-                    $uuid = '';
-                }*/
 
                 // сохраняем в комментарий к заказу полученный uuid
                 if(empty($order->comment)) {
@@ -1479,6 +1472,11 @@ class Trip extends \yii\db\ActiveRecord
                     $order->comment = $order->comment.' uuid: '.$uuid;
                 }
                 $order->setField('comment', $order->comment);
+                */
+
+                // произойдет прерывание только в случае непредвиденных ошибок
+                // например: у заказа нет рейса или у клиента нет телефона или litebox ответчает ошибкой
+                $order->setPay([], false);
             }
         }
     }
@@ -1538,7 +1536,6 @@ class Trip extends \yii\db\ActiveRecord
             }
 
             if($client != null) {
-                // $client->recountSendedCanceledReliabilityCounts($fact_order, -1, -$fact_order->places_count, 0 , 0);
                 $client->recountSendedCanceledReliabilityCounts($fact_order, 'cancel_send');
             }
         }
@@ -1638,11 +1635,7 @@ class Trip extends \yii\db\ActiveRecord
                             $client->cashback -= $trip_order->accrual_cash_back;
                         }
 
-//                        if($trip_order->used_cash_back > 0) {
-//                            $client->cashback += $trip_order->used_cash_back;
-//                        }
-
-                        if($trip_order->accrual_cash_back > 0 /*|| $trip_order->used_cash_back > 0*/) {
+                        if($trip_order->accrual_cash_back > 0) {
                             $client->setField('cashback', $client->cashback);
                             $client->setField('sync_date', NULL);
                         }

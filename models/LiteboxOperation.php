@@ -28,8 +28,9 @@ class LiteboxOperation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'sell_status_setting_time', 'sell_refund_status_setting_time', 'sell_at', 'sell_refund_at', ], 'integer'],
-            [['sell_status', 'sell_refund_status'], 'string'],
+            [['order_id', 'sell_status_setting_time', 'sell_refund_status_setting_time', 'sell_at',
+                'sell_refund_at', 'commercial_trip', 'direction_id'], 'integer'],
+            [['sell_status', 'sell_refund_status', 'place_type'], 'string'],
             [['sell_uuid', 'sell_refund_uuid'], 'string', 'max' => 36],
             [['fn_number', 'ecr_registration_number'], 'string', 'max' => 16],
             [['fiscal_document_number', 'fiscal_document_attribute'], 'string', 'max' => 10],
@@ -44,6 +45,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'order_id' => 'Заказ',
+            'commercial_trip' => 'Коммерческий рейс',
+            'direction_id' => 'Направление',
+            'place_type' => 'Тип места',
+            'place_price' => 'Цена за место',
 
             'sell_uuid' => 'uuid операции "Приход", возвращенный сервером Litebox',
             'sell_at' => 'Время отправки запроса типа "Приход"',
@@ -63,7 +68,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
     }
 
 
-
     /**
      * проводим операцию "Приход"
      *
@@ -72,7 +76,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-    public static function makeOperationSell($order, $litebox_operation = null) {
+    public static function makeOperationSellOld($order, $litebox_operation = null) {
 
         // вместо uuid временно верну id последней записи  litebox_operation
 //        $last_litebox_operation = LiteboxOperation::find()->orderBy(['id' => 'SORT_DESC'])->one();
@@ -665,12 +669,18 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
     }
 
-    public static function makeOperationSellNew($order) {
 
-        $aUuids = [];
+    /*
+     * Для всех мест в заказе создаются записи в таблице litebox_operation и запрашивается печать чеков
+     */
+    public static function makeOperationSell($order, $throw_errors) {
 
         if($order->trip == null) {
             throw new ErrorException('Рейс не найден');
+        }
+        $tariff = $order->trip->tariff;
+        if ($tariff == null) {
+            throw new ErrorException('Тариф не найден');
         }
         if($order->client == null) {
             throw new ErrorException('Клиент не найден');
@@ -678,246 +688,294 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         if(empty($order->client->mobile_phone)) {
             throw new ErrorException('У клиента не заполнен мобильный телефон');
         }
+        if(!empty($order->paid_time)) {
+            throw new ForbiddenHttpException('По заказу уже производился платеж');
+        }
 
         // нет мест - фискализацию не проводим
         if($order->is_not_places == true) {
-            return true;
+            if($throw_errors) {
+                throw new ErrorException('Нет мест в заказе, фискализация запрещена');
+            }else {
+                return false;
+            }
         }
         // для фикс.цены = 0
         if($order->use_fix_price == true && $order->price == 0) {
-            return true;
+            if($throw_errors) {
+                throw new ErrorException('Для заказа с фикс.ценой равной 0 фискализация запрещена');
+            }else {
+                return false;
+            }
         }
 
 
-        // проверка уже существующих запрос в litebox для этого заказа с этими местами
-        // ...
 
-//        if($litebox_operation != null) {
-//
-//            // повторный запрос той же операции в litebox (производиться если на первый запрос litebox не ответил на запрос)
-//            $litebox_operation->order_id = $order->id;
-//            $litebox_operation->sell_at = time();
-//            if (!$litebox_operation->save(false)) {
-//                throw new ErrorException('Не удалось обновить LiteboxOperation');
-//            }
-//        }else {
-//
-//            // проверяем наличие неотменненных копий
-//            $exist_litebox_operation = LiteboxOperation::find()
-//                ->where(['order_id' => $order->id])
-//                ->andWhere(['sell_refund_status' => NULL])
-//                ->one();
-//            if($exist_litebox_operation != null) {
-//                throw new ErrorException('Операция "Приход" уже создавалась ранее');
-//            }
-//
-//            $litebox_operation = new LiteboxOperation();
-//            $litebox_operation->order_id = $order->id;
-//            $litebox_operation->sell_at = time();
-//            if (!$litebox_operation->save(false)) {
-//                throw new ErrorException('Не удалось создать LiteboxOperation');
-//            }
-//        }
+        // проверка уже существующих запрос в litebox для этого заказа
+        $litebox_operation = LiteboxOperation::find()
+            ->where(['order_id' => $order->id])
+            ->andWhere(['sell_refund_uuid' => NULL])
+            ->one();
+        if($litebox_operation != null) {
+            if($throw_errors) {
+                throw new ErrorException('Операция на создание чеков для этого заказа уже была создана');
+            }else {
+                return false;
+            }
+        }
+
+        $T_RESERV = $tariff->unprepayment_reservation_cost; // стоимость бронирования
+        $T_COMMON = $tariff->unprepayment_common_price + $T_RESERV;  // цена по общему тарифу
+        $T_STUDENT = $tariff->unprepayment_student_price + $T_RESERV; // студенческий тариф
+        $T_BABY = $tariff->unprepayment_baby_price + $T_RESERV;    // детский тариф
+        $T_AERO = $tariff->unprepayment_aero_price + $T_RESERV;    // тариф аэропорт
+        //$T_LOYAL = $tariff->unprepayment_loyal_price + $T_RESERV;   // тариф призовой поездки
+        //$T_PARCEL = $tariff->unprepayment_parcel_price + $T_RESERV; // тариф отправки посылки (без места)
 
 
-        $aItems = [];
+
+        $aLiteboxes = [];
 
 
         // рейс ком-й / не коммерческий, -
         // заказ в аэропорт/из аэропорта -
         // фикс.цена  -
         // places_count, student_count, child_count, is_not_places
-        // призовая как-то обозначать? И пускать призовые по цене призовых?
+        // призовая - никак не учитывать, как будто ее нет!
 
+        if($order->use_fix_price == 1) {
 
+            $litebox = new LiteboxOperation();
+            $litebox->order_id = $order->id;
+            $litebox->commercial_trip = $order->trip->commercial;
+            $litebox->direction_id = $order->direction_id;
+            $litebox->place_type = 'fix_price'; // 'fix_price','airport','adult','student','child',''
+            $litebox->place_price = $order->price;
+            $litebox->save();
 
-
-        // нужна цена за заказ
-        $total_price = intval($order->price);
-
-        // если клиенту едут в аэропорт, то они считаются по иной формуле
-        $yandexPointTo = $order->yandexPointTo;
-        $yandexPointFrom = $order->yandexPointFrom;
-        if (
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
-        ) { // едут в аэропорт или из аэропорта
-
-
-            if($yandexPointTo != null && $yandexPointTo->alias == 'airport') {
-
-                if($order->direction_id == 1) {
-                    $direction = 'Альметьевск-Аэропорт Казань';
-                }else {
-                    $direction = 'Казань-Альметьевск';
-                }
-
-            }else {
-
-                if($order->direction_id == 1) {
-                    $direction = 'Альметьевск-Казань';
-                }else {
-                    $direction = 'Аэропорт Казань-Альметьевск';
-                }
-            }
-
-
-            if($order->trip->commercial == 1) {
-
-                $aItems[] = [
-                    //'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
-                    'name' => 'Заказная перевозка '.$direction.' (тариф КОМ) '.date('d.m.Y', $order->date).', МЕСТ:'.$order->places_count,
-                    'price' => $total_price,
-                    'quantity' => 1,
-                    'sum' => $total_price,
-                    'vat' => [ // налоги
-                        'type' => "none",
-                        'sum' => 0.0
-                    ],
-                    'payment_object' => 'service',
-                    'payment_method' => 'full_payment',
-                    'measurement_unit' => 'мест'
-                ];
-
-            }else {
-
-                $aItems[] = [
-                    //'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
-                    'name' => 'Заказная перевозка '.$direction.' (тариф ОБЩ) '.date('d.m.Y', $order->date).', МЕСТ:'.$order->places_count,
-                    'price' => $total_price,
-                    'quantity' => 1,
-                    'sum' => $total_price,
-                    'vat' => [ // налоги
-                        'type' => "none",
-                        'sum' => 0.0
-                    ],
-                    'payment_object' => 'service',
-                    'payment_method' => 'full_payment',
-                    'measurement_unit' => 'мест'
-                ];
-            }
+            $aLiteboxes[] = $litebox;
 
         }else {
 
-            if($order->direction_id == 1) {
+            $total_count = intval($order->places_count); // количество мест в текущем заказе
+            if($total_count <= 0) {
+                throw new ErrorException('Нет мест в заказе');
+            }
+
+            $student_count = intval($order->student_count); // количество студентов в текущем заказе
+            $child_count = intval($order->child_count); // количество детей в текущем заказе
+            $adult_count = $total_count - $student_count - $child_count; // общие места
+            if($adult_count < 0) {
+                throw new ErrorException('Колличество мест для взрослых меньше 0');
+            }
+
+
+            $yandexPointTo = $order->yandexPointTo;
+            $yandexPointFrom = $order->yandexPointFrom;
+            if (
+                ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+            ) { // едут в аэропорт или из аэропорта
+
+                for($i = 0; $i < $total_count; $i++) {
+
+                    $litebox = new LiteboxOperation();
+                    $litebox->order_id = $order->id;
+                    $litebox->commercial_trip = $order->trip->commercial;
+                    $litebox->direction_id = $order->direction_id;
+                    $litebox->place_type = 'airport'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->place_price = $T_AERO;
+                    $litebox->save();
+
+                    $aLiteboxes[] = $litebox;
+                }
+
+            }else {
+
+                if($adult_count > 0) {
+                    for($i = 0; $i < $adult_count; $i++) {
+
+                        $litebox = new LiteboxOperation();
+                        $litebox->order_id = $order->id;
+                        $litebox->commercial_trip = $order->trip->commercial;
+                        $litebox->direction_id = $order->direction_id;
+                        $litebox->place_type = 'adult'; // 'fix_price','airport','adult','student','child',''
+                        $litebox->place_price = $T_COMMON;
+                        $litebox->save();
+
+                        $aLiteboxes[] = $litebox;
+                    }
+                }
+
+                if($student_count > 0) {
+                    for($i = 0; $i < $student_count; $i++) {
+
+                        $litebox = new LiteboxOperation();
+                        $litebox->order_id = $order->id;
+                        $litebox->commercial_trip = $order->trip->commercial;
+                        $litebox->direction_id = $order->direction_id;
+                        $litebox->place_type = 'student'; // 'fix_price','airport','adult','student','child',''
+                        $litebox->place_price = $T_STUDENT;
+                        $litebox->save();
+
+                        $aLiteboxes[] = $litebox;
+                    }
+                }
+
+                if($child_count > 0) {
+                    for($i = 0; $i < $child_count; $i++) {
+
+                        $litebox = new LiteboxOperation();
+                        $litebox->order_id = $order->id;
+                        $litebox->commercial_trip = $order->trip->commercial;
+                        $litebox->direction_id = $order->direction_id;
+                        $litebox->place_type = 'child'; // 'fix_price','airport','adult','student','child',''
+                        $litebox->place_price = $T_BABY;
+                        $litebox->save();
+
+                        $aLiteboxes[] = $litebox;
+                    }
+                }
+            }
+        }
+
+
+        if(count($aLiteboxes) == 0) {
+            throw new ErrorException('Не обнаружены данные для печати');
+        }
+
+
+        foreach ($aLiteboxes as $litebox)
+        {
+            $litebox->sell_at = time();
+            $litebox->save(false);
+
+            if($litebox->direction_id == 1) {
                 $direction = 'Альметьевск-Казань';
             }else {
                 $direction = 'Казань-Альметьевск';
             }
 
-            if($order->trip->commercial == 1) {
+            if($litebox->commercial_trip == 1) {
+                $kommer_reis = '+КР.';
+            }else {
+                $kommer_reis = '';
+            }
 
-                $aItems[] = [
-                    //'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (коммерческий) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
-                    'name' => 'Заказная перевозка '.$direction.' (тариф КОМ) '.date('d.m.Y', $order->date).', МЕСТ:'.$order->places_count,
-                    'price' => $total_price,
-                    'quantity' => 1,
-                    'sum' => $total_price,
-                    'vat' => [ // налоги
-                        'type' => "none",
-                        'sum' => 0.0
+            $name = '';
+            switch($litebox->place_type)
+            {
+                case 'fix_price':
+                    $name = 'Заказная перевозка пассажиров - '.$litebox->place_price.'х1 = '.$litebox->place_price.' руб';
+                    break;
+
+                case 'airport':
+                    $place_type = 'ПОВ';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    break;
+
+                case 'adult':
+                    $place_type = 'ОБЩ';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    break;
+
+                case 'student':
+                    $place_type = 'СТУД';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    break;
+
+                case 'child':
+                    $place_type = 'ДЕТ';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    break;
+
+                default:
+                    throw new ErrorException('Не определен тип места');
+                    break;
+            }
+
+            $aItems = [];
+            $aItems[] = [
+                'name' => $name,
+                'price' => $litebox->place_price,
+                'quantity' => 1,
+                'sum' => $litebox->place_price,
+                'vat' => [ // налоги
+                    'type' => "none",
+                    'sum' => 0.0
+                ],
+                'payment_object' => 'service',
+                'payment_method' => 'full_payment',
+                'measurement_unit' => 'мест'
+            ];
+
+            $payments[0] = [
+                'type' => 1,
+                'sum' => $litebox->place_price
+            ];
+            $data = [
+                'external_id' => $litebox->sell_at.'_'.$litebox->order_id , // 17052917561851307
+                'timestamp' => date("d.m.Y H:i:s", $litebox->sell_at),
+                'receipt' => [
+                    'client' => [
+                        //'email' => $order->client->email,
+                        //'phone' => $order->client->mobile_phone,
+                        //'phone' => '79661128006',
+                        //'email' => '79661128006',
+                        'email' => $order->client->mobile_phone,// в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
                     ],
-                    'payment_object' => 'service',
-                    'payment_method' => 'full_payment',
-                    'measurement_unit' => 'мест'
-                ];
+                    'company' => [
+                        'email' => "417417t@gmail.com",
+                        'inn' => "165711720197",
+                        'sno' => "patent",
+                        'payment_address' => "t417.ru"
+                    ],
+                    'items' => $aItems,
+                    'payments' => $payments,
+                    'total' => $litebox->place_price,
+                    'is_print' => false
+                    //'is_print' => true
+                ],
+            ];
 
+
+            // пример:
+            // curl -i -H "Authorization: Token d8881c694429e766c7a36db089d1391148616178" "Accept:application/json" -H "Content-Type:application/json" -XPOST "https://in.litebox.ru/fiscalization/v1/shops/3563/sell" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"external_id\": \"1558921554_1\",  \"timestamp\": \"12.07.17 22:00:00\",  \"receipt\": {    \"client\": {      \"email\": \"vlad.shetinin@gmail.com\"    },    \"company\": {      \"email\": \"417417t@gmail.com\",      \"inn\": \"165711720197\",      \"sno\": \"envd\",      \"payment_address\": \"t417.ru\"    },    \"items\": [      {        \"name\": \"АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1)\",        \"price\": 1,        \"quantity\": 2.0,        \"sum\": 2.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      },       {        \"name\": \"ФИКС. ТАРИФ\",        \"price\": 0,        \"quantity\": 0.0,        \"sum\": 0.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      }    ],    \"payments\": [      {        \"type\": 1,        \"sum\": 2.0      }    ],    \"total\": 2.0,    \"is_print\": false  }}"
+            $headers[] = 'Authorization: Token '.self::$token;
+            $headers[] = 'Content-Type: application/json; charset=UTF-8';
+
+            $myCurl = curl_init();
+            curl_setopt_array($myCurl, [
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_URL => 'https://in.litebox.ru/fiscalization/v1/shops/'.self::$shop_id.'/sell',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode($data)
+            ]);
+            $response = curl_exec($myCurl);
+            curl_close($myCurl);
+            $result = json_decode($response);
+            // echo "aResult:<pre>"; print_r($aResult); echo "</pre>";
+
+            if(isset($result->error) && !empty($result->error)) {
+                throw new ErrorException($result->error->text);
             }else {
 
-                $aItems[] = [
-                    //'name' => 'ТЕСТИРОВАНИЕ: УСЛУГА заказной перевозки по нпр.' . $direction . ' ' . date('d.m.Y', $order->date) . ' (стандарт) ' . $order->places_count . ' МЕСТ, в том числе ' . intval($order->student_count) . ' СТ, ' . intval($order->child_count) . ' ДЕТ, ' . intval($order->prize_trip_count) . ' ПРИЗ',
-                    'name' => 'Заказная перевозка '.$direction.' (тариф ОБЩ) '.date('d.m.Y', $order->date).', МЕСТ:'.$order->places_count,
-                    'price' => $total_price,
-                    'quantity' => 1,
-                    'sum' => $total_price,
-                    'vat' => [ // налоги
-                        'type' => "none",
-                        'sum' => 0.0
-                    ],
-                    'payment_object' => 'service',
-                    'payment_method' => 'full_payment',
-                    'measurement_unit' => 'мест'
-                ];
+                $litebox->sell_uuid = $result->uuid;
+                $litebox->sell_status = $result->status;
+                $litebox->sell_status_setting_time = time();
+                if(!$litebox->save(false)) {
+                    throw new ErrorException('Не удалось создать LiteboxOperation');
+                }
+
+                // $order->setField('litebox_uuid', $result->uuid);
+                //return $result->uuid;
             }
         }
 
+        // $order->setField('litebox_completed', true); // изменения в заказе вынесены из этой функции
 
-
-
-        $payments[0] = [
-            'type' => 1,
-            'sum' => $total_price
-        ];
-        $data = [
-            'external_id' => $litebox_operation->sell_at.'_'.$litebox_operation->order_id , // 17052917561851307
-            'timestamp' => date("d.m.Y H:i:s", $litebox_operation->sell_at),
-            'receipt' => [
-                'client' => [
-                    //'email' => $order->client->email,
-                    //'phone' => $order->client->mobile_phone,
-                    //'phone' => '79661128006',
-                    //'email' => '79661128006',
-
-                    // в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
-                    'email' => $order->client->mobile_phone,
-                ],
-                'company' => [
-                    'email' => "417417t@gmail.com",
-                    'inn' => "165711720197",
-                    //'sno' => "envd",
-                    'sno' => "patent",
-                    'payment_address' => "t417.ru"
-                ],
-                'items' => $aItems,
-                'payments' => $payments,
-                'total' => $total_price,
-                'is_print' => false
-                //'is_print' => true
-            ],
-        ];
-
-        // пример:
-        // curl -i -H "Authorization: Token d8881c694429e766c7a36db089d1391148616178" "Accept:application/json" -H "Content-Type:application/json" -XPOST "https://in.litebox.ru/fiscalization/v1/shops/3563/sell" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"external_id\": \"1558921554_1\",  \"timestamp\": \"12.07.17 22:00:00\",  \"receipt\": {    \"client\": {      \"email\": \"vlad.shetinin@gmail.com\"    },    \"company\": {      \"email\": \"417417t@gmail.com\",      \"inn\": \"165711720197\",      \"sno\": \"envd\",      \"payment_address\": \"t417.ru\"    },    \"items\": [      {        \"name\": \"АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1)\",        \"price\": 1,        \"quantity\": 2.0,        \"sum\": 2.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      },       {        \"name\": \"ФИКС. ТАРИФ\",        \"price\": 0,        \"quantity\": 0.0,        \"sum\": 0.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      }    ],    \"payments\": [      {        \"type\": 1,        \"sum\": 2.0      }    ],    \"total\": 2.0,    \"is_print\": false  }}"
-
-
-        $headers[] = 'Authorization: Token '.self::$token;
-        $headers[] = 'Content-Type: application/json; charset=UTF-8';
-
-        $myCurl = curl_init();
-        curl_setopt_array($myCurl, [
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_URL => 'https://in.litebox.ru/fiscalization/v1/shops/'.self::$shop_id.'/sell',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            //CURLOPT_POSTFIELDS => http_build_query($data)
-            CURLOPT_POSTFIELDS => json_encode($data)
-        ]);
-        $response = curl_exec($myCurl);
-        curl_close($myCurl);
-
-        $result = json_decode($response);
-        // echo "aResult:<pre>"; print_r($aResult); echo "</pre>";
-
-
-        if(isset($result->error) && !empty($result->error)) {
-            throw new ErrorException($result->error->text);
-
-        }else {
-
-            $litebox_operation->sell_uuid = $result->uuid;
-            $litebox_operation->sell_status = $result->status;
-            $litebox_operation->sell_status_setting_time = time();
-            if(!$litebox_operation->save(false)) {
-                throw new ErrorException('Не удалось создать LiteboxOperation');
-            }
-
-            $order->setField('litebox_uuid', $result->uuid);
-
-            return $result->uuid;
-        }
-
-
-        return $aUuids;
+        return true;
     }
 
 
@@ -925,7 +983,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
      * На основе текущей операции создается новая операция отвены текущей операции
      * @throws ErrorException
      */
-    public function makeOperationSellRefund() {
+    public function makeOperationSellRefundOld() {
 
         // вместо uuid временно верну id последней записи  litebox_operation
 //        $last_litebox_operation = LiteboxOperation::find()->orderBy(['id' => 'SORT_DESC'])->one();
@@ -1430,6 +1488,150 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
     }
 
+    /*
+     * Запрашивается отмена текущей litebox_operation с выдачей чека
+     */
+    public function makeOperationSellRefund()
+    {
+        $order = Order::find()->where(['id' => $this->order_id])->one();
+
+        if($order == null) {
+            throw new ErrorException('Заказ не найден');
+        }
+        if($order->client == null) {
+            throw new ErrorException('Клиент не найден');
+        }
+        if(empty($order->client->mobile_phone)) {
+            throw new ErrorException('У клиента не заполнен мобильный телефон');
+        }
+
+        $this->sell_refund_at = time();
+        if(!$this->save(false)) {
+            throw new ErrorException('Не удалось создать LiteboxOperation');
+        }
+
+
+        if($this->direction_id == 1) {
+            $direction = 'Альметьевск-Казань';
+        }else {
+            $direction = 'Казань-Альметьевск';
+        }
+
+        if($this->commercial_trip == 1) {
+            $kommer_reis = '+КР.';
+        }else {
+            $kommer_reis = '';
+        }
+
+        $name = '';
+        switch($this->place_type)
+        {
+            case 'fix_price':
+                $name = 'Заказная перевозка пассажиров - '.$this->place_price.'х1 = '.$this->place_price.' руб';
+                break;
+
+            case 'airport':
+                $place_type = 'ПОВ';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                break;
+
+            case 'adult':
+                $place_type = 'ОБЩ';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                break;
+
+            case 'student':
+                $place_type = 'СТУД';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                break;
+
+            case 'child':
+                $place_type = 'ДЕТ';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                break;
+
+            default:
+                throw new ErrorException('Не определен тип места');
+                break;
+        }
+
+        $aItems = [];
+        $aItems[] = [
+            'name' => $name,
+            'price' => $this->place_price,
+            'quantity' => 1,
+            'sum' => $this->place_price,
+            'vat' => [ // налоги
+                'type' => "none",
+                'sum' => 0.0
+            ],
+            'payment_object' => 'service',
+            'payment_method' => 'full_payment',
+            'measurement_unit' => 'мест'
+        ];
+
+
+
+        $payments[0] = [
+            'type' => 1,
+            'sum' => $this->place_price
+        ];
+        $data = [
+            'external_id' => $this->sell_refund_at.'_'.$this->order_id , // 17052917561851307
+            'timestamp' => date("d.m.Y H:i:s", $this->sell_refund_at),
+            'receipt' => [
+                'client' => [
+                    // в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
+                    'email' => $order->client->mobile_phone,
+                ],
+                'company' => [
+                    'email' => "417417t@gmail.com",
+                    'inn' => "165711720197",
+                    'sno' => "patent",
+                    'payment_address' => "t417.ru"
+                ],
+                'items' => $aItems,
+                'payments' => $payments,
+                'total' => $this->place_price,
+                'is_print' => false
+                //'is_print' => true
+            ],
+        ];
+
+        // пример:
+        // curl -i -H "Authorization: Token d8881c694429e766c7a36db089d1391148616178" "Accept:application/json" -H "Content-Type:application/json" -XPOST "https://in.litebox.ru/fiscalization/v1/shops/3563/sell" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"external_id\": \"1558921554_1\",  \"timestamp\": \"12.07.17 22:00:00\",  \"receipt\": {    \"client\": {      \"email\": \"vlad.shetinin@gmail.com\"    },    \"company\": {      \"email\": \"417417t@gmail.com\",      \"inn\": \"165711720197\",      \"sno\": \"envd\",      \"payment_address\": \"t417.ru\"    },    \"items\": [      {        \"name\": \"АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1)\",        \"price\": 1,        \"quantity\": 2.0,        \"sum\": 2.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      },       {        \"name\": \"ФИКС. ТАРИФ\",        \"price\": 0,        \"quantity\": 0.0,        \"sum\": 0.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      }    ],    \"payments\": [      {        \"type\": 1,        \"sum\": 2.0      }    ],    \"total\": 2.0,    \"is_print\": false  }}"
+
+        $headers[] = 'Authorization: Token '.self::$token;
+        $headers[] = 'Content-Type: application/json; charset=UTF-8';
+
+        $myCurl = curl_init();
+        curl_setopt_array($myCurl, [
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_URL => 'https://in.litebox.ru/fiscalization/v1/shops/'.self::$shop_id.'/sell_refund',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data)
+        ]);
+        $response = curl_exec($myCurl);
+        curl_close($myCurl);
+        $result = json_decode($response);
+        // echo "aResult:<pre>"; print_r($aResult); echo "</pre>";
+
+
+        if(isset($result->error) && !empty($result->error)) {
+            throw new ErrorException($result->error->text);
+        }else {
+            $this->sell_refund_uuid = $result->uuid;
+            $this->sell_refund_status = $result->status;
+            $this->sell_refund_status_setting_time = time();
+            if(!$this->save(false)) {
+                throw new ErrorException('Не удалось сохранить LiteboxOperation');
+            }
+        }
+
+
+        return true;
+    }
 
     /**
      * @param bool $is_console

@@ -41,14 +41,15 @@ class SetCashReceivedConfirmAction extends \yii\rest\Action
         }
 
 
-//        $order->cash_received_time = time();
-//        $order->setField('cash_received_time', $order->cash_received_time);
-
-        // делаем заказ оплаченным
+        // оплачиваем заказ с выдачей чеков
         $aFields = [
             'payment_source' => 'application'
         ];
-        $order->setPay(true, $aFields);
+        if($order->setPay($aFields, true)) {
+
+            $order->setField('cash_received_time', time());
+            $order->setField('cash_received_by_user_id', Yii::$app->user->id);
+        }
 
         if($order->trip_id > 0) {
             // передаем сообщение в браузер

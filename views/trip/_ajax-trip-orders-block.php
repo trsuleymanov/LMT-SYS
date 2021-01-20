@@ -665,7 +665,8 @@ $columns = ArrayHelper::merge($columns, [
             if($model->cash_received_time > 0) {
                 //$str .= '<span>Деньги получены водителем</span><br />';
 
-                $href = 'https://ofd.yandex.ru/vaucher/'.$model->litebox_ecr_registration_number.'/'.$model->litebox_fiscal_document_number.'/'.$model->litebox_fiscal_document_attribute;
+                //$href = 'https://ofd.yandex.ru/vaucher/'.$model->litebox_ecr_registration_number.'/'.$model->litebox_fiscal_document_number.'/'.$model->litebox_fiscal_document_attribute;
+                $href = '';
                 if($model->payment_source == 'application') {
                     $source = 'ILS_'.date('dmY_H:i', $model->paid_time);
                 }elseif($model->payment_source == 'client_site') {

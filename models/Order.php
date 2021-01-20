@@ -223,7 +223,8 @@ class Order extends \yii\db\ActiveRecord
                 'sync_date',
                 'penalty_time', 'penalty_author_id', 'first_opened_form_time', 'first_opened_form_user_id',
                 //'date_sended'
-                'time_confirm_diff', 'time_confirm_delta'
+                'time_confirm_diff', 'time_confirm_delta',
+                'litebox_completed'
             ], 'integer'],
             //[['additional_phone_1', 'additional_phone_2', 'additional_phone_3'], 'string', 'max' => 20],
             [['additional_phone_1', 'additional_phone_2', 'additional_phone_3'], 'checkPhone'],
@@ -721,6 +722,7 @@ class Order extends \yii\db\ActiveRecord
             'confirmed_time_satter_user_id' => 'Пользователь нажавший кнопку "Подтвердить посадку"',
             'price' => 'Цена',
             'paid_summ' => 'Оплачено',
+            'litebox_completed' => 'Операции выдачи чеков для заказа завершены',
             'litebox_uuid' => 'uuid операции, возвращенный сервером',
             'litebox_fn_number' => 'ФН номер (номер фискального накопителя)',
             'litebox_fiscal_document_number' => 'Номер_ФД',
@@ -2335,38 +2337,26 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
-    function setPay($save_paid_data = true, $aFields = []) {
 
-        // запрос на создание чека - здесь есть условия при которых оплата не может пройти
-        LiteboxOperation::makeOperationSell($this);
+    public function setPay($aFields = [], $throw_litebox_errors) {
 
-        // $this->cash_received_time = time(); // здесь не нужно устанавливать
-        if($save_paid_data) {
+        // если фискализация не отработает, то произойдет прерывание
+        if(LiteboxOperation::makeOperationSell($this, $throw_litebox_errors)) {
 
-            if(!empty($this->paid_time)) {
-                throw new ForbiddenHttpException('По заказу уже производился один платеж');
-            }
-
-
-//            $this->scenario = 'pay_or_cancel_pay';
-//            $this->paid_summ = $this->price;
-//            $this->paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
-//            $this->payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
-//            $this->is_paid = true;
-//            if (!$this->save(false)) {
-//                throw new ForbiddenHttpException('Заказ не удалось сохранить');
-//            }
-
+            $this->setField('litebox_completed', true); // litebox полностью отработала
             $this->setField('paid_summ', $this->price);
+            $this->setField('is_paid', true); // Заказ полностью оплачен
 
             $paid_time = (isset($aFields['paid_time']) ? $aFields['paid_time'] : time());
-            $this->setField('paid_time', $paid_time);
+            $this->setField('paid_time', $paid_time); // время оплаты
 
             $payment_source = (isset($aFields['payment_source']) ? $aFields['payment_source'] : 'crm');
-            $this->setField('payment_source', $payment_source);
+            $this->setField('payment_source', $payment_source); // источник оплаты
 
-            $this->setField('is_paid', true);
+            // $this->setField('cash_received_time', time()); // Деньги за заказ получены'
+            // $this->setField('cash_received_by_user_id', Yii::$app->user->id); // кто получил деньги
         }
+
 
         // сообщим браузерам что надо обновить страницу рейсов
         if($this->trip_id > 0) {
@@ -2375,41 +2365,33 @@ class Order extends \yii\db\ActiveRecord
         }
     }
 
+
     function cancelPay() {
 
-        // вызывается при отмене заказа, при высадке пассажира
-        // заказ может быть не оплачен, частично оплачен, полностью оплачен
-        // у заказа возможно уже были возвраты денег, или 2 операции оплаты и 1 возврат.
+        if($this->is_paid != true) {
+            throw new ErrorException('Заказ не числиться оплаченным, поэтому отменить оплату нельзя');
+        }
 
-        // отменяем оплату
-        //$this->cash_received_time = 0; // пусть этот флаг останеться не тронутым для истории
-
-        $litebox_operation = LiteboxOperation::find()
+        $litebox_operations = LiteboxOperation::find()
             ->where(['order_id' => $this->id])
-            ->andWhere(['sell_refund_status' => NULL])
-            ->one();
-        if($litebox_operation != null && empty($litebox_operation->sell_refund_at)) {
-            $litebox_operation->makeOperationSellRefund();
+            ->andWhere(['>', 'sell_at', 0])
+            ->andWhere(['<', 'sell_refund_at', 1])
+            ->all();
+        if(count($litebox_operations) > 0) {
+            foreach ($litebox_operations as $litebox_operation) {
+                $litebox_operation->makeOperationSellRefund();
+            }
         }
 
-        if(empty($this->paid_time)) {
-            //throw new ForbiddenHttpException('Нельзя отменить оплату, т.к. не было платежа');
-            return false;
-        }
-
-//        $this->scenario = 'pay_or_cancel_pay';
-//        $this->paid_summ = 0;
-//        $this->paid_time = 0;
-//        $this->is_paid = false;
-//        $this->payment_source = '';
-//        if(!$this->save(false)) {
-//            throw new ForbiddenHttpException('Заказ не удалось сохранить');
-//        }
-
+        $this->setField('litebox_completed', false);
         $this->setField('paid_summ', 0);
-        $this->setField('paid_time', 0);
         $this->setField('is_paid', false);
+        $this->setField('paid_time', 0);
         $this->setField('payment_source', '');
+
+        $this->setField('cash_received_time', 0);
+        $this->setField('cash_received_by_user_id', 0);
+
 
         // сообщим браузерам что надо обновить страницу рейсов
         if($this->trip_id > 0) {

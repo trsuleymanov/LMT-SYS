@@ -955,7 +955,16 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             $response = curl_exec($myCurl);
             curl_close($myCurl);
             $result = json_decode($response);
-            echo "result:<pre>"; print_r($result); echo "</pre>"; exit;
+            // echo "result:<pre>"; print_r($result); echo "</pre>"; exit;
+//            result:
+//
+//            stdClass Object
+//            (
+//                [status] => wait
+//                [uuid] => bef8560f-5b7f-418b-8985-2aea500a62d1
+//                [error] =>
+//            )
+
 
             if(isset($result->error) && !empty($result->error)) {
                 throw new ErrorException($result->error->text);

@@ -599,7 +599,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'sum' => $total_price
         ];
         $data = [
-            'external_id' => $litebox_operation->sell_at.'_'.$litebox_operation->order_id.'_'.$litebox_operation->id , // 17052917561851307
+            'external_id' => $litebox_operation->id.'_'.$litebox_operation->order_id.'_'.$litebox_operation->sell_at,
             'timestamp' => date("d.m.Y H:i:s", $litebox_operation->sell_at),
             'receipt' => [
                 'client' => [
@@ -914,7 +914,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 'sum' => $litebox->place_price
             ];
             $data = [
-                'external_id' => $litebox->sell_at.'_'.$litebox->order_id.'_'.$litebox->id, // 17052917561851307
+                'external_id' => $litebox->id.'_'.$litebox->order_id.'_'.$litebox->sell_at,
                 'timestamp' => date("d.m.Y H:i:s", $litebox->sell_at),
                 'receipt' => [
                     'client' => [
@@ -1446,7 +1446,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'sum' => $total_price
         ];
         $data = [
-            'external_id' => $this->sell_refund_at.'_'.$this->order_id.'_'.$this->id , // 17052917561851307
+            'external_id' => $this->id.'_'.$this->order_id.'_'.$this->sell_refund_at,
             //'timestamp' => date("d.m.y H:i:s", $this->sell_refund_at),
             // нужен формат времени теперь: %d.%m.%Y %H:%M:%S
             'timestamp' => date("d.m.Y H:i:s", $this->sell_refund_at),
@@ -1598,7 +1598,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'sum' => $this->place_price
         ];
         $data = [
-            'external_id' => $this->sell_refund_at.'_'.$this->order_id.'_'.$this->id , // 17052917561851307
+            'external_id' => $this->id.'_'.$this->order_id.'_'.$this->sell_refund_at,
             'timestamp' => date("d.m.Y H:i:s", $this->sell_refund_at),
             'receipt' => [
                 'client' => [

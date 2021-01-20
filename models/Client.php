@@ -41,11 +41,10 @@ class Client extends \yii\db\ActiveRecord
             $mobile_phone = '+' . $mobile_phone;
         }
 
-        $client = Client::find()->where(['mobile_phone' => $mobile_phone])->one();
-        // здесь не нужно выводить ошибку
-//        if($client == null) {
-//            throw new ErrorException('клиент не найден. Телефон: '.$mobile_phone);
-//        }
+        $client = Client::find()
+            ->where(['mobile_phone' => $mobile_phone])
+            ->limit(1) // добавлено чтобы снизить нагрузку запроса и избежать ошибки Allowed memory size of Command.php on line 1291  (LogTarget.php on line 67)
+            ->one();
 
         return $client;
     }

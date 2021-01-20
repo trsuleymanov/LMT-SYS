@@ -861,6 +861,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             switch($litebox->place_type)
             {
                 case 'fix_price':
+                    $litebox->place_price = intval($litebox->place_price);
                     $name = 'Заказная перевозка пассажиров - '.$litebox->place_price.'х1 = '.$litebox->place_price.' руб';
                     break;
 
@@ -965,8 +966,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 }
 
             }
-
-            //sleep(1);
         }
 
         // $order->setField('litebox_completed', true); // изменения в заказе вынесены из этой функции
@@ -1526,6 +1525,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         switch($this->place_type)
         {
             case 'fix_price':
+                $this->place_price = intval($this->place_price);
                 $name = 'Заказная перевозка пассажиров - '.$this->place_price.'х1 = '.$this->place_price.' руб';
                 break;
 

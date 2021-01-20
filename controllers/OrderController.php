@@ -989,8 +989,6 @@ class OrderController extends Controller
         Yii::$app->response->format = 'json';
         $post = Yii::$app->request->post();
 
-        //echo "post:<pre>"; print_r($post); echo "</pre>";
-
         $order = new Order();
         $order->scenario = 'check_form_fields';
 
@@ -999,13 +997,12 @@ class OrderController extends Controller
         if(isset($post['Client']['mobile_phone'])) {
             $client = Client::getClientByMobilePhone($post['Client']['mobile_phone']);
         }
-        if($client == null && isset($post['Client']['email'])) {
-            $client = Client::find()->where(['email' => $post['Client']['email']])->one();
-        }
+//        if($client == null && isset($post['Client']['email'])) {
+//            $client = Client::find()->where(['email' => $post['Client']['email']])->one();
+//        }
         if($client == null) {
             $client = new Client();
         }
-        //echo "client:<pre>"; print_r($client); echo "</pre>";
 
         if($client->load($post) && $order->load($post) && $client->validate() && $order->validate())
         {

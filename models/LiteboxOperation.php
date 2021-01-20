@@ -845,22 +845,23 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
-        $aTestMobiles = [
-            '+7-111-111-1110',
-            '+7-111-111-1111',
-            '+7-111-111-1112',
-            '+7-111-111-1113',
-            '+7-111-111-1114',
-            '+7-111-111-1115',
-            '+7-111-111-1116',
-            '+7-111-111-1117',
-            '+7-111-111-1118',
-            '+7-111-111-1119',
-        ];
-        $i = 0;
+//        $aTestMobiles = [
+//            '+7-111-111-1110',
+//            '+7-111-111-1111',
+//            '+7-111-111-1112',
+//            '+7-111-111-1113',
+//            '+7-111-111-1114',
+//            '+7-111-111-1115',
+//            '+7-111-111-1116',
+//            '+7-111-111-1117',
+//            '+7-111-111-1118',
+//            '+7-111-111-1119',
+//        ];
+//        $i = 0;
+        $myCurl = curl_init();
         foreach ($aLiteboxes as $litebox)
         {
-            $i++;
+            // $i++;
 
             $litebox->sell_at = time();
             $litebox->save(false);
@@ -938,8 +939,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                         //'phone' => '79661128006',
                         //'email' => '79661128006',
 
-                        //'email' => $order->client->mobile_phone,// в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
-                        'email' => $aTestMobiles[$i]
+                        'email' => $order->client->mobile_phone,// в этом случае сообщение на почту не приходит, но приходит смс со ссылкой
+                        //'email' => $aTestMobiles[$i]
                     ],
                     'company' => [
                         'email' => "417417t@gmail.com",
@@ -958,10 +959,11 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
             // пример:
             // curl -i -H "Authorization: Token d8881c694429e766c7a36db089d1391148616178" "Accept:application/json" -H "Content-Type:application/json" -XPOST "https://in.litebox.ru/fiscalization/v1/shops/3563/sell" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"external_id\": \"1558921554_1\",  \"timestamp\": \"12.07.17 22:00:00\",  \"receipt\": {    \"client\": {      \"email\": \"vlad.shetinin@gmail.com\"    },    \"company\": {      \"email\": \"417417t@gmail.com\",      \"inn\": \"165711720197\",      \"sno\": \"envd\",      \"payment_address\": \"t417.ru\"    },    \"items\": [      {        \"name\": \"АК 19.07.2019 14:20 3 мест (СТ:0, ДЕТ:1, АЭР:3, ПРИЗ:1)\",        \"price\": 1,        \"quantity\": 2.0,        \"sum\": 2.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      },       {        \"name\": \"ФИКС. ТАРИФ\",        \"price\": 0,        \"quantity\": 0.0,        \"sum\": 0.0,        \"vat\":{            \"type\": \"none\",            \"sum\": 0.0        }      }    ],    \"payments\": [      {        \"type\": 1,        \"sum\": 2.0      }    ],    \"total\": 2.0,    \"is_print\": false  }}"
+            $headers = [];
             $headers[] = 'Authorization: Token '.self::$token;
             $headers[] = 'Content-Type: application/json; charset=UTF-8';
 
-            $myCurl = curl_init();
+            //$myCurl = curl_init();
             curl_setopt_array($myCurl, [
                 CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_URL => 'https://in.litebox.ru/fiscalization/v1/shops/'.self::$shop_id.'/sell',
@@ -970,7 +972,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 CURLOPT_POSTFIELDS => json_encode($data)
             ]);
             $response = curl_exec($myCurl);
-            curl_close($myCurl);
+
             $result = json_decode($response);
             // echo "result:<pre>"; print_r($result); echo "</pre>"; exit;
 //            result:
@@ -992,6 +994,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
 
             if(isset($result->error) && !empty($result->error)) {
+                curl_close($myCurl);
                 throw new ErrorException($result->error->text);
             }else {
 
@@ -1003,23 +1006,25 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 //                    exit;
 //                }
 
-                echo "data:<pre>"; print_r($data); echo "</pre>";
-                echo "result:<pre>"; print_r($result); echo "</pre>";
+                //echo "data:<pre>"; print_r($data); echo "</pre>";
+                //echo "result:<pre>"; print_r($result); echo "</pre>";
 
 
-//                $litebox->sell_uuid = $result->uuid;
-//                $litebox->sell_status = $result->status;
-//                $litebox->sell_status_setting_time = time();
-//                if(!$litebox->save(false)) {
-//                    throw new ErrorException('Не удалось создать LiteboxOperation');
-//                }
+                $litebox->sell_uuid = $result->uuid;
+                $litebox->sell_status = $result->status;
+                $litebox->sell_status_setting_time = time();
+                if(!$litebox->save(false)) {
+                    curl_close($myCurl);
+                    throw new ErrorException('Не удалось создать LiteboxOperation');
+                }
 
                 // $order->setField('litebox_uuid', $result->uuid);
                 //return $result->uuid;
             }
 
-            sleep(2);
+            sleep(1);
         }
+        curl_close($myCurl);
 
         // $order->setField('litebox_completed', true); // изменения в заказе вынесены из этой функции
 

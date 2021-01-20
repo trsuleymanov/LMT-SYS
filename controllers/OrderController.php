@@ -997,9 +997,12 @@ class OrderController extends Controller
         if(isset($post['Client']['mobile_phone'])) {
             $client = Client::getClientByMobilePhone($post['Client']['mobile_phone']);
         }
-//        if($client == null && isset($post['Client']['email'])) {
-//            $client = Client::find()->where(['email' => $post['Client']['email']])->one();
-//        }
+        if($client == null && isset($post['Client']['email'])) {
+            $client = Client::find()
+                ->where(['email' => $post['Client']['email']])
+                ->limit(1) // добавлено чтобы снизить нагрузку запроса и избежать ошибки Allowed memory size of Command.php on line 1291  (LogTarget.php on line 67)
+                ->one();
+        }
         if($client == null) {
             $client = new Client();
         }

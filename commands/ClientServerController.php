@@ -727,7 +727,7 @@ class ClientServerController extends Controller
 
     public static function sendMessageToAdmin($theme, $msg = 'test') {
 
-        exit('Отключено');
+        // exit('Отключено');
 
         Yii::$app->mailer->compose()
             ->setFrom('admin@developer.almobus.ru')

@@ -1659,7 +1659,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         if(isset($result->error) && !empty($result->error)) {
 
             if($is_console == true) {
+
+                print_r($result->error);
                 ClientServerController::sendMessageToAdmin('Ошибка', 'sell_uuid: '.$this->sell_uuid.' '.$result->error->text);
+
             }else {
                 throw new ErrorException($result->error->text);
             }
@@ -1704,7 +1707,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
             if(!$this->save(false)) {
                 if($is_console == true) {
+
+                    print_r($result->error);
                     ClientServerController::sendMessageToAdmin('Ошибка', 'LiteboxOperation::checkStatusAndUpdate Не удалось сохранить данные по litebox операции');
+
                 }else {
                     throw new ErrorException('Не удалось сохранить данные по litebox операции');
                 }

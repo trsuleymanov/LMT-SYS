@@ -662,7 +662,7 @@ $columns = ArrayHelper::merge($columns, [
             if(!empty($model->comment)) {
                 $str .= '<span>' . $model->comment . '</span><hr style="margin: 5px 0;" />';
             }
-            if($model->cash_received_time > 0) {
+            //if($model->cash_received_time > 0) {
                 //$str .= '<span>Деньги получены водителем</span><br />';
 
                 $liteboxes = \app\models\LiteboxOperation::find()
@@ -685,11 +685,13 @@ $columns = ArrayHelper::merge($columns, [
                     }
 
                     foreach ($liteboxes as $litebox) {
-                        $href = 'https://ofd.yandex.ru/vaucher/'.$litebox->ecr_registration_number.'/'.$litebox->fiscal_document_number.'/'.$litebox->fiscal_document_attribute;
-                        $str .= '<span><a href="' . $href . '">' . $source . '</a></span><br />';
+                        if(!empty($litebox->ecr_registration_number)) {
+                            $href = 'https://ofd.yandex.ru/vaucher/' . $litebox->ecr_registration_number . '/' . $litebox->fiscal_document_number . '/' . $litebox->fiscal_document_attribute;
+                            $str .= '<span><a href="' . $href . '">' . $source . '</a></span><br />';
+                        }
                     }
                 }
-            }
+            //}
             $str .= 'Стоимость/Оплачено: <b>'.(intval($model->price) == 0 ? '0.00' : $model->price).' / '.($model->paid_summ == 0 ? '0.00' : $model->paid_summ).'</b>';
             if($model->informer_office_id > 0) {
                 $str .= ', <i>Ист. '.$model->informerOffice->name.'</i>';

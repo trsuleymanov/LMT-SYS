@@ -737,101 +737,102 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         $aLiteboxes = [];
 
 
-        if($order->use_fix_price == 1) {
+//        if($order->use_fix_price == 1) {
+//
+//            $litebox = new LiteboxOperation();
+//            $litebox->order_id = $order->id;
+//            $litebox->commercial_trip = $order->trip->commercial;
+//            $litebox->direction_id = $order->direction_id;
+//            $litebox->place_type = 'fix_price'; // 'fix_price','airport','adult','student','child',''
+//            $litebox->place_price = $order->price;
+//            $litebox->save();
+//
+//            $aLiteboxes[] = $litebox;
+//
+//        }else {
 
-            $litebox = new LiteboxOperation();
-            $litebox->order_id = $order->id;
-            $litebox->commercial_trip = $order->trip->commercial;
-            $litebox->direction_id = $order->direction_id;
-            $litebox->place_type = 'fix_price'; // 'fix_price','airport','adult','student','child',''
-            $litebox->place_price = $order->price;
-            $litebox->save();
 
-            $aLiteboxes[] = $litebox;
+        $total_count = intval($order->places_count); // количество мест в текущем заказе
+        if($total_count <= 0) {
+            throw new ErrorException('Нет мест в заказе');
+        }
+
+        $student_count = intval($order->student_count); // количество студентов в текущем заказе
+        $child_count = intval($order->child_count); // количество детей в текущем заказе
+        $adult_count = $total_count - $student_count - $child_count; // общие места
+        if($adult_count < 0) {
+            throw new ErrorException('Колличество мест для взрослых меньше 0');
+        }
+
+
+        $yandexPointTo = $order->yandexPointTo;
+        $yandexPointFrom = $order->yandexPointFrom;
+        if (
+            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+        ) { // едут в аэропорт или из аэропорта
+
+            for($i = 0; $i < $total_count; $i++) {
+
+                $litebox = new LiteboxOperation();
+                $litebox->order_id = $order->id;
+                $litebox->commercial_trip = $order->trip->commercial;
+                $litebox->direction_id = $order->direction_id;
+                $litebox->place_type = 'airport'; // 'fix_price','airport','adult','student','child',''
+                $litebox->place_price = $T_AERO;
+                $litebox->save();
+
+                $aLiteboxes[] = $litebox;
+            }
 
         }else {
 
-            $total_count = intval($order->places_count); // количество мест в текущем заказе
-            if($total_count <= 0) {
-                throw new ErrorException('Нет мест в заказе');
-            }
-
-            $student_count = intval($order->student_count); // количество студентов в текущем заказе
-            $child_count = intval($order->child_count); // количество детей в текущем заказе
-            $adult_count = $total_count - $student_count - $child_count; // общие места
-            if($adult_count < 0) {
-                throw new ErrorException('Колличество мест для взрослых меньше 0');
-            }
-
-
-            $yandexPointTo = $order->yandexPointTo;
-            $yandexPointFrom = $order->yandexPointFrom;
-            if (
-                ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
-            ) { // едут в аэропорт или из аэропорта
-
-                for($i = 0; $i < $total_count; $i++) {
+            if($adult_count > 0) {
+                for($i = 0; $i < $adult_count; $i++) {
 
                     $litebox = new LiteboxOperation();
                     $litebox->order_id = $order->id;
                     $litebox->commercial_trip = $order->trip->commercial;
                     $litebox->direction_id = $order->direction_id;
-                    $litebox->place_type = 'airport'; // 'fix_price','airport','adult','student','child',''
-                    $litebox->place_price = $T_AERO;
+                    $litebox->place_type = 'adult'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->place_price = $T_COMMON;
                     $litebox->save();
 
                     $aLiteboxes[] = $litebox;
                 }
+            }
 
-            }else {
+            if($student_count > 0) {
+                for($i = 0; $i < $student_count; $i++) {
 
-                if($adult_count > 0) {
-                    for($i = 0; $i < $adult_count; $i++) {
+                    $litebox = new LiteboxOperation();
+                    $litebox->order_id = $order->id;
+                    $litebox->commercial_trip = $order->trip->commercial;
+                    $litebox->direction_id = $order->direction_id;
+                    $litebox->place_type = 'student'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->place_price = $T_STUDENT;
+                    $litebox->save();
 
-                        $litebox = new LiteboxOperation();
-                        $litebox->order_id = $order->id;
-                        $litebox->commercial_trip = $order->trip->commercial;
-                        $litebox->direction_id = $order->direction_id;
-                        $litebox->place_type = 'adult'; // 'fix_price','airport','adult','student','child',''
-                        $litebox->place_price = $T_COMMON;
-                        $litebox->save();
-
-                        $aLiteboxes[] = $litebox;
-                    }
+                    $aLiteboxes[] = $litebox;
                 }
+            }
 
-                if($student_count > 0) {
-                    for($i = 0; $i < $student_count; $i++) {
+            if($child_count > 0) {
+                for($i = 0; $i < $child_count; $i++) {
 
-                        $litebox = new LiteboxOperation();
-                        $litebox->order_id = $order->id;
-                        $litebox->commercial_trip = $order->trip->commercial;
-                        $litebox->direction_id = $order->direction_id;
-                        $litebox->place_type = 'student'; // 'fix_price','airport','adult','student','child',''
-                        $litebox->place_price = $T_STUDENT;
-                        $litebox->save();
+                    $litebox = new LiteboxOperation();
+                    $litebox->order_id = $order->id;
+                    $litebox->commercial_trip = $order->trip->commercial;
+                    $litebox->direction_id = $order->direction_id;
+                    $litebox->place_type = 'child'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->place_price = $T_BABY;
+                    $litebox->save();
 
-                        $aLiteboxes[] = $litebox;
-                    }
-                }
-
-                if($child_count > 0) {
-                    for($i = 0; $i < $child_count; $i++) {
-
-                        $litebox = new LiteboxOperation();
-                        $litebox->order_id = $order->id;
-                        $litebox->commercial_trip = $order->trip->commercial;
-                        $litebox->direction_id = $order->direction_id;
-                        $litebox->place_type = 'child'; // 'fix_price','airport','adult','student','child',''
-                        $litebox->place_price = $T_BABY;
-                        $litebox->save();
-
-                        $aLiteboxes[] = $litebox;
-                    }
+                    $aLiteboxes[] = $litebox;
                 }
             }
         }
+//        }
 
 
         if(count($aLiteboxes) == 0) {
@@ -860,10 +861,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             $name = '';
             switch($litebox->place_type)
             {
-                case 'fix_price':
-                    $litebox->place_price = intval($litebox->place_price);
-                    $name = 'Заказная перевозка пассажиров - '.$litebox->place_price.'х1 = '.$litebox->place_price.' руб';
-                    break;
+//                case 'fix_price':
+//                    $litebox->place_price = intval($litebox->place_price);
+//                    $name = 'Заказная перевозка пассажиров - '.$litebox->place_price.'х1 = '.$litebox->place_price.' руб';
+//                    break;
 
                 case 'airport':
                     $place_type = 'ПОВ';
@@ -1524,10 +1525,10 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         $name = '';
         switch($this->place_type)
         {
-            case 'fix_price':
-                $this->place_price = intval($this->place_price);
-                $name = 'Заказная перевозка пассажиров - '.$this->place_price.'х1 = '.$this->place_price.' руб';
-                break;
+//            case 'fix_price':
+//                $this->place_price = intval($this->place_price);
+//                $name = 'Заказная перевозка пассажиров - '.$this->place_price.'х1 = '.$this->place_price.' руб';
+//                break;
 
             case 'airport':
                 $place_type = 'ПОВ';

@@ -796,7 +796,7 @@ $form = ActiveForm::begin([
             $options = [];
             $options['style'] = 'width: 100%; text-align: center;';
             if(empty($order->time_air_train_arrival)) {
-                if(!($order->pointFrom != null && $order->pointFrom->alias == 'airport')) {
+                if(!($order->pointFrom != null && $order->pointFrom->alias == 'unified')) {
                     $options['disabled'] = true;
                 }
             }
@@ -868,7 +868,7 @@ $form = ActiveForm::begin([
             $options = [];
             $options['style'] = 'width: 100%; text-align: center;';
             if(empty($order->time_air_train_departure)) {
-                if(!($order->yandexPointTo != null && $order->yandexPointTo->alias == 'airport')) {
+                if(!($order->yandexPointTo != null && $order->yandexPointTo->alias == 'unified')) {
                     $options['disabled'] = true;
                 }
             }

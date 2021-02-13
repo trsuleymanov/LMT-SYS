@@ -1442,7 +1442,6 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
-
         }
 
 //        echo "sended_orders_places_count=".$sended_places_count." sended_prize_count=".$sended_prize_count;
@@ -1703,7 +1702,7 @@ class Order extends \yii\db\ActiveRecord
     /*
      * Возвращается цена заказа
      */
-    public function getCalculatePrice($return_full_price_without_cashback = false)
+    public function getCalculatePriceOld_13_02_2021($return_full_price_without_cashback = false)
     {
         // определяем источник, по нему определяем признак формирования цены
         $do_tariff = null;
@@ -1782,8 +1781,8 @@ class Order extends \yii\db\ActiveRecord
             if ($this->is_not_places == 1) {
                 $COST = ($do_tariff != null ? $do_tariff->changePlacePrice($T_PARCEL, $this) : $T_PARCEL);
             } elseif (
-                ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
             ) { // едут в аэропорт или из аэропорта
 
                 // здесь нужно сделать пересчет в соответствии с признаком цены
@@ -1841,8 +1840,8 @@ class Order extends \yii\db\ActiveRecord
                 }elseif ($this->is_not_places == 1) {
                     $COST = $do_tariff->changePlacePrice($T_PARCEL, $this);
                 }elseif (
-                    ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                    || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                    ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+                    || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
                 ) { // едут в аэропорт или из аэропорта
 
                     $COST = $P * $do_tariff->changePlacePrice($T_AERO, $this);
@@ -1892,8 +1891,8 @@ class Order extends \yii\db\ActiveRecord
                     $COST = $T_PARCEL;
 
                 } elseif (
-                    ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                    || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                    ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+                    || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
                 ) { // едут в аэропорт или из аэропорта
 
                     $COST = $P * $T_AERO;
@@ -1951,6 +1950,101 @@ class Order extends \yii\db\ActiveRecord
     }
 
 
+    /*
+     * Возвращается цена заказа
+     */
+    public function getCalculatePrice()
+    {
+        if($this->use_fix_price == true) {
+            return $this->price;
+        }
+
+        $trip = $this->trip;
+        if ($trip == null) {
+            return 0;
+        }
+        $tariff = $trip->tariff;
+        if ($tariff == null) {
+            return 0;
+        }
+
+
+        // Расчитываем цену заказа
+        $COST = 0;
+
+        $P = intval($this->places_count); // количество мест в текущем заказе
+        $S = intval($this->student_count); // количество студентов в текущем заказе
+        $B = intval($this->child_count); // количество детей в текущем заказе
+
+
+        $yandexPointTo = $this->yandexPointTo;
+        $yandexPointFrom = $this->yandexPointFrom;
+
+        if($trip->commercial == true) {
+            $points_diff = $yandexPointTo->commercial_price_diff + $yandexPointFrom->commercial_price_diff;
+        }else {
+            $points_diff = $yandexPointTo->standart_price_diff + $yandexPointFrom->standart_price_diff;
+        }
+
+
+        $T_COMMON = $tariff->unprepayment_common_price + $points_diff;  // цена по общему тарифу
+        $T_STUDENT = $tariff->unprepayment_student_price + $points_diff; // студенческий тариф
+        $T_BABY = $tariff->unprepayment_baby_price + $points_diff;    // детский тариф
+        $T_LOYAL = $tariff->unprepayment_loyal_price + $points_diff;   // тариф призовой поездки
+        $T_PARCEL = $tariff->unprepayment_parcel_price + $points_diff; // тариф отправки посылки (без места)
+
+
+        $prize_count = $this->prizeTripCount; // количество призовых поездок в текущем заказе
+
+        if ($this->is_not_places == 1) {
+            $COST = $T_PARCEL;
+        } elseif (
+            ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
+        ) { // едут в аэропорт или из аэропорта или т.п.
+
+            // для точек с пометкой unified не учитываютя категория пассажира, т.е. считаются по общей цене
+            $COST = ($P - $prize_count) * $T_COMMON  + $prize_count * $T_LOYAL;
+
+        } else {
+
+            // составляется массив всех цен за места (общих, студенческих, детских)
+            $aPlacesPrice = [];
+            $P = $P - $S - $B;
+            $n = 0;
+            for ($i = 0; $i < $P; $i++) {
+                $aPlacesPrice[$T_COMMON.'_'.$n] = $T_COMMON;
+                $n++;
+            }
+            for ($i = 0; $i < $S; $i++) {
+                $aPlacesPrice[$T_STUDENT.'_'.$n] = $T_STUDENT;
+                $n++;
+            }
+            for ($i = 0; $i < $B; $i++) {
+                $aPlacesPrice[$T_BABY.'_'.$n] = $T_BABY;
+                $n++;
+            }
+            sort($aPlacesPrice);
+
+            // кол-во первых массив соответствующего кол-во призовых мест заменяется ценой $T_LOYAL
+            // призовая поездка назначается для наименьшей стоимости места в заказе
+            $n = 0;
+            foreach ($aPlacesPrice as $key => $place_price) {
+                if($n < $prize_count) {
+                    $aPlacesPrice[$key] = $T_LOYAL;
+                }
+                $n++;
+            }
+
+            // суммируются цены за места и получается общая цена заказа
+            foreach ($aPlacesPrice as $placePrise) {
+                $COST += $placePrise;
+            }
+        }
+
+
+        return $COST;
+    }
 
 
     public function getCalculateAccrualCashBack($price)

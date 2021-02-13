@@ -489,12 +489,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         $yandexPointTo = $order->yandexPointTo;
         $yandexPointFrom = $order->yandexPointFrom;
         if (
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+            ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
         ) { // едут в аэропорт или из аэропорта
 
 
-            if($yandexPointTo != null && $yandexPointTo->alias == 'airport') {
+            if($yandexPointTo != null && $yandexPointTo->alias == 'unified') {
 
                 if($order->direction_id == 1) {
                     $direction = 'Альметьевск-Аэропорт Казань';
@@ -724,32 +724,25 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             }
         }
 
-        $T_RESERV = $tariff->unprepayment_reservation_cost; // стоимость бронирования
-        $T_COMMON = $tariff->unprepayment_common_price + $T_RESERV;  // цена по общему тарифу
-        $T_STUDENT = $tariff->unprepayment_student_price + $T_RESERV; // студенческий тариф
-        $T_BABY = $tariff->unprepayment_baby_price + $T_RESERV;    // детский тариф
-        $T_AERO = $tariff->unprepayment_aero_price + $T_RESERV;    // тариф аэропорт
-        //$T_LOYAL = $tariff->unprepayment_loyal_price + $T_RESERV;   // тариф призовой поездки
-        //$T_PARCEL = $tariff->unprepayment_parcel_price + $T_RESERV; // тариф отправки посылки (без места)
+        $yandexPointTo = $order->yandexPointTo;
+        $yandexPointFrom = $order->yandexPointFrom;
+        if($order->trip->commercial == true) {
+            $points_diff = $yandexPointTo->commercial_price_diff + $yandexPointFrom->commercial_price_diff;
+        }else {
+            $points_diff = $yandexPointTo->standart_price_diff + $yandexPointFrom->standart_price_diff;
+        }
+
+
+        $T_COMMON = $tariff->unprepayment_common_price + $points_diff;  // цена по общему тарифу
+        $T_STUDENT = $tariff->unprepayment_student_price + $points_diff; // студенческий тариф
+        $T_BABY = $tariff->unprepayment_baby_price + $points_diff;    // детский тариф
+        // $T_LOYAL = $tariff->unprepayment_loyal_price + $points_diff;   // тариф призовой поездки
+        // $T_PARCEL = $tariff->unprepayment_parcel_price + $points_diff; // тариф отправки посылки (без места)
 
 
 
         $aLiteboxes = [];
 
-
-//        if($order->use_fix_price == 1) {
-//
-//            $litebox = new LiteboxOperation();
-//            $litebox->order_id = $order->id;
-//            $litebox->commercial_trip = $order->trip->commercial;
-//            $litebox->direction_id = $order->direction_id;
-//            $litebox->place_type = 'fix_price'; // 'fix_price','airport','adult','student','child',''
-//            $litebox->place_price = $order->price;
-//            $litebox->save();
-//
-//            $aLiteboxes[] = $litebox;
-//
-//        }else {
 
 
         $total_count = intval($order->places_count); // количество мест в текущем заказе
@@ -765,21 +758,20 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
 
-        $yandexPointTo = $order->yandexPointTo;
-        $yandexPointFrom = $order->yandexPointFrom;
         if (
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
-        ) { // едут в аэропорт или из аэропорта
+            ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
+        ) { // едут в аэропорт или из аэропорта или т.п.
 
+            // призовые места не показываем в чеках (не понятно почему), поэтому считаем все цены по общей цене
             for($i = 0; $i < $total_count; $i++) {
 
                 $litebox = new LiteboxOperation();
                 $litebox->order_id = $order->id;
                 $litebox->commercial_trip = $order->trip->commercial;
                 $litebox->direction_id = $order->direction_id;
-                $litebox->place_type = 'airport'; // 'fix_price','airport','adult','student','child',''
-                $litebox->place_price = $T_AERO;
+                $litebox->place_type = 'unified'; // 'fix_price','airport','adult','student','child',''
+                $litebox->place_price = $T_COMMON;
                 $litebox->save();
 
                 $aLiteboxes[] = $litebox;
@@ -787,6 +779,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         }else {
 
+            // призовые места не показываем в чеках (не понятно почему), поэтому считаем все цены по общей цене
             if($adult_count > 0) {
                 for($i = 0; $i < $adult_count; $i++) {
 
@@ -832,7 +825,6 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 }
             }
         }
-//        }
 
 
         if(count($aLiteboxes) == 0) {
@@ -861,12 +853,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             $name = '';
             switch($litebox->place_type)
             {
-//                case 'fix_price':
-//                    $litebox->place_price = intval($litebox->place_price);
-//                    $name = 'Заказная перевозка пассажиров - '.$litebox->place_price.'х1 = '.$litebox->place_price.' руб';
-//                    break;
-
-                case 'airport':
+                case 'unified':
                     $place_type = 'ПОВ';
                     $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
                     break;
@@ -1314,11 +1301,11 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         $yandexPointTo = $order->yandexPointTo;
         $yandexPointFrom = $order->yandexPointFrom;
         if (
-            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+            ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
         ) { // едут в аэропорт или из аэропорта
 
-            if($yandexPointTo != null && $yandexPointTo->alias == 'airport') {
+            if($yandexPointTo != null && $yandexPointTo->alias == 'unified') {
 
                 if($order->direction_id == 1) {
                     $direction = 'Альметьевск-Аэропорт Казань';
@@ -1525,12 +1512,7 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         $name = '';
         switch($this->place_type)
         {
-//            case 'fix_price':
-//                $this->place_price = intval($this->place_price);
-//                $name = 'Заказная перевозка пассажиров - '.$this->place_price.'х1 = '.$this->place_price.' руб';
-//                break;
-
-            case 'airport':
+            case 'unified':
                 $place_type = 'ПОВ';
                 $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
                 break;

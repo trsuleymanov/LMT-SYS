@@ -286,7 +286,9 @@ $(document).ready(function()
                             critical_point: yandex_point.critical_point,
                             popular_departure_point: yandex_point.popular_departure_point,
                             popular_arrival_point: yandex_point.popular_arrival_point,
-                            alias: yandex_point.alias
+                            alias: yandex_point.alias,
+                            standart_price_diff: yandex_point.standart_price_diff,
+                            commercial_price_diff: yandex_point.commercial_price_diff
                         };
                         var placemark = createPlacemark(create_placemark_params);
 
@@ -310,6 +312,8 @@ $(document).ready(function()
                                 popular_departure_point: yandex_point.popular_departure_point,
                                 popular_arrival_point: yandex_point.popular_arrival_point,
                                 alias: yandex_point.alias,
+                                standart_price_diff: yandex_point.standart_price_diff,
+                                commercial_price_diff: yandex_point.commercial_price_diff,
                                 draggable: getDraggable(yandex_point.id),
                                 is_allowed_edit: true
                                 //point_focusing_scale: point_focusing_scale
@@ -387,7 +391,9 @@ $(document).ready(function()
                                         critical_point: yandex_point.critical_point,
                                         popular_departure_point: yandex_point.popular_departure_point,
                                         popular_arrival_point: yandex_point.popular_arrival_point,
-                                        alias: yandex_point.alias
+                                        alias: yandex_point.alias,
+                                        standart_price_diff: yandex_point.standart_price_diff,
+                                        commercial_price_diff: yandex_point.commercial_price_diff
                                     };
                                     var placemark = createPlacemark(create_placemark_params);
 
@@ -406,6 +412,8 @@ $(document).ready(function()
                                         popular_departure_point: yandex_point.popular_departure_point,
                                         popular_arrival_point: yandex_point.popular_arrival_point,
                                         alias: yandex_point.alias,
+                                        standart_price_diff: yandex_point.standart_price_diff,
+                                        commercial_price_diff: yandex_point.commercial_price_diff,
                                         draggable: getDraggable(yandex_point.id),
                                         is_allowed_edit: true
                                         //point_focusing_scale: point_focusing_scale

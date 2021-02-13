@@ -856,6 +856,13 @@ function getPlacemarketTemplate(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
+    if(params['standart_price_diff'] == undefined) {
+        params['standart_price_diff'] = '0';
+    }
+    if(params['commercial_price_diff'] == undefined) {
+        params['commercial_price_diff'] = '0';
+    }
+
 
     if(params['is_editing'] != true) {
         params['is_editing'] = false;
@@ -869,6 +876,9 @@ function getPlacemarketTemplate(params) {
     if(params['create_new_point'] != true) {
         params['create_new_point'] = false;
     }
+
+
+
     //if(params['is_temp_point'] != true) {
     //    params['is_temp_point'] = false;
     //}
@@ -903,7 +913,9 @@ function getPlacemarketTemplate(params) {
                         '<input class="critical-point" type="checkbox" ' + (params['critical_point'] == true ? "checked" : "") + ' /> критическая точка <br />' +
                         '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
                         '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
-                        '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="airport" /><br />';
+                        '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />' +
+                        'СТД Наценка/скидка, руб <input class="standart-price-diff" type="text" style="width: 50px;" value="' + params['standart_price_diff'] + '" /><br />' +
+                        'КОММ Наценка/скидка, руб <input class="commercial-price-diff" type="text" style="width: 50px;" value="' + params['commercial_price_diff'] + '" /><br />';
         }
         content +=
                 '<input class="input-placemark" type="text" value="' + params['point_text'] + '" />' +
@@ -924,7 +936,9 @@ function getPlacemarketTemplate(params) {
                             '<input class="critical-point" type="checkbox" ' + (params['critical_point'] == true ? "checked" : "") + ' /> критическая точка <br />' +
                             '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
                             '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
-                            '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="airport" /><br />';
+                            '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />'
+                            'СТД Наценка/скидка, руб <input class="standart-price-diff" type="text" style="width: 50px;" value="' + params['standart_price_diff'] + '" /><br />' +
+                            'КОММ Наценка/скидка, руб <input class="commercial-price-diff" type="text" style="width: 50px;" value="' + params['commercial_price_diff'] + '" /><br />';
             }
 
         content +=
@@ -1084,6 +1098,12 @@ function createPlacemark(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
+    if(params['standart_price_diff'] == undefined) {
+        params['standart_price_diff'] = '0';
+    }
+    if(params['commercial_price_diff'] == undefined) {
+        params['commercial_price_diff'] = '0';
+    }
 
     if(params['is_temp_point'] != true) {
         params['is_temp_point'] = false;
@@ -1106,6 +1126,8 @@ function createPlacemark(params) {
         popular_departure_point: params['popular_departure_point'],
         popular_arrival_point: params['popular_arrival_point'],
         alias: params['alias'],
+        standart_price_diff: params['standart_price_diff'],
+        commercial_price_diff: params['commercial_price_diff'],
         create_new_point: params['create_new_point'],
         is_editing: params['is_editing'],
         can_change_params: params['can_change_params'],
@@ -1248,6 +1270,12 @@ function selectPointPlacemark(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
+    if(params['standart_price_diff'] == undefined) {
+        params['standart_price_diff'] = '0';
+    }
+    if(params['commercial_price_diff'] == undefined) {
+        params['commercial_price_diff'] = '0';
+    }
     if(params['is_editing'] != true) {
         params['is_editing'] = false;
     }
@@ -1287,6 +1315,8 @@ function selectPointPlacemark(params) {
         point_of_arrival: params['point_of_arrival'],
         super_tariff_used: params['super_tariff_used'],
         alias: params['alias'],
+        standart_price_diff: params['standart_price_diff'],
+        commercial_price_diff: params['commercial_price_diff'],
         create_new_point: params['create_new_point'],
         is_editing: params['is_editing'],
         can_change_params: params['can_change_params'],
@@ -1447,7 +1477,12 @@ function createYandexPoint(placemark, params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
-
+    if(params['standart_price_diff'] == undefined) {
+        params['standart_price_diff'] = '0';
+    }
+    if(params['commercial_price_diff'] == undefined) {
+        params['commercial_price_diff'] = '0';
+    }
 
 
     if($('#order-create-modal').length > 0) { // вызывается со страницы сайта где есть форма создания заказа
@@ -1470,6 +1505,8 @@ function createYandexPoint(placemark, params) {
         data.popular_departure_point = params['popular_departure_point'];
         data.popular_arrival_point = params['popular_arrival_point'];
         data.alias = params['alias'];
+        data.standart_price_diff = params['standart_price_diff'];
+        data.commercial_price_diff = params['commercial_price_diff'];
     }
 
     $.ajax({
@@ -1611,6 +1648,12 @@ function updateYandexPoint(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
+    if(params['standart_price_diff'] == undefined) {
+        params['standart_price_diff'] = '0';
+    }
+    if(params['commercial_price_diff'] == undefined) {
+        params['commercial_price_diff'] = '0';
+    }
 
 
 
@@ -1635,6 +1678,8 @@ function updateYandexPoint(params) {
         data.point_of_arrival = params['point_of_arrival'];
         data.super_tariff_used = params['super_tariff_used'];
         data.alias = params['alias'];
+        data.standart_price_diff = params['standart_price_diff'];
+        data.commercial_price_diff = params['commercial_price_diff'];
     }
 
     $.ajax({
@@ -1661,7 +1706,9 @@ function updateYandexPoint(params) {
                         critical_point: params['critical_point'],
                         popular_departure_point: params['popular_departure_point'],
                         popular_arrival_point: params['popular_arrival_point'],
-                        alias: params['alias']
+                        alias: params['alias'],
+                        standart_price_diff: params['standart_price_diff'],
+                        commercial_price_diff: params['commercial_price_diff'],
                         //draggable: draggable,
                         //is_allowed_edit: is_allowed_edit
                     }
@@ -1919,6 +1966,9 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             var popular_arrival_point = ($(this).parent().find('.popular-arrival-point').is(':checked') == true ? 1 : 0);
             var super_tariff_used = ($(this).parent().find('.super-tariff-used').is(':checked') == true ? 1 : 0);
             var alias = $(this).parent().find('.alias').val();
+            var standart_price_diff = $(this).parent().find('.standart-price-diff').val();
+            var commercial_price_diff = $(this).parent().find('.commercial-price-diff').val();
+
         }else {
             var can_change_params = false;
             var external_use = 0;
@@ -1928,6 +1978,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             var popular_departure_point = 0;
             var popular_arrival_point = 0;
             var alias = '';
+            var standart_price_diff = 0;
+            var commercial_price_diff = 0;
         }
 
         // функция выбора точки обновляет контент/название точки
@@ -1949,6 +2001,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             point_of_arrival: point_of_arrival,
             super_tariff_used: super_tariff_used,
             alias: alias,
+            standart_price_diff: standart_price_diff,
+            commercial_price_diff: commercial_price_diff,
             draggable: draggable
             //is_allowed_edit: is_allowed_edit
         }
@@ -1980,7 +2034,9 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                 critical_point: critical_point,
                 popular_departure_point: popular_departure_point,
                 popular_arrival_point: popular_arrival_point,
-                alias: alias
+                alias: alias,
+                standart_price_diff: standart_price_diff,
+                commercial_price_diff: commercial_price_diff
             };
             updateYandexPoint(update_yandex_point_params);
 
@@ -1998,7 +2054,9 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                     critical_point: critical_point,
                     popular_departure_point: popular_departure_point,
                     popular_arrival_point: popular_arrival_point,
-                    alias: alias
+                    alias: alias,
+                    standart_price_diff: standart_price_diff,
+                    commercial_price_diff: commercial_price_diff
                 };
                 createYandexPoint(placemark, create_yandex_point_params);
 
@@ -2026,6 +2084,8 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                         popular_departure_point: popular_departure_point,
                         popular_arrival_point: popular_arrival_point,
                         alias: alias,
+                        standart_price_diff: standart_price_diff,
+                        commercial_price_diff: commercial_price_diff,
                         draggable: getDraggable(yandex_point_id)
                         //is_allowed_edit: is_allowed_edit
                     }

@@ -150,8 +150,8 @@ class DayReportController extends Controller
                         $yandexPointTo = $fact_order->yandexPointTo;
                         $yandexPointFrom = $fact_order->yandexPointFrom;
                         if (
-                            ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                            ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+                            || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
                         ) { // едут в аэропорт или из аэропорта
                             $day_report_trip_transport->airport_count_sent++;
                         }
@@ -179,8 +179,8 @@ class DayReportController extends Controller
                             $yandexPointTo = $fact_order->yandexPointTo;
                             $yandexPointFrom = $fact_order->yandexPointFrom;
                             if (
-                                ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                                ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+                                || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
                             ) { // едут в аэропорт или из аэропорта
                                 $day_report_trip_transport->airport_count_sent++;
                             }

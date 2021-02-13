@@ -1102,8 +1102,8 @@ class Trip extends \yii\db\ActiveRecord
                     $yandexPointTo = $fact_order->yandexPointTo;
                     $yandexPointFrom = $fact_order->yandexPointFrom;
                     if(
-                        ($yandexPointTo != null && $yandexPointTo->alias == 'airport')
-                        || ($yandexPointFrom != null && $yandexPointFrom->alias == 'airport')
+                        ($yandexPointTo != null && $yandexPointTo->alias == 'unified')
+                        || ($yandexPointFrom != null && $yandexPointFrom->alias == 'unified')
                     ) { // едут в аэропорт или из аэропорта
                         $day_report_trip_transport->airport_count_sent++;
                         $day_report_trip_transport->airport_places_count_sent += $fact_order->places_count;

@@ -233,6 +233,12 @@ if(!$model->isNewRecord)
                         'label' => 'Алиас'
                     ],
                     [
+                        'attribute' => 'standart_price_diff',
+                    ],
+                    [
+                        'attribute' => 'commercial_price_diff',
+                    ],
+                    [
                         'attribute' => 'time_to_get_together_short',
                         'content' => function ($model) {
                             return $model->time_to_get_together_short;

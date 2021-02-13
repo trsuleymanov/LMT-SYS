@@ -36,7 +36,9 @@ class YandexPoint extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'lat', 'long'], 'required'],
-            [['city_id', 'creator_id', 'updater_id', 'created_at', 'updated_at', 'sync_date', 'super_tariff_used'], 'integer'],
+            [['city_id', 'creator_id', 'updater_id', 'created_at', 'updated_at', 'sync_date', 'super_tariff_used',
+                'standart_price_diff', 'commercial_price_diff'
+            ], 'integer'],
             [['lat', 'long'], 'number'],
             [['external_use'], 'boolean'],
             [['name', 'description'], 'string', 'max' => 255],
@@ -145,6 +147,8 @@ class YandexPoint extends \yii\db\ActiveRecord
             'description' => 'Описание',
             'time_to_get_together_short' => 'Относительное время от ВРПТ до конечной базовой точки рейса коротких рейсов',
             'time_to_get_together_long' => 'Относительное время от ВРПТ до конечной базовой точки рейса длинных рейсов',
+            'standart_price_diff' => 'Стандартная наценка/скидка на точке',
+            'commercial_price_diff' => 'На коммерческом рейсе наценка/скидка на точке',
             'created_at' => 'Время создания',
             'updated_at' => 'Время изменения',
             'creator_id' => 'Создатель точки',

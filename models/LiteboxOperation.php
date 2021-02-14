@@ -48,6 +48,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             'commercial_trip' => 'Коммерческий рейс',
             'direction_id' => 'Направление',
             'place_type' => 'Тип места',
+            'point_from_price_diff' => 'Скидка/наценка за место на точке посадки',
+            'point_to_price_diff' => 'Скидка/наценка за место на точке высадки',
             'place_price' => 'Цена за место',
 
             'sell_uuid' => 'uuid операции "Приход", возвращенный сервером Litebox',
@@ -726,12 +728,17 @@ class LiteboxOperation extends \yii\db\ActiveRecord
 
         $yandexPointFrom = $order->yandexPointFrom;
         $yandexPointTo = $order->yandexPointTo;
+        $point_from_price_diff = 0;
+        $point_to_price_diff = 0;
         if($order->trip->commercial == true) {
             $points_diff = $yandexPointFrom->point_from_commercial_price_diff + $yandexPointTo->point_to_commercial_price_diff;
+            $point_from_price_diff = $yandexPointFrom->point_from_commercial_price_diff;
+            $point_to_price_diff = $yandexPointTo->point_to_commercial_price_diff;
         }else {
             $points_diff = $yandexPointFrom->point_from_standart_price_diff + $yandexPointTo->point_to_standart_price_diff;
+            $point_from_price_diff = $yandexPointFrom->point_from_standart_price_diff;
+            $point_to_price_diff = $yandexPointTo->point_to_standart_price_diff;
         }
-
 
         $T_COMMON = $tariff->unprepayment_common_price + $points_diff;  // цена по общему тарифу
         $T_STUDENT = $tariff->unprepayment_student_price + $points_diff; // студенческий тариф
@@ -771,6 +778,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 $litebox->commercial_trip = $order->trip->commercial;
                 $litebox->direction_id = $order->direction_id;
                 $litebox->place_type = 'unified'; // 'fix_price','airport','adult','student','child',''
+                $litebox->point_from_price_diff = $point_from_price_diff;
+                $litebox->point_to_price_diff = $point_to_price_diff;
                 $litebox->place_price = $T_COMMON;
                 $litebox->save();
 
@@ -788,6 +797,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     $litebox->commercial_trip = $order->trip->commercial;
                     $litebox->direction_id = $order->direction_id;
                     $litebox->place_type = 'adult'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->point_from_price_diff = $point_from_price_diff;
+                    $litebox->point_to_price_diff = $point_to_price_diff;
                     $litebox->place_price = $T_COMMON;
                     $litebox->save();
 
@@ -803,6 +814,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     $litebox->commercial_trip = $order->trip->commercial;
                     $litebox->direction_id = $order->direction_id;
                     $litebox->place_type = 'student'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->point_from_price_diff = $point_from_price_diff;
+                    $litebox->point_to_price_diff = $point_to_price_diff;
                     $litebox->place_price = $T_STUDENT;
                     $litebox->save();
 
@@ -818,6 +831,8 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                     $litebox->commercial_trip = $order->trip->commercial;
                     $litebox->direction_id = $order->direction_id;
                     $litebox->place_type = 'child'; // 'fix_price','airport','adult','student','child',''
+                    $litebox->point_from_price_diff = $point_from_price_diff;
+                    $litebox->point_to_price_diff = $point_to_price_diff;
                     $litebox->place_price = $T_BABY;
                     $litebox->save();
 
@@ -850,27 +865,41 @@ class LiteboxOperation extends \yii\db\ActiveRecord
                 $kommer_reis = '';
             }
 
+
             $name = '';
+
+            $str_point_diff = '';
+            if($litebox->point_from_price_diff < 0) {
+                $str_point_diff .= $litebox->point_from_price_diff;
+            }else {
+                $str_point_diff .= '+'.$litebox->point_from_price_diff;
+            }
+            if($litebox->point_to_price_diff < 0) {
+                $str_point_diff .= $litebox->point_to_price_diff;
+            }else {
+                $str_point_diff .= '+'.$litebox->point_to_price_diff;
+            }
+
             switch($litebox->place_type)
             {
                 case 'unified':
                     $place_type = 'ПОВ';
-                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$litebox->place_price.' руб';
                     break;
 
                 case 'adult':
                     $place_type = 'ОБЩ';
-                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$litebox->place_price.' руб';
                     break;
 
                 case 'student':
                     $place_type = 'СТУД';
-                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$litebox->place_price.' руб';
                     break;
 
                 case 'child':
                     $place_type = 'ДЕТ';
-                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$litebox->place_price.' руб';
+                    $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$litebox->place_price.' руб';
                     break;
 
                 default:
@@ -1510,26 +1539,39 @@ class LiteboxOperation extends \yii\db\ActiveRecord
         }
 
         $name = '';
+
+        $str_point_diff = '';
+        if($this->point_from_price_diff < 0) {
+            $str_point_diff .= $this->point_from_price_diff;
+        }else {
+            $str_point_diff .= '+'.$this->point_from_price_diff;
+        }
+        if($this->point_to_price_diff < 0) {
+            $str_point_diff .= $this->point_to_price_diff;
+        }else {
+            $str_point_diff .= '+'.$this->point_to_price_diff;
+        }
+
         switch($this->place_type)
         {
             case 'unified':
                 $place_type = 'ПОВ';
-                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$this->place_price.' руб';
                 break;
 
             case 'adult':
                 $place_type = 'ОБЩ';
-                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$this->place_price.' руб';
                 break;
 
             case 'student':
                 $place_type = 'СТУД';
-                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$this->place_price.' руб';
                 break;
 
             case 'child':
                 $place_type = 'ДЕТ';
-                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.'), МЕСТ:1 - '.$this->place_price.' руб';
+                $name = 'Заказная перевозка '.$direction.' (тариф '.$place_type.''.$kommer_reis.$str_point_diff.'), МЕСТ:1 - '.$this->place_price.' руб';
                 break;
 
             default:

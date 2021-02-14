@@ -1377,6 +1377,10 @@ class Order extends \yii\db\ActiveRecord
         if($this->informerOffice != null && $this->informerOffice->cashless_payment == 1) {
             return 0;
         }
+        if($this->use_fix_price == true) {
+            return 0;
+        }
+
 
         $client = $this->client;
 

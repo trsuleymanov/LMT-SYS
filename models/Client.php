@@ -293,15 +293,19 @@ class Client extends \yii\db\ActiveRecord
 
             }else {
 
-                if($trip->commercial == true) {
+                // заказы с фикс.ценой не считаем (они считаются отдельно в current_year_sended_fixprice_orders)
+                if($order->use_fix_price != 1)
+                {
+                    if ($trip->commercial == true) {
 
-                    $this->current_year_sended_commercial_orders += 1;
-                    $this->current_year_sended_commercial_places += $order->places_count;
+                        $this->current_year_sended_commercial_orders += 1;
+                        $this->current_year_sended_commercial_places += $order->places_count;
 
-                }else {
+                    } else {
 
-                    $this->current_year_sended_standart_orders += 1;
-                    $this->current_year_sended_standart_places += $order->places_count;
+                        $this->current_year_sended_standart_orders += 1;
+                        $this->current_year_sended_standart_places += $order->places_count;
+                    }
                 }
             }
 
@@ -328,15 +332,18 @@ class Client extends \yii\db\ActiveRecord
 
             }else {
 
-                if($trip->commercial == true) {
+                // заказы с фикс.ценой не считаем (они считаются отдельно в current_year_sended_fixprice_orders)
+                if($order->use_fix_price != 1) {
+                    if ($trip->commercial == true) {
 
-                    $this->current_year_sended_commercial_orders -= 1;
-                    $this->current_year_sended_commercial_places -= $order->places_count;
+                        $this->current_year_sended_commercial_orders -= 1;
+                        $this->current_year_sended_commercial_places -= $order->places_count;
 
-                }else {
+                    } else {
 
-                    $this->current_year_sended_standart_orders -= 1;
-                    $this->current_year_sended_standart_places -= $order->places_count;
+                        $this->current_year_sended_standart_orders -= 1;
+                        $this->current_year_sended_standart_places -= $order->places_count;
+                    }
                 }
             }
 

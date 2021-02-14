@@ -338,15 +338,18 @@ class Loyality extends \yii\db\ActiveRecord
 
                         }else {
 
-                            if($trip->commercial == true) {
+                            if($order->use_fix_price != 1)
+                            {
+                                if ($trip->commercial == true) {
 
-                                $aL['current_year_sended_commercial_orders'] += 1;
-                                $aL['current_year_sended_commercial_places'] += $order->places_count;
+                                    $aL['current_year_sended_commercial_orders'] += 1;
+                                    $aL['current_year_sended_commercial_places'] += $order->places_count;
 
-                            }else {
+                                } else {
 
-                                $aL['current_year_sended_standart_orders'] += 1;
-                                $aL['current_year_sended_standart_places'] += $order->places_count;
+                                    $aL['current_year_sended_standart_orders'] += 1;
+                                    $aL['current_year_sended_standart_places'] += $order->places_count;
+                                }
                             }
                         }
 

@@ -287,8 +287,10 @@ $(document).ready(function()
                             popular_departure_point: yandex_point.popular_departure_point,
                             popular_arrival_point: yandex_point.popular_arrival_point,
                             alias: yandex_point.alias,
-                            standart_price_diff: yandex_point.standart_price_diff,
-                            commercial_price_diff: yandex_point.commercial_price_diff
+                            point_from_standart_price_diff: yandex_point.point_from_standart_price_diff,
+                            point_from_commercial_price_diff: yandex_point.point_from_commercial_price_diff,
+                            point_to_standart_price_diff: yandex_point.point_to_standart_price_diff,
+                            point_to_commercial_price_diff: yandex_point.point_to_commercial_price_diff
                         };
                         var placemark = createPlacemark(create_placemark_params);
 
@@ -312,12 +314,14 @@ $(document).ready(function()
                                 popular_departure_point: yandex_point.popular_departure_point,
                                 popular_arrival_point: yandex_point.popular_arrival_point,
                                 alias: yandex_point.alias,
-                                standart_price_diff: yandex_point.standart_price_diff,
-                                commercial_price_diff: yandex_point.commercial_price_diff,
+                                point_from_standart_price_diff: yandex_point.point_from_standart_price_diff,
+                                point_from_commercial_price_diff: yandex_point.point_from_commercial_price_diff,
+                                point_to_standart_price_diff: yandex_point.point_to_standart_price_diff,
+                                point_to_commercial_price_diff: yandex_point.point_to_commercial_price_diff,
                                 draggable: getDraggable(yandex_point.id),
                                 is_allowed_edit: true
                                 //point_focusing_scale: point_focusing_scale
-                            }
+                            };
                             selectPointPlacemark(select_point_placemark_params);
                             //selectPointPlacemark(index, yandex_point.name, yandex_point.id, false, false, true, yandex_point.critical_point, yandex_point.alias, true);
 
@@ -392,8 +396,10 @@ $(document).ready(function()
                                         popular_departure_point: yandex_point.popular_departure_point,
                                         popular_arrival_point: yandex_point.popular_arrival_point,
                                         alias: yandex_point.alias,
-                                        standart_price_diff: yandex_point.standart_price_diff,
-                                        commercial_price_diff: yandex_point.commercial_price_diff
+                                        point_from_standart_price_diff: yandex_point.point_from_standart_price_diff,
+                                        point_from_commercial_price_diff: yandex_point.point_from_commercial_price_diff,
+                                        point_to_standart_price_diff: yandex_point.point_to_standart_price_diff,
+                                        point_to_commercial_price_diff: yandex_point.point_to_commercial_price_diff
                                     };
                                     var placemark = createPlacemark(create_placemark_params);
 
@@ -412,12 +418,14 @@ $(document).ready(function()
                                         popular_departure_point: yandex_point.popular_departure_point,
                                         popular_arrival_point: yandex_point.popular_arrival_point,
                                         alias: yandex_point.alias,
-                                        standart_price_diff: yandex_point.standart_price_diff,
-                                        commercial_price_diff: yandex_point.commercial_price_diff,
+                                        point_from_standart_price_diff: yandex_point.point_from_standart_price_diff,
+                                        point_from_commercial_price_diff: yandex_point.point_from_commercial_price_diff,
+                                        point_to_standart_price_diff: yandex_point.point_to_standart_price_diff,
+                                        point_to_commercial_price_diff: yandex_point.point_to_commercial_price_diff,
                                         draggable: getDraggable(yandex_point.id),
                                         is_allowed_edit: true
                                         //point_focusing_scale: point_focusing_scale
-                                    }
+                                    };
                                     selectPointPlacemark(select_point_placemark_params);
                                     //selectPointPlacemark(index, text, 0, true, true, true, yandex_point.critical_point, yandex_point.alias, true);
                                     placemark.balloon.open();

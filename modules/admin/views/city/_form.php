@@ -233,10 +233,16 @@ if(!$model->isNewRecord)
                         'label' => 'Алиас'
                     ],
                     [
-                        'attribute' => 'standart_price_diff',
+                        'attribute' => 'point_from_standart_price_diff',
                     ],
                     [
-                        'attribute' => 'commercial_price_diff',
+                        'attribute' => 'point_from_commercial_price_diff',
+                    ],
+                    [
+                        'attribute' => 'point_to_standart_price_diff',
+                    ],
+                    [
+                        'attribute' => 'point_to_commercial_price_diff',
                     ],
                     [
                         'attribute' => 'time_to_get_together_short',

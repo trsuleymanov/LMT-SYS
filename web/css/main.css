@@ -75,7 +75,7 @@
     top: 10px;
 }
 #order-create-modal .map-block .placemark-balloon-content, #default-modal .map-block .placemark-balloon-content {
-    width: 300px;
+    width: 330px;
 }
 #order-create-modal .map-block .placemark-balloon-content .alias,
 #default-modal .map-block .placemark-balloon-content .alias{

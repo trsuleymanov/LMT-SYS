@@ -856,11 +856,17 @@ function getPlacemarketTemplate(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
-    if(params['standart_price_diff'] == undefined) {
-        params['standart_price_diff'] = '0';
+    if(params['point_from_standart_price_diff'] == undefined) {
+        params['point_from_standart_price_diff'] = '0';
     }
-    if(params['commercial_price_diff'] == undefined) {
-        params['commercial_price_diff'] = '0';
+    if(params['point_from_commercial_price_diff'] == undefined) {
+        params['point_from_commercial_price_diff'] = '0';
+    }
+    if(params['point_to_standart_price_diff'] == undefined) {
+        params['point_to_standart_price_diff'] = '0';
+    }
+    if(params['point_to_commercial_price_diff'] == undefined) {
+        params['point_to_commercial_price_diff'] = '0';
     }
 
 
@@ -914,8 +920,10 @@ function getPlacemarketTemplate(params) {
                         '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
                         '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
                         '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />' +
-                        'СТД Наценка/скидка, руб <input class="standart-price-diff" type="text" style="width: 50px;" value="' + params['standart_price_diff'] + '" /><br />' +
-                        'КОММ Наценка/скидка, руб <input class="commercial-price-diff" type="text" style="width: 50px;" value="' + params['commercial_price_diff'] + '" /><br />';
+                        '<p style="white-space: nowrap;">СТД Наценка отправления, руб <input class="point-from-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_from_standart_price_diff'] + '" /></p>' +
+                        '<p style="white-space: nowrap;">КОММ Наценка отправления, руб <input class="point-from-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
+                        '<p style="white-space: nowrap;">СТД Наценка прибытия, руб <input class="point-to-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_to_standart_price_diff'] + '" /></p>' +
+                        '<p style="white-space: nowrap;">КОММ Наценка прибытия, руб <input class="point-to-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
         }
         content +=
                 '<input class="input-placemark" type="text" value="' + params['point_text'] + '" />' +
@@ -937,8 +945,10 @@ function getPlacemarketTemplate(params) {
                             '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
                             '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
                             '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />'
-                            'СТД Наценка/скидка, руб <input class="standart-price-diff" type="text" style="width: 50px;" value="' + params['standart_price_diff'] + '" /><br />' +
-                            'КОММ Наценка/скидка, руб <input class="commercial-price-diff" type="text" style="width: 50px;" value="' + params['commercial_price_diff'] + '" /><br />';
+                            '<p style="white-space: nowrap;">СТД Наценка отправления, руб <input class="point-from-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_from_standart_price_diff'] + '" /></p>' +
+                            '<p style="white-space: nowrap;">КОММ Наценка отправления, руб <input class="point-from-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
+                            '<p style="white-space: nowrap;">СТД Наценка прибытия, руб <input class="point-to-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_to_standart_price_diff'] + '" /></p>' +
+                            '<p style="white-space: nowrap;">КОММ Наценка прибытия, руб <input class="point-to-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
             }
 
         content +=
@@ -1098,11 +1108,17 @@ function createPlacemark(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
-    if(params['standart_price_diff'] == undefined) {
-        params['standart_price_diff'] = '0';
+    if(params['point_from_standart_price_diff'] == undefined) {
+        params['point_from_standart_price_diff'] = '0';
     }
-    if(params['commercial_price_diff'] == undefined) {
-        params['commercial_price_diff'] = '0';
+    if(params['point_from_commercial_price_diff'] == undefined) {
+        params['point_from_commercial_price_diff'] = '0';
+    }
+    if(params['point_to_standart_price_diff'] == undefined) {
+        params['point_to_standart_price_diff'] = '0';
+    }
+    if(params['point_to_commercial_price_diff'] == undefined) {
+        params['point_to_commercial_price_diff'] = '0';
     }
 
     if(params['is_temp_point'] != true) {
@@ -1126,8 +1142,10 @@ function createPlacemark(params) {
         popular_departure_point: params['popular_departure_point'],
         popular_arrival_point: params['popular_arrival_point'],
         alias: params['alias'],
-        standart_price_diff: params['standart_price_diff'],
-        commercial_price_diff: params['commercial_price_diff'],
+        point_from_standart_price_diff: params['point_from_standart_price_diff'],
+        point_from_commercial_price_diff: params['point_from_commercial_price_diff'],
+        point_to_standart_price_diff: params['point_to_standart_price_diff'],
+        point_to_commercial_price_diff: params['point_to_commercial_price_diff'],
         create_new_point: params['create_new_point'],
         is_editing: params['is_editing'],
         can_change_params: params['can_change_params'],
@@ -1270,11 +1288,17 @@ function selectPointPlacemark(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
-    if(params['standart_price_diff'] == undefined) {
-        params['standart_price_diff'] = '0';
+    if(params['point_from_standart_price_diff'] == undefined) {
+        params['point_from_standart_price_diff'] = '0';
     }
-    if(params['commercial_price_diff'] == undefined) {
-        params['commercial_price_diff'] = '0';
+    if(params['point_from_commercial_price_diff'] == undefined) {
+        params['point_from_commercial_price_diff'] = '0';
+    }
+    if(params['point_to_standart_price_diff'] == undefined) {
+        params['point_to_standart_price_diff'] = '0';
+    }
+    if(params['point_to_commercial_price_diff'] == undefined) {
+        params['point_to_commercial_price_diff'] = '0';
     }
     if(params['is_editing'] != true) {
         params['is_editing'] = false;
@@ -1315,8 +1339,10 @@ function selectPointPlacemark(params) {
         point_of_arrival: params['point_of_arrival'],
         super_tariff_used: params['super_tariff_used'],
         alias: params['alias'],
-        standart_price_diff: params['standart_price_diff'],
-        commercial_price_diff: params['commercial_price_diff'],
+        point_from_standart_price_diff: params['point_from_standart_price_diff'],
+        point_from_commercial_price_diff: params['point_from_commercial_price_diff'],
+        point_to_standart_price_diff: params['point_to_standart_price_diff'],
+        point_to_commercial_price_diff: params['point_to_commercial_price_diff'],
         create_new_point: params['create_new_point'],
         is_editing: params['is_editing'],
         can_change_params: params['can_change_params'],
@@ -1477,11 +1503,17 @@ function createYandexPoint(placemark, params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
-    if(params['standart_price_diff'] == undefined) {
-        params['standart_price_diff'] = '0';
+    if(params['point_from_standart_price_diff'] == undefined) {
+        params['point_from_standart_price_diff'] = '0';
     }
-    if(params['commercial_price_diff'] == undefined) {
-        params['commercial_price_diff'] = '0';
+    if(params['point_from_commercial_price_diff'] == undefined) {
+        params['point_from_commercial_price_diff'] = '0';
+    }
+    if(params['point_to_standart_price_diff'] == undefined) {
+        params['point_to_standart_price_diff'] = '0';
+    }
+    if(params['point_to_commercial_price_diff'] == undefined) {
+        params['point_to_commercial_price_diff'] = '0';
     }
 
 
@@ -1505,8 +1537,10 @@ function createYandexPoint(placemark, params) {
         data.popular_departure_point = params['popular_departure_point'];
         data.popular_arrival_point = params['popular_arrival_point'];
         data.alias = params['alias'];
-        data.standart_price_diff = params['standart_price_diff'];
-        data.commercial_price_diff = params['commercial_price_diff'];
+        data.point_from_standart_price_diff = params['point_from_standart_price_diff'];
+        data.point_from_commercial_price_diff = params['point_from_commercial_price_diff'];
+        data.point_to_standart_price_diff = params['point_to_standart_price_diff'];
+        data.point_to_commercial_price_diff = params['point_to_commercial_price_diff'];
     }
 
     $.ajax({
@@ -1648,11 +1682,17 @@ function updateYandexPoint(params) {
     if(params['alias'] == undefined) {
         params['alias'] = '';
     }
-    if(params['standart_price_diff'] == undefined) {
-        params['standart_price_diff'] = '0';
+    if(params['point_from_standart_price_diff'] == undefined) {
+        params['point_from_standart_price_diff'] = '0';
     }
-    if(params['commercial_price_diff'] == undefined) {
-        params['commercial_price_diff'] = '0';
+    if(params['point_from_commercial_price_diff'] == undefined) {
+        params['point_from_commercial_price_diff'] = '0';
+    }
+    if(params['point_to_standart_price_diff'] == undefined) {
+        params['point_to_standart_price_diff'] = '0';
+    }
+    if(params['point_to_commercial_price_diff'] == undefined) {
+        params['point_to_commercial_price_diff'] = '0';
     }
 
 
@@ -1678,8 +1718,10 @@ function updateYandexPoint(params) {
         data.point_of_arrival = params['point_of_arrival'];
         data.super_tariff_used = params['super_tariff_used'];
         data.alias = params['alias'];
-        data.standart_price_diff = params['standart_price_diff'];
-        data.commercial_price_diff = params['commercial_price_diff'];
+        data.point_from_standart_price_diff = params['point_from_standart_price_diff'];
+        data.point_from_commercial_price_diff = params['point_from_commercial_price_diff'];
+        data.point_to_standart_price_diff = params['point_to_standart_price_diff'];
+        data.point_to_commercial_price_diff = params['point_to_commercial_price_diff'];
     }
 
     $.ajax({
@@ -1707,8 +1749,10 @@ function updateYandexPoint(params) {
                         popular_departure_point: params['popular_departure_point'],
                         popular_arrival_point: params['popular_arrival_point'],
                         alias: params['alias'],
-                        standart_price_diff: params['standart_price_diff'],
-                        commercial_price_diff: params['commercial_price_diff'],
+                        point_from_standart_price_diff: params['point_from_standart_price_diff'],
+                        point_from_commercial_price_diff: params['point_from_commercial_price_diff'],
+                        point_to_standart_price_diff: params['point_to_standart_price_diff'],
+                        point_to_commercial_price_diff: params['point_to_commercial_price_diff']
                         //draggable: draggable,
                         //is_allowed_edit: is_allowed_edit
                     }
@@ -1966,8 +2010,10 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             var popular_arrival_point = ($(this).parent().find('.popular-arrival-point').is(':checked') == true ? 1 : 0);
             var super_tariff_used = ($(this).parent().find('.super-tariff-used').is(':checked') == true ? 1 : 0);
             var alias = $(this).parent().find('.alias').val();
-            var standart_price_diff = $(this).parent().find('.standart-price-diff').val();
-            var commercial_price_diff = $(this).parent().find('.commercial-price-diff').val();
+            var point_from_standart_price_diff = $(this).parent().find('.point-from-standart-price-diff').val();
+            var point_from_commercial_price_diff = $(this).parent().find('.point-from-commercial-price-diff').val();
+            var point_to_standart_price_diff = $(this).parent().find('.point-to-standart-price-diff').val();
+            var point_to_commercial_price_diff = $(this).parent().find('.point-to-commercial-price-diff').val();
 
         }else {
             var can_change_params = false;
@@ -1978,8 +2024,10 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             var popular_departure_point = 0;
             var popular_arrival_point = 0;
             var alias = '';
-            var standart_price_diff = 0;
-            var commercial_price_diff = 0;
+            var point_from_standart_price_diff = 0;
+            var point_from_commercial_price_diff = 0;
+            var point_to_standart_price_diff = 0;
+            var point_to_commercial_price_diff = 0;
         }
 
         // функция выбора точки обновляет контент/название точки
@@ -2001,11 +2049,13 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
             point_of_arrival: point_of_arrival,
             super_tariff_used: super_tariff_used,
             alias: alias,
-            standart_price_diff: standart_price_diff,
-            commercial_price_diff: commercial_price_diff,
+            point_from_standart_price_diff: point_from_standart_price_diff,
+            point_from_commercial_price_diff: point_from_commercial_price_diff,
+            point_to_standart_price_diff: point_to_standart_price_diff,
+            point_to_commercial_price_diff: point_to_commercial_price_diff,
             draggable: draggable
             //is_allowed_edit: is_allowed_edit
-        }
+        };
         if(typeof point_focusing_scale != "undefined") {
             select_point_placemark_params.point_focusing_scale = point_focusing_scale;
         }
@@ -2035,8 +2085,10 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                 popular_departure_point: popular_departure_point,
                 popular_arrival_point: popular_arrival_point,
                 alias: alias,
-                standart_price_diff: standart_price_diff,
-                commercial_price_diff: commercial_price_diff
+                point_from_standart_price_diff: point_from_standart_price_diff,
+                point_from_commercial_price_diff: point_from_commercial_price_diff,
+                point_to_standart_price_diff: point_to_standart_price_diff,
+                point_to_commercial_price_diff: point_to_commercial_price_diff
             };
             updateYandexPoint(update_yandex_point_params);
 
@@ -2055,8 +2107,10 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                     popular_departure_point: popular_departure_point,
                     popular_arrival_point: popular_arrival_point,
                     alias: alias,
-                    standart_price_diff: standart_price_diff,
-                    commercial_price_diff: commercial_price_diff
+                    point_from_standart_price_diff: point_from_standart_price_diff,
+                    point_from_commercial_price_diff: point_from_commercial_price_diff,
+                    point_to_standart_price_diff: point_to_standart_price_diff,
+                    point_to_commercial_price_diff: point_to_commercial_price_diff
                 };
                 createYandexPoint(placemark, create_yandex_point_params);
 
@@ -2084,11 +2138,13 @@ $(document).on('click', '#order-create-modal .ok-placemark, #default-modal .ok-p
                         popular_departure_point: popular_departure_point,
                         popular_arrival_point: popular_arrival_point,
                         alias: alias,
-                        standart_price_diff: standart_price_diff,
-                        commercial_price_diff: commercial_price_diff,
+                        point_from_standart_price_diff: point_from_standart_price_diff,
+                        point_from_commercial_price_diff: point_from_commercial_price_diff,
+                        point_to_standart_price_diff: point_to_standart_price_diff,
+                        point_to_commercial_price_diff: point_to_commercial_price_diff,
                         draggable: getDraggable(yandex_point_id)
                         //is_allowed_edit: is_allowed_edit
-                    }
+                    };
                     if(typeof point_focusing_scale != "undefined") {
                         select_point_placemark_params.point_focusing_scale = point_focusing_scale;
                     }

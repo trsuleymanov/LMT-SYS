@@ -114,8 +114,10 @@ class YandexPointController extends Controller
         $yandex_point->super_tariff_used = Yii::$app->getRequest()->post('super_tariff_used', 0);
         $yandex_point->point_of_arrival = Yii::$app->getRequest()->post('point_of_arrival', 0);
         $yandex_point->alias = Yii::$app->getRequest()->post('alias', '');
-        $yandex_point->standart_price_diff = Yii::$app->getRequest()->post('standart_price_diff', 0);
-        $yandex_point->commercial_price_diff = Yii::$app->getRequest()->post('commercial_price_diff', 0);
+        $yandex_point->point_from_standart_price_diff = Yii::$app->getRequest()->post('point_from_standart_price_diff', 0);
+        $yandex_point->point_from_commercial_price_diff = Yii::$app->getRequest()->post('point_from_commercial_price_diff', 0);
+        $yandex_point->point_to_standart_price_diff = Yii::$app->getRequest()->post('point_to_standart_price_diff', 0);
+        $yandex_point->point_to_commercial_price_diff = Yii::$app->getRequest()->post('point_to_commercial_price_diff', 0);
 
         if(!$yandex_point->save()) {
             return [
@@ -153,8 +155,10 @@ class YandexPointController extends Controller
         $yandex_point->popular_departure_point = Yii::$app->getRequest()->post('popular_departure_point', $yandex_point->popular_departure_point);
         $yandex_point->popular_arrival_point = Yii::$app->getRequest()->post('popular_arrival_point', $yandex_point->popular_arrival_point);
         $yandex_point->alias = Yii::$app->getRequest()->post('alias', $yandex_point->alias);
-        $yandex_point->standart_price_diff = Yii::$app->getRequest()->post('standart_price_diff', $yandex_point->standart_price_diff);
-        $yandex_point->commercial_price_diff = Yii::$app->getRequest()->post('commercial_price_diff', $yandex_point->commercial_price_diff);
+        $yandex_point->point_from_standart_price_diff = Yii::$app->getRequest()->post('point_from_standart_price_diff', $yandex_point->point_from_standart_price_diff);
+        $yandex_point->point_from_commercial_price_diff = Yii::$app->getRequest()->post('point_from_commercial_price_diff', $yandex_point->point_from_commercial_price_diff);
+        $yandex_point->point_to_standart_price_diff = Yii::$app->getRequest()->post('point_to_standart_price_diff', $yandex_point->point_to_standart_price_diff);
+        $yandex_point->point_to_commercial_price_diff = Yii::$app->getRequest()->post('point_to_commercial_price_diff', $yandex_point->point_to_commercial_price_diff);
 
         if(!$yandex_point->save()) {
             return [

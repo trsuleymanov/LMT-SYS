@@ -724,12 +724,12 @@ class LiteboxOperation extends \yii\db\ActiveRecord
             }
         }
 
-        $yandexPointTo = $order->yandexPointTo;
         $yandexPointFrom = $order->yandexPointFrom;
+        $yandexPointTo = $order->yandexPointTo;
         if($order->trip->commercial == true) {
-            $points_diff = $yandexPointTo->commercial_price_diff + $yandexPointFrom->commercial_price_diff;
+            $points_diff = $yandexPointFrom->point_from_commercial_price_diff + $yandexPointTo->point_to_commercial_price_diff;
         }else {
-            $points_diff = $yandexPointTo->standart_price_diff + $yandexPointFrom->standart_price_diff;
+            $points_diff = $yandexPointFrom->point_from_standart_price_diff + $yandexPointTo->point_to_standart_price_diff;
         }
 
 

@@ -1977,13 +1977,16 @@ class Order extends \yii\db\ActiveRecord
         $B = intval($this->child_count); // количество детей в текущем заказе
 
 
-        $yandexPointTo = $this->yandexPointTo;
         $yandexPointFrom = $this->yandexPointFrom;
+        $yandexPointTo = $this->yandexPointTo;
 
-        if($trip->commercial == true) {
-            $points_diff = $yandexPointTo->commercial_price_diff + $yandexPointFrom->commercial_price_diff;
-        }else {
-            $points_diff = $yandexPointTo->standart_price_diff + $yandexPointFrom->standart_price_diff;
+        $points_diff = 0;
+        if($yandexPointFrom != null && $yandexPointTo != null) {
+            if ($trip->commercial == true) {
+                $points_diff = $yandexPointFrom->point_from_commercial_price_diff + $yandexPointTo->point_to_commercial_price_diff;
+            } else {
+                $points_diff = $yandexPointFrom->point_from_standart_price_diff + $yandexPointTo->point_to_standart_price_diff;
+            }
         }
 
 

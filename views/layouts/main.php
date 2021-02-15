@@ -66,31 +66,10 @@ if($current_route == 'site/index') { ?>
 		</div>
 	</div>
 
-	<?php /*
-	<div class="wrap <?= Helper::getMainClass(Yii::$app->request->get('date')) ?>">
-		<?= $this->render('top-menu-trip-orders', [
-			'date' => $date,
-			'trip' => $trip,
-		]); ?>
-		<div id="page-area">
-			<div id="notification-area">
-				&nbsp;
-			</div><div id="content-area">
-				<?= $content ?>
-			</div>
-		</div>
-	</div>*/ ?>
 
 <?php }elseif($current_route == 'trip/set-trips') { // страница "Расстановка" ?>
 	<div class="wrap <?= Helper::getMainClass(Yii::$app->request->get('date')) ?>">
 		<?= $this->render('top-menu-settrips'); ?>
-		<?php /*
-		<div class="container" style="padding-left: 0; padding-right: 0; padding-top: 20px;">
-			<?= Breadcrumbs::widget([
-				'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-			]) ?>
-			<?= $content ?>
-		</div>*/ ?>
 		<div id="page-area">
 			<div id="notification-area">
 				&nbsp;
@@ -116,33 +95,8 @@ if($current_route == 'site/index') { ?>
 			<?= $content ?>
 		</div>
 	</div>
-	<?php /*
-	<div class="wrap <?= Helper::getMainClass(Yii::$app->request->get('date')) ?>">
-		<?= $this->render('top-menu'); ?>
-		<?= Breadcrumbs::widget([
-			'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-		]) ?>
-
-		<div id="page-area">
-			<div id="notification-area">
-				&nbsp;
-			</div><div id="content-area">
-				<?= $content ?>
-			</div>
-		</div>
-	</div>
- 	*/ ?>
 <?php } ?>
 
-<?php /*
-<div id="clientext-block">
-	<?php
-	if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) {
-		echo app\widgets\ClientextWidget::widget();
-	}
-	?>
-</div>
-*/ ?>
 
 <div id="incoming-orders-block">
 	<?php
@@ -159,12 +113,6 @@ if($current_route == 'site/index') { ?>
 	]); ?>
 </div>
 
-<?php /*
-<div id="msg-from-driver" style="display: none;">
-	<div class="modal-title"><span>Сообщение от водителя</span>&nbsp;<button type="button" class="modal-close">×</button></div>
-	<div class="modal-body"></div>
-</div>
-*/ ?>
 
 <?php $this->endBody() ?>
 

@@ -368,7 +368,7 @@ class TripController extends Controller
 		return $this->render('setOfTrips', [
 			'selected_unixdate' => $selected_unixdate,
 			'user' => Yii::$app->user->identity,
-			'aDirections' => Direction::getDirectionsTrips($selected_unixdate)
+			'aDirections' => Direction::getDirectionsTrips($selected_unixdate, true)
 		]);
     }
 

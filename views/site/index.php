@@ -17,18 +17,17 @@ $this->registerJsFile('https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=5c7acdc
 
 $user = Yii::$app->user->identity;
 
-// $setting = Setting::find()->where(['id' => 1])->one();
-
 
 ?>
-<div id="main-page" class="row" test="777">
+<div id="main-page" class="row">
 
     <div id="directions-trips-block"  class="col-tobus-center__">
         <?php
         echo $this->render('/site/directions-trips-block', [
             'aDirections' => $aDirections,
             'view' => 'trip_list'
-        ]); ?>
+        ]);
+        ?>
     </div>
 
 

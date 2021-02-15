@@ -920,10 +920,12 @@ function getPlacemarketTemplate(params) {
                         '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
                         '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
                         '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />' +
-                        '<p style="white-space: nowrap;">СТД Наценка отправления, руб <input class="point-from-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_from_standart_price_diff'] + '" /></p>' +
-                        '<p style="white-space: nowrap;">КОММ Наценка отправления, руб <input class="point-from-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
-                        '<p style="white-space: nowrap;">СТД Наценка прибытия, руб <input class="point-to-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_to_standart_price_diff'] + '" /></p>' +
-                        '<p style="white-space: nowrap;">КОММ Наценка прибытия, руб <input class="point-to-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
+                        //'<p style="white-space: nowrap;">СТД Наценка отправления, руб <input class="point-from-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_from_standart_price_diff'] + '" /></p>' +
+                        //'<p style="white-space: nowrap;">КОММ Наценка отправления, руб <input class="point-from-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
+                        //'<p style="white-space: nowrap;">СТД Наценка прибытия, руб <input class="point-to-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_to_standart_price_diff'] + '" /></p>' +
+                        //'<p style="white-space: nowrap;">КОММ Наценка прибытия, руб <input class="point-to-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
+                        '<p style="white-space: nowrap;">Наценка отпр СТД <input class="point-from-standart-price-diff" type="text" style="width: 60px;" value="' + params['point_from_standart_price_diff'] + '" /> КОММ <input class="point-from-commercial-price-diff" type="text" style="width: 60px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
+                        '<p style="white-space: nowrap;">Наценка приб СТД <input class="point-to-standart-price-diff" type="text" style="width: 60px;" value="' + params['point_to_standart_price_diff'] + '" /> КОММ <input class="point-to-commercial-price-diff" type="text" style="width: 60px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
         }
         content +=
                 '<input class="input-placemark" type="text" value="' + params['point_text'] + '" />' +
@@ -944,11 +946,13 @@ function getPlacemarketTemplate(params) {
                             '<input class="critical-point" type="checkbox" ' + (params['critical_point'] == true ? "checked" : "") + ' /> критическая точка <br />' +
                             '<input class="popular-departure-point" type="checkbox" ' + (params['popular_departure_point'] == true ? "checked" : "") + ' /> популярная точка отправления <br />' +
                             '<input class="popular-arrival-point" type="checkbox" ' + (params['popular_arrival_point'] == true ? "checked" : "") + ' /> популярная точка прибытия <br />' +
-                            '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />'
-                            '<p style="white-space: nowrap;">СТД Наценка отправления, руб <input class="point-from-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_from_standart_price_diff'] + '" /></p>' +
-                            '<p style="white-space: nowrap;">КОММ Наценка отправления, руб <input class="point-from-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
-                            '<p style="white-space: nowrap;">СТД Наценка прибытия, руб <input class="point-to-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_to_standart_price_diff'] + '" /></p>' +
-                            '<p style="white-space: nowrap;">КОММ Наценка прибытия, руб <input class="point-to-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
+                            '<input class="alias" type="text" value="' + params['alias'] + '" placeholder="unified" /><br />' +
+                            //'<p style="white-space: nowrap;">СТД Наценка отправления, руб <input class="point-from-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_from_standart_price_diff'] + '" /></p>' +
+                            //'<p style="white-space: nowrap;">КОММ Наценка отправления, руб <input class="point-from-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
+                            //'<p style="white-space: nowrap;">СТД Наценка прибытия, руб <input class="point-to-standart-price-diff" type="text" style="width: 50px;" value="' + params['point_to_standart_price_diff'] + '" /></p>' +
+                            //'<p style="white-space: nowrap;">КОММ Наценка прибытия, руб <input class="point-to-commercial-price-diff" type="text" style="width: 50px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
+                            '<p style="white-space: nowrap;">Наценка отпр СТД <input class="point-from-standart-price-diff" type="text" style="width: 60px;" value="' + params['point_from_standart_price_diff'] + '" /> КОММ <input class="point-from-commercial-price-diff" type="text" style="width: 60px;" value="' + params['point_from_commercial_price_diff'] + '" /></p>' +
+                            '<p style="white-space: nowrap;">Наценка приб СТД <input class="point-to-standart-price-diff" type="text" style="width: 60px;" value="' + params['point_to_standart_price_diff'] + '" /> КОММ <input class="point-to-commercial-price-diff" type="text" style="width: 60px;" value="' + params['point_to_commercial_price_diff'] + '" /></p>';
             }
 
         content +=

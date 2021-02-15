@@ -1103,15 +1103,42 @@ class OrderController extends Controller
             $used_cash_back = $model->getCalculateUsedCashBack();
             $result_price = intval($full_price) - intval($used_cash_back);
 
+            $point_from_diff = 0;
+            $point_to_diff = 0;
+            if($use_fix_price == false && $model->trip != null)
+            {
+                $yandex_point_from = $model->yandexPointFrom;
+                if($yandex_point_from != null) {
+                    if ($model->trip->commercial == true) {
+                        $point_from_diff = $yandex_point_from->point_from_commercial_price_diff;
+                    } else {
+                        $point_from_diff = $yandex_point_from->point_from_standart_price_diff;
+                    }
+                }
+
+                $yandex_point_to = $model->yandexPointTo;
+                if($yandex_point_to != null) {
+                    if($yandex_point_to != null) {
+                        if ($model->trip->commercial == true) {
+                            $point_to_diff = $yandex_point_to->point_to_commercial_price_diff;
+                        } else {
+                            $point_to_diff = $yandex_point_to->point_to_standart_price_diff;
+                        }
+                    }
+                }
+            }
+
             return [
                 'success' => true,
                 'loyalty_switch' => Yii::$app->setting->loyalty_switch,
                 'price' => $full_price,
+                'point_from_diff' => $point_from_diff,
+                'point_to_diff' => $point_to_diff,
                 'used_cash_back' => $used_cash_back,
                 'result_price' => $result_price,
                 'prizeTripCount' => $model->prizeTripCount, // кол-во призовых поездок
                 'use_fix_price' => $use_fix_price,
-                'comment' => $comment
+                'comment' => $comment,
             ];
         } else {
             return [

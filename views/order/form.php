@@ -980,8 +980,35 @@ $form = ActiveForm::begin([
     </div>
     <?php if(Yii::$app->setting->loyalty_switch == 'cash_back_on') { ?>
         <div class="yellow-line">К оплате <span id="resultPrice"><?= intval($order->price) ?></span> р. (полная стоимость - <span id="price"><?= (intval($order->price) + intval($order->used_cash_back)) ?></span> р., КБ - <span id="usedCashBack"><?= intval($order->used_cash_back) ?></span> р.)</div>
-    <?php }else { // fifth_place_prize  ?>
+    <?php }else { // fifth_place_prize
+
+        $point_from_diff = 0;
+        $point_to_diff = 0;
+
+        if($order->yandex_point_from_id > 0 && $order->trip != null) {
+            $yandex_point_from = $order->yandexPointFrom;
+            if($yandex_point_from != null) {
+                if ($order->trip->commercial == true) {
+                    $point_from_diff = $yandex_point_from->point_from_commercial_price_diff;
+                } else {
+                    $point_from_diff = $yandex_point_from->point_from_standart_price_diff;
+                }
+            }
+        }
+        if($order->yandex_point_to_id > 0 && $order->trip != null) {
+            $yandex_point_to = $order->yandexPointTo;
+            if($yandex_point_to != null) {
+                if ($order->trip->commercial == true) {
+                    $point_to_diff = $yandex_point_to->point_to_commercial_price_diff;
+                } else {
+                    $point_to_diff = $yandex_point_to->point_to_standart_price_diff;
+                }
+            }
+        }
+        ?>
         <div class="yellow-line">Стоимость проезда: <span id="price"><?= intval($order->price) ?></span> рублей (<span id="prizeTripCount"><?= $order->prizeTripCount ?></span> призовый поездок) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Оплачено: <?= $order->paid_summ ?> рублей</div>
+        <div class="yellow-line">Наценка/Скидка точки отправления: <span class="point-from-diff"><?= $point_from_diff ?></span> рублей за место</div>
+        <div class="yellow-line">Наценка/Скидка точки прибытия: <span class="point-to-diff"><?= $point_to_diff ?></span> рублей за место</div>
     <?php } ?>
     <div class="row">
         <div class="col-sm-1  first-col" style="width: 13.5%;">&nbsp;</div>

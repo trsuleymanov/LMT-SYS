@@ -310,6 +310,7 @@ function updatePrice()
                     allow_updating_price = false;
                 },
                 success: function (response) {
+
                     if (response.success == true) {
 
                         if(response.loyalty_switch == 'cash_back_on') {
@@ -334,6 +335,8 @@ function updatePrice()
 
                         $('*[name="Order[comment]"]').text(response.comment);
 
+                        $('#order-client-form .point-from-diff').text(response.point_from_diff);
+                        $('#order-client-form .point-to-diff').text(response.point_to_diff);
 
                     } else {
                         alert('неустановленная ошибка расчета цены');
@@ -360,6 +363,8 @@ function updatePrice()
         }else {
             $('#order-client-form #price').text('-');
             $('#order-client-form #prizeTripCount').text('-');
+            $('#order-client-form .point-from-diff').text('-');
+            $('#order-client-form .point-to-diff').text('-');
         }
     }
 }
@@ -1780,7 +1785,9 @@ $(document).ready(function()
 
 
     $(document).on('keyup', 'input[name="order-fix_price-disp"]', function () {
-        $('#price').text($(this).val());
+        $('#order-client-form #price').text($(this).val());
+        $('#order-client-form .point-from-diff').text('-');
+        $('#order-client-form .point-to-diff').text('-');
     });
 
 

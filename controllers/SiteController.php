@@ -932,14 +932,16 @@ class SiteController extends Controller
 //
 //        echo "order:<pre>"; print_r($order); echo "</pre>";
         //echo '01.01.'.date('Y').' 00:00:00'."<br />";
-        $unixdate_31dec = strtotime('31.12.2020 23:59:59');
-        echo '1='.$unixdate_31dec."<br />";
+//        $unixdate_31dec = strtotime('31.12.2020 23:59:59');
+//        echo '1='.$unixdate_31dec."<br />";
+//
+//        $unixdate_1jan = strtotime('01.01.'.date('Y'));
+//        echo '2='.$unixdate_1jan."<br />";
+//
+//        $unixdate_1jan = strtotime('01.01.2021 00:00:00');
+//        echo '3='.$unixdate_1jan."<br />";
 
-        $unixdate_1jan = strtotime('01.01.'.date('Y'));
-        echo '2='.$unixdate_1jan."<br />";
-
-        $unixdate_1jan = strtotime('01.01.2021 00:00:00');
-        echo '3='.$unixdate_1jan."<br />";
+        echo date('d.m.Y H:i',1613509200);
     }
 
     public function actionTest2()

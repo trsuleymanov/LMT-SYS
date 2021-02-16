@@ -273,13 +273,13 @@ $cookie = Yii::$app->getRequest()->getCookies();
 
 //            echo "current_module=$current_module <br />";
 //            echo "current_controller=$current_controller <br />";
-            echo "current_route=$current_route <br />";
+//            echo "current_route=$current_route <br />";
             ?>
 
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu">
                 <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
-                    <li class="treeview <?= ($current_module == 'admin' && (in_array($current_controller, ['city', 'direction', ])) || $current_route == 'admin/setting/vrpt') ? 'active' : '' ?>">
+                    <li class="treeview <?= (in_array($current_controller, ['city', 'direction', ]) || in_array($current_route, ['admin/setting/vrpt', 'admin/yandex-point/statistics'])) ? 'active' : '' ?>">
                         <a href="#">
                             <i class="fa fa-exchange"></i> <span>Маршруты и точки</span>
                             <span class="pull-right-container">
@@ -295,6 +295,9 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             </li>
                             <li<?= $current_route == 'admin/setting/vrpt' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="glyphicon glyphicon-cog"></i> <span>А-ВРПТ</span>', '/admin/setting/vrpt'); ?>
+                            </li>
+                            <li<?= $current_route == 'admin/yandex-point/statistics' ? ' class="active"' : '' ?>>
+                                <?= Html::a('<i class="glyphicon glyphicon-map-marker"></i> <span>Статистика точек</span>', '/admin/yandex-point/statistics'); ?>
                             </li>
                         </ul>
                     </li>

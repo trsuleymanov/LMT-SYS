@@ -335,8 +335,22 @@ function updatePrice()
 
                         $('*[name="Order[comment]"]').text(response.comment);
 
-                        $('#order-client-form .point-from-diff').text(response.point_from_diff);
-                        $('#order-client-form .point-to-diff').text(response.point_to_diff);
+                        var point_from_str = '';
+                        if(response.point_from_diff < 0) {
+                            point_from_str = 'Скидка ' + Math.abs(response.point_from_diff);
+                        }else {
+                            point_from_str = 'Наценка ' + response.point_from_diff;
+                        }
+
+                        var point_to_str = '';
+                        if(response.point_to_diff < 0) {
+                            point_to_str = 'Скидка ' + Math.abs(response.point_to_diff);
+                        }else {
+                            point_to_str = 'Наценка ' + response.point_to_diff;
+                        }
+
+                        $('#order-client-form .point-from-str').text(point_from_str);
+                        $('#order-client-form .point-to-str').text(point_to_str);
 
                     } else {
                         alert('неустановленная ошибка расчета цены');
@@ -363,8 +377,8 @@ function updatePrice()
         }else {
             $('#order-client-form #price').text('-');
             $('#order-client-form #prizeTripCount').text('-');
-            $('#order-client-form .point-from-diff').text('-');
-            $('#order-client-form .point-to-diff').text('-');
+            $('#order-client-form .point-from-str').text('-');
+            $('#order-client-form .point-to-str').text('-');
         }
     }
 }
@@ -1786,8 +1800,8 @@ $(document).ready(function()
 
     $(document).on('keyup', 'input[name="order-fix_price-disp"]', function () {
         $('#order-client-form #price').text($(this).val());
-        $('#order-client-form .point-from-diff').text('-');
-        $('#order-client-form .point-to-diff').text('-');
+        $('#order-client-form .point-from-str').text('-');
+        $('#order-client-form .point-to-str').text('-');
     });
 
 

@@ -1005,10 +1005,26 @@ $form = ActiveForm::begin([
                 }
             }
         }
+
+        if($point_from_diff < 0) {
+            $point_from_str = 'Скидка '. abs($point_from_diff);
+        }else {
+            $point_from_str = 'Наценка '. $point_from_diff;
+        }
+
+        $point_to_str = '';
+        if($point_to_diff < 0) {
+            $point_to_diff = 'Скидка '. abs($point_to_diff);
+        }else {
+            $point_to_diff = 'Наценка '. $point_to_diff;
+        }
         ?>
-        <div class="yellow-line">Стоимость проезда: <span id="price"><?= intval($order->price) ?></span> рублей (<span id="prizeTripCount"><?= $order->prizeTripCount ?></span> призовый поездок) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Оплачено: <?= $order->paid_summ ?> рублей</div>
+        <div class="yellow-line">Стоимость проезда: <span id="price"><?= intval($order->price) ?></span> руб (Приз: <span id="prizeTripCount"><?= $order->prizeTripCount ?></span> мест) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Оплачено: <?= $order->paid_summ ?> руб</div>
+        <div class="yellow-line">ОТПР: <span class="point-from-str"><?= $point_from_str ?></span> руб за место / ПРИБ: <span class="point-to-str"><?= $point_to_diff ?></span> руб за место</div>
+        <?php /*
         <div class="yellow-line">Наценка/Скидка точки отправления: <span class="point-from-diff"><?= $point_from_diff ?></span> рублей за место</div>
         <div class="yellow-line">Наценка/Скидка точки прибытия: <span class="point-to-diff"><?= $point_to_diff ?></span> рублей за место</div>
+        */ ?>
     <?php } ?>
     <div class="row">
         <div class="col-sm-1  first-col" style="width: 13.5%;">&nbsp;</div>

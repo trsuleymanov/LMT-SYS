@@ -1063,8 +1063,8 @@ class OrderController extends Controller
         $model->scenario = 'calculate_price';
 
 
-        if ($model->load($post) && $model->validate()) {
-
+        if ($model->load($post) && $model->validate())
+        {
             if(empty($model->client_id)) {
                 if(isset($post['Client']['mobile_phone'])) {
                     $client = Client::getClientByMobilePhone($post['Client']['mobile_phone']);
@@ -1105,6 +1105,7 @@ class OrderController extends Controller
 
             $point_from_diff = 0;
             $point_to_diff = 0;
+            $xz = 0;
             if($use_fix_price == false && $model->trip != null)
             {
                 $yandex_point_from = $model->yandexPointFrom;
@@ -1118,18 +1119,17 @@ class OrderController extends Controller
 
                 $yandex_point_to = $model->yandexPointTo;
                 if($yandex_point_to != null) {
-                    if($yandex_point_to != null) {
-                        if ($model->trip->commercial == true) {
-                            $point_to_diff = $yandex_point_to->point_to_commercial_price_diff;
-                        } else {
-                            $point_to_diff = $yandex_point_to->point_to_standart_price_diff;
-                        }
+                    if ($model->trip->commercial == true) {
+                        $point_to_diff = $yandex_point_to->point_to_commercial_price_diff;
+                    } else {
+                        $point_to_diff = $yandex_point_to->point_to_standart_price_diff;
                     }
                 }
             }
 
             return [
                 'success' => true,
+                'xz' => $xz,
                 'loyalty_switch' => Yii::$app->setting->loyalty_switch,
                 'price' => $full_price,
                 'point_from_diff' => $point_from_diff,
@@ -1139,6 +1139,7 @@ class OrderController extends Controller
                 'prizeTripCount' => $model->prizeTripCount, // кол-во призовых поездок
                 'use_fix_price' => $use_fix_price,
                 'comment' => $comment,
+                'model' => $model
             ];
         } else {
             return [

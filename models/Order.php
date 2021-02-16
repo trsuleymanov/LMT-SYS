@@ -1984,14 +1984,30 @@ class Order extends \yii\db\ActiveRecord
         $yandexPointFrom = $this->yandexPointFrom;
         $yandexPointTo = $this->yandexPointTo;
 
-        $points_diff = 0;
-        if($yandexPointFrom != null && $yandexPointTo != null) {
-            if ($trip->commercial == true) {
-                $points_diff = $yandexPointFrom->point_from_commercial_price_diff + $yandexPointTo->point_to_commercial_price_diff;
-            } else {
-                $points_diff = $yandexPointFrom->point_from_standart_price_diff + $yandexPointTo->point_to_standart_price_diff;
-            }
+        if($yandexPointFrom == null) {
+            $point_from_commercial_price_diff = 0;
+            $point_from_standart_price_diff = 0;
+        }else {
+            $point_from_commercial_price_diff = $yandexPointFrom->point_from_commercial_price_diff;
+            $point_from_standart_price_diff = $yandexPointFrom->point_from_standart_price_diff;
         }
+
+        if($yandexPointTo == null) {
+            $point_to_commercial_price_diff = 0;
+            $point_to_standart_price_diff = 0;
+        }else {
+            $point_to_commercial_price_diff = $yandexPointTo->point_to_commercial_price_diff;
+            $point_to_standart_price_diff = $yandexPointTo->point_to_standart_price_diff;
+        }
+
+        $points_diff = 0;
+        if ($trip->commercial == true) {
+            $points_diff = $point_from_commercial_price_diff + $point_to_commercial_price_diff;
+        } else {
+            $points_diff = $point_from_standart_price_diff + $point_to_standart_price_diff;
+        }
+
+
 
 
         $T_COMMON = $tariff->unprepayment_common_price + $points_diff;  // цена по общему тарифу

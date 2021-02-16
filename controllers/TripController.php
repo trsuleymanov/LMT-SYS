@@ -403,7 +403,6 @@ class TripController extends Controller
 
 		if($start == "1") {
 
-            //echo 'use_mobile_app='.$use_mobile_app;
             $trip->use_mobile_app = $use_mobile_app;
 
             if ($trip->startSending()) {
@@ -483,74 +482,11 @@ class TripController extends Controller
             throw new ForbiddenHttpException('Рейс не найден');
         }
 
-        $orders = $trip->orders;
-
-        $update_page = false;
-        $aOrdersLog = [];
-        if(count($orders) > 0) {
-            foreach ($orders as $order) {
-
-                $is_changed = false;
-
-                $price = $order->getCalculatePrice();
-                if ($order->price != $price) {
-                    $aOrdersLog[$order->id] = [
-                        'order_id' => $order->id,
-                        'old_price' => $order->price,
-                        'new_price' => $price
-                    ];
-                    $order->setField('price', $price);
-                    $is_changed = true;
-                }
-
-                $used_cash_back = $order->getCalculateUsedCashBack();
-                if ($order->used_cash_back != $used_cash_back) {
-                    $order->setField('used_cash_back', $used_cash_back);
-                    $is_changed = true;
-                    $aOrdersLog[$order->id] = [
-                        'order_id' => $order->id,
-                        'old_price' => $order->price,
-                        'new_price' => $price
-                    ];
-                }
-
-                $prizeTripCount = $order->prizeTripCount;
-                if($order->prize_trip_count != $prizeTripCount) {
-                    $order->setField('prize_trip_count', $prizeTripCount);
-                    $is_changed = true;
-                    $aOrdersLog[$order->id] = [
-                        'order_id' => $order->id,
-                        'old_price' => $order->price,
-                        'new_price' => $price
-                    ];
-                }
-
-                if($is_changed == true) {
-                    $order->setField('sync_date', NULL);
-                    $update_page = true;
-                }
-            }
-        }
-
-        if(count($aOrdersLog) > 0) {
-            foreach ($aOrdersLog as $aOrderData) {
-
-                $log = new LogOrderPriceRecount();
-                $log->trip_id = $trip->id;
-                $log->trip_link = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/trip/trip-orders?trip_id='.$trip->id;
-                $log->order_id = $aOrderData['order_id'];
-                $log->old_price = $aOrderData['old_price'];
-                $log->new_price = $aOrderData['new_price'];
-                if(!$log->save(false)) {
-                    throw new ForbiddenHttpException('Не удалось сохранить лог для изменения цены заказа '.$aOrderData['order_id']);
-                }
-            }
-        }
-
+        $is_updated = $trip->recountOrdersPrices();
 
         return [
             'success' => true,
-            'update_page' => $update_page
+            'update_page' => $is_updated
         ];
     }
 

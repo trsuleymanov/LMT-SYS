@@ -945,6 +945,10 @@ class Trip extends \yii\db\ActiveRecord
 			throw new ErrorException('Не удалось сохранить в историю операцию с рейсом');
 		}
 
+
+        $this->recountOrdersPrices(); // заодно пересчитаем цены заказов
+
+
 		SocketDemon::updateMainPages($this->id, $this->date);
 		IncomingOrdersWidget::updateActiveTripsModal();
 
@@ -1861,9 +1865,6 @@ class Trip extends \yii\db\ActiveRecord
     }
 
 
-
-
-
     public function setField($field_name, $field_value)
     {
         if(!empty($field_value)) {
@@ -1881,5 +1882,75 @@ class Trip extends \yii\db\ActiveRecord
         $res = Yii::$app->db->createCommand($sql)->execute();
 
         return $res;
+    }
+
+    public function recountOrdersPrices()
+    {
+        $orders = $this->orders;
+
+        $is_updated = false;
+        $aOrdersLog = [];
+        if(count($orders) > 0) {
+            foreach ($orders as $order) {
+
+                $is_changed = false;
+
+                $price = $order->getCalculatePrice();
+                if ($order->price != $price) {
+                    $aOrdersLog[$order->id] = [
+                        'order_id' => $order->id,
+                        'old_price' => $order->price,
+                        'new_price' => $price
+                    ];
+                    $order->setField('price', $price);
+                    $is_changed = true;
+                }
+
+                $used_cash_back = $order->getCalculateUsedCashBack();
+                if ($order->used_cash_back != $used_cash_back) {
+                    $order->setField('used_cash_back', $used_cash_back);
+                    $is_changed = true;
+                    $aOrdersLog[$order->id] = [
+                        'order_id' => $order->id,
+                        'old_price' => $order->price,
+                        'new_price' => $price
+                    ];
+                }
+
+                $prizeTripCount = $order->prizeTripCount;
+                if($order->prize_trip_count != $prizeTripCount) {
+                    $order->setField('prize_trip_count', $prizeTripCount);
+                    $is_changed = true;
+                    $aOrdersLog[$order->id] = [
+                        'order_id' => $order->id,
+                        'old_price' => $order->price,
+                        'new_price' => $price
+                    ];
+                }
+
+                if($is_changed == true) {
+                    $order->setField('sync_date', NULL);
+                    $is_updated = true;
+                }
+            }
+        }
+
+        if(count($aOrdersLog) > 0) {
+            foreach ($aOrdersLog as $aOrderData) {
+
+                $log = new LogOrderPriceRecount();
+                $log->trip_id = $this->id;
+                $log->trip_link = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/trip/trip-orders?trip_id='.$this->id;
+                $log->order_id = $aOrderData['order_id'];
+                $log->old_price = $aOrderData['old_price'];
+                $log->new_price = $aOrderData['new_price'];
+                $log->created_at = time();
+                if(!$log->save(false)) {
+                    throw new ForbiddenHttpException('Не удалось сохранить лог для изменения цены заказа '.$aOrderData['order_id']);
+                }
+            }
+        }
+
+        return $is_updated;
     }
 }

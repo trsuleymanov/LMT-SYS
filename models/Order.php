@@ -1959,9 +1959,22 @@ class Order extends \yii\db\ActiveRecord
      */
     public function getCalculatePrice()
     {
-        if($this->use_fix_price == true) {
+        // определяем источник, по нему определяем признак формирования цены
+        $do_tariff = null;
+        if($this->client_id > 0) {
+            $do_tariff = $this->client->doTariff;
+        }
+        if($do_tariff == null) {
+            $informer_office = $this->informerOffice;
+            if ($informer_office != null) {
+                $do_tariff = $informer_office->doTariff;
+            }
+        }
+
+        if(($do_tariff != null && $do_tariff->use_fix_price == true) || $this->use_fix_price == true) {
             return $this->price;
         }
+
 
         $trip = $this->trip;
         if ($trip == null) {
@@ -2008,8 +2021,6 @@ class Order extends \yii\db\ActiveRecord
         }
 
 
-
-
         $T_COMMON = $tariff->unprepayment_common_price + $points_diff;  // цена по общему тарифу
         $T_STUDENT = $tariff->unprepayment_student_price + $points_diff; // студенческий тариф
         $T_BABY = $tariff->unprepayment_baby_price + $points_diff;    // детский тариф
@@ -2018,6 +2029,16 @@ class Order extends \yii\db\ActiveRecord
 
 
         $prize_count = $this->prizeTripCount; // количество призовых поездок в текущем заказе
+
+        if($do_tariff != null) {
+            $T_COMMON = $do_tariff->changePlacePrice($T_COMMON, $this);
+            $T_STUDENT = $do_tariff->changePlacePrice($T_STUDENT, $this);
+            $T_BABY = $do_tariff->changePlacePrice($T_BABY, $this);
+            $T_LOYAL = $do_tariff->changePlacePrice($T_LOYAL, $this);
+            $T_PARCEL = $do_tariff->changePlacePrice($T_PARCEL, $this);
+        }
+
+
 
         if ($this->is_not_places == 1) {
             $COST = $T_PARCEL;
@@ -2063,6 +2084,10 @@ class Order extends \yii\db\ActiveRecord
             foreach ($aPlacesPrice as $placePrise) {
                 $COST += $placePrise;
             }
+        }
+
+        if($do_tariff != null) {
+            $COST = $do_tariff->changeTotalPrice($COST, $this);
         }
 
 

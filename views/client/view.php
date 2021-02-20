@@ -1,7 +1,10 @@
 <?php
 
 use app\models\InformerOffice;
+use app\models\OrderCancellationReason;
 use app\models\Setting;
+use app\models\TripTransport;
+use app\models\YandexPoint;
 use yii\helpers\Html;
 use app\widgets\EditableTextWidget;
 use yii\web\JsExpression;
@@ -22,6 +25,86 @@ $this->title = 'Лист информации о клиенте';
 $this->params['breadcrumbs'][] = $this->title;
 
 $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['name' => SORT_ASC])->all(), 'id', 'name');
+
+$directions = Direction::find()->orderBy(['sh_name' => SORT_ASC])->all();
+
+$aDirections = [];
+if(count($directions) > 0) {
+    foreach ($directions as $direction) {
+        $aDirections[$direction->id] = $direction;
+    }
+}
+
+// $start = microtime(true);
+
+$client_orders = Order::find()->where(['client_id' => $client->id])->all();
+
+$aTripsIds = [];
+$aFactTripTransportsIds = [];
+if(count($client_orders) > 0) {
+    foreach ($client_orders as $order) {
+
+        $aTripsIds[$order->trip_id] = $order->trip_id;
+
+        if($order->fact_trip_transport_id > 0) {
+            $aFactTripTransportsIds[$order->fact_trip_transport_id] = $order->fact_trip_transport_id;
+        }
+    }
+}
+
+$aTrips = [];
+$trips = Trip::find()->where(['IN', 'id', $aTripsIds])->all();
+if(count($trips) > 0) {
+    foreach ($trips as $trip) {
+        $aTrips[$trip->id] = $trip;
+    }
+}
+
+$aFactTripTransports = [];
+if(count($aFactTripTransportsIds) > 0) {
+    $trip_transports = TripTransport::find()->where(['IN', 'id', $aFactTripTransportsIds])->all();
+    if(count($trip_transports) > 0) {
+        foreach ($trip_transports as $trip_transport) {
+            $aFactTripTransports[$trip_transport->id] = $trip_transport;
+        }
+    }
+}
+
+
+$aYandexPoints = [];
+$yandex_points = YandexPoint::find()->all();
+if(count($yandex_points) > 0) {
+    foreach ($yandex_points as $yandex_point) {
+        $aYandexPoints[$yandex_point->id] = $yandex_point;
+    }
+}
+
+$aInformerOffices = [];
+$informer_offices = InformerOffice::find()->all();
+if(count($informer_offices) > 0) {
+    foreach ($informer_offices as $informer_office) {
+        $aInformerOffices[$informer_office->id] = $informer_office;
+    }
+}
+
+$aOrderCancellationReasons = [];
+$order_cancellation_reasons = OrderCancellationReason::find()->all();
+if(count($order_cancellation_reasons) > 0) {
+    foreach ($order_cancellation_reasons as $order_cancellation_reason) {
+        $aOrderCancellationReasons[$order_cancellation_reason->id] = $order_cancellation_reason;
+    }
+}
+
+$aTransports = [];
+$transports = Transport::find()->orderBy(['model' => SORT_ASC])->all();
+if(count($transports) > 0) {
+    foreach ($transports as $transport) {
+        $aTransports[$transport->id] = $transport;
+    }
+}
+
+// echo 'Время выполнения скрипта: '.round(microtime(true) - $start, 4).' сек.';
+
 ?>
 <div id="client-view-page">
 
@@ -364,22 +447,27 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'direction_id',
                     'label' => 'Напр.',
-                    'content' => function ($model) {
-                        return $model->direction->sh_name;
+                    'content' => function ($model) use($aDirections) {
+                        //return $model->direction->sh_name;
+                        return (isset($aDirections[$model->direction_id]) ? $aDirections[$model->direction_id]->sh_name : $model->direction_id);
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModelCurYear,
                         'direction_id',
-                        ['' => 'Все'] + ArrayHelper::map(Direction::find()->orderBy(['sh_name' => SORT_ASC])->all(), 'id', 'sh_name'),
+                        ['' => 'Все'] + ArrayHelper::map($directions, 'id', 'sh_name'),
                         ['class' => "form-control"]
                     )
                 ],
+
                 [
                     'attribute' => 'trip_id',
-                    'content' => function($model) {
-                        if($model->trip != null) {
+                    'content' => function($model) use($aTrips) {
+
+                        $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
+
+                        if($trip != null) {
                             return Html::a(
-                                $model->trip->name,
+                                $trip->name,
                                 Url::to(['/trip/trip-orders', 'trip_id' => $model->trip_id]),
                                 [
                                     'title' => 'Состав рейса',
@@ -393,9 +481,11 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'trip_commercial',
                     'label' => 'ТР',
-                    'content' => function($model) {
-                        if($model->trip != null) {
-                            if($model->trip->commercial == true) {
+                    'content' => function($model) use($aTrips) {
+
+                        $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
+                        if($trip != null) {
+                            if($trip->commercial == true) {
                                 return 'КОММ';
                             }else {
                                 return 'СТД';
@@ -408,9 +498,12 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'yandex_point_from_name',
                     'label' => 'Точка откуда',
-                    'content' => function($model) {
+                    'content' => function($model) use($aYandexPoints) {
                         if($model->yandex_point_from_id > 0) {
-                            $yandexPoint = $model->yandexPointFrom;
+
+                            //$yandexPoint = $model->yandexPointFrom;
+                            $yandexPoint = (isset($aYandexPoints[$model->yandex_point_from_id]) ? $aYandexPoints[$model->yandex_point_from_id] : null);
+
                             if($yandexPoint->critical_point == 1) { // добавляем жирный шрифт
                                 if(!empty($model->time_air_train_arrival)) { // добавляем красный цвет
                                     return '<b class="text-danger">'.$model->yandex_point_from_name.', '.$model->time_air_train_arrival.'</b>';
@@ -430,9 +523,11 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'yandex_point_to_name',
                     'label' => 'Точка куда',
-                    'content' => function($model) {
+                    'content' => function($model) use($aYandexPoints) {
                         if($model->yandex_point_to_id > 0) {
-                            $yandexPoint = $model->yandexPointTo;
+
+                            // $yandexPoint = $model->yandexPointTo;
+                            $yandexPoint = (isset($aYandexPoints[$model->yandex_point_to_id]) ? $aYandexPoints[$model->yandex_point_to_id] : null);
 
                             if($yandexPoint->critical_point == 1) { // добавляем жирный шрифт
                                 if(!empty($model->time_air_train_departure)) { // добавляем красный цвет
@@ -468,15 +563,18 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 ],
                 [
                     'attribute' => 'status_id',
-                    'content' => function ($model) {
+                    'content' => function ($model) use($aTrips) {
+
+                        $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
+
                         if($model->status_id > 0) {
                             if($model->status_id == 1) {
                                 return 'Записан';
                             }elseif($model->status_id == 2) {
                                 return 'Отменен';
-                            }elseif($model->status_id == 3 && empty($model->trip->date_sended)) {
+                            }elseif($model->status_id == 3 && empty($trip->date_sended)) {
                                 return 'Отправлен, не завершен';
-                            }elseif($model->status_id == 3 && !empty($model->trip->date_sended)) {
+                            }elseif($model->status_id == 3 && !empty($trip->date_sended)) {
                                 return 'Отправлен, завершен';
                             }
                         }else {
@@ -521,33 +619,45 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'fact_transport_id',
                     'label' => 'Факт. т/с',
-                    'content' => function($model) {
-                        $factTripTransport = $model->factTripTransport;
-                        if($factTripTransport != null) {
-                            $text = $factTripTransport->transport->name2;
-                        }else {
-                            $text = '';
+                    'content' => function($model) use($aFactTripTransports, $aOrderCancellationReasons, $aTransports) {
+
+//                        $factTripTransport = $model->factTripTransport;
+
+                        $factTripTransport = ($model->fact_trip_transport_id > 0 && isset($aFactTripTransports[$model->fact_trip_transport_id]) ? $aFactTripTransports[$model->fact_trip_transport_id] : null);
+
+                        $text = '';
+                        $transport = null;
+                        if($factTripTransport != null && isset($aTransports[$factTripTransport->transport_id])) {
+                            $transport = $aTransports[$factTripTransport->transport_id];
+                        }
+                        if($transport != null) {
+                            $text = $transport->name2;
                         }
 
-                        return $text.(!empty($model->cancellation_reason_id) ? $model->cancellationReason->name.', '.($model->has_penalty == 1 ? 'оштрафован, '.$model->penalty_comment : 'не оштрафован') : '');
+
+                        // return $text.(!empty($model->cancellation_reason_id) ? $model->cancellationReason->name.', '.($model->has_penalty == 1 ? 'оштрафован, '.$model->penalty_comment : 'не оштрафован') : '');
+                        return $text.
+                            (!empty($model->cancellation_reason_id) && isset($aOrderCancellationReasons[$model->cancellation_reason_id]) ? $aOrderCancellationReasons[$model->cancellation_reason_id]->name.', '.($model->has_penalty == 1 ? 'оштрафован, '.$model->penalty_comment : 'не оштрафован') : '');
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModelCurYear,
                         'fact_transport_id',
-                        ['' => 'Все'] + ArrayHelper::map(Transport::find()->orderBy(['model' => SORT_ASC])->all(), 'id', 'name2'),
+                        ['' => 'Все'] + ArrayHelper::map($transports, 'id', 'name2'),
                         ['class' => "form-control"]
                     )
                 ],
 
                 [
                     'attribute' => 'informer_office_id',
-                    'content' => function($model) {
-                        return ($model->informer_office_id > 0 && $model->informerOffice != null ? $model->informerOffice->name : '');
+                    'content' => function($model) use($aInformerOffices) {
+
+                        //return ($model->informer_office_id > 0 && $model->informerOffice != null ? $model->informerOffice->name : '');
+                        return ($model->informer_office_id > 0 && isset($aInformerOffices[$model->informer_office_id]) ? $aInformerOffices[$model->informer_office_id]->name : '');
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModelCurYear,
                         'informer_office_id',
-                        ['' => 'Все'] + ArrayHelper::map(InformerOffice::find()->all(), 'id', 'name'),
+                        ['' => 'Все'] + ArrayHelper::map($informer_offices, 'id', 'name'),
                         ['class' => "form-control"]
                     )
                 ],
@@ -681,22 +791,29 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'direction_id',
                     'label' => 'Напр.',
-                    'content' => function ($model) {
-                        return $model->direction->sh_name;
+                    'content' => function ($model) use($aDirections) {
+                        // return $model->direction->sh_name;
+                        return (isset($aDirections[$model->direction_id]) ? $aDirections[$model->direction_id]->sh_name : $model->direction_id);
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModelPastYears,
                         'direction_id',
-                        ['' => 'Все'] + ArrayHelper::map(Direction::find()->orderBy(['sh_name' => SORT_ASC])->all(), 'id', 'sh_name'),
+                        ['' => 'Все'] + ArrayHelper::map($directions, 'id', 'sh_name'),
                         ['class' => "form-control"]
                     )
                 ],
+
+
+                // перегружает систему на клиенте http://tobus-yii2.ru/client/view?id=29552
                 [
                     'attribute' => 'trip_id',
-                    'content' => function($model) {
-                        if($model->trip != null) {
+                    'content' => function($model) use($aTrips) {
+
+                        $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
+
+                        if($trip != null) {
                             return Html::a(
-                                $model->trip->name,
+                                $trip->name,
                                 Url::to(['/trip/trip-orders', 'trip_id' => $model->trip_id]),
                                 [
                                     'title' => 'Состав рейса',
@@ -710,9 +827,12 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'trip_commercial',
                     'label' => 'ТР',
-                    'content' => function($model) {
-                        if($model->trip != null) {
-                            if($model->trip->commercial == true) {
+                    'content' => function($model) use($aTrips) {
+
+                        $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
+
+                        if($trip != null) {
+                            if($trip->commercial == true) {
                                 return 'КОММ';
                             }else {
                                 return 'СТД';
@@ -725,9 +845,12 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'yandex_point_from_name',
                     'label' => 'Точка откуда',
-                    'content' => function($model) {
+                    'content' => function($model) use($aYandexPoints) {
                         if($model->yandex_point_from_id > 0) {
-                            $yandexPoint = $model->yandexPointFrom;
+
+                            // $yandexPoint = $model->yandexPointFrom;
+                            $yandexPoint = (isset($aYandexPoints[$model->yandex_point_from_id]) ? $aYandexPoints[$model->yandex_point_from_id] : null);
+
                             if($yandexPoint->critical_point == 1) { // добавляем жирный шрифт
                                 if(!empty($model->time_air_train_arrival)) { // добавляем красный цвет
                                     return '<b class="text-danger">'.$model->yandex_point_from_name.', '.$model->time_air_train_arrival.'</b>';
@@ -747,9 +870,11 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'yandex_point_to_name',
                     'label' => 'Точка куда',
-                    'content' => function($model) {
+                    'content' => function($model) use($aYandexPoints) {
                         if($model->yandex_point_to_id > 0) {
-                            $yandexPoint = $model->yandexPointTo;
+
+                            // $yandexPoint = $model->yandexPointTo;
+                            $yandexPoint = (isset($aYandexPoints[$model->yandex_point_to_id]) ? $aYandexPoints[$model->yandex_point_to_id] : null);
 
                             if($yandexPoint->critical_point == 1) { // добавляем жирный шрифт
                                 if(!empty($model->time_air_train_departure)) { // добавляем красный цвет
@@ -785,15 +910,18 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 ],
                 [
                     'attribute' => 'status_id',
-                    'content' => function ($model) {
+                    'content' => function ($model) use($aTrips) {
+
+                        $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
+
                         if($model->status_id > 0) {
                             if($model->status_id == 1) {
                                 return 'Записан';
                             }elseif($model->status_id == 2) {
                                 return 'Отменен';
-                            }elseif($model->status_id == 3 && empty($model->trip->date_sended)) {
+                            }elseif($model->status_id == 3 && empty($trip->date_sended)) {
                                 return 'Отправлен, не завершен';
-                            }elseif($model->status_id == 3 && !empty($model->trip->date_sended)) {
+                            }elseif($model->status_id == 3 && !empty($trip->date_sended)) {
                                 return 'Отправлен, завершен';
                             }
                         }else {
@@ -810,8 +938,6 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 ],
 
 
-
-//                'prize_trip_count',
                 [
                     'attribute' => 'price',
                     'label' => 'Цена',
@@ -837,38 +963,48 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                 [
                     'attribute' => 'fact_transport_id',
                     'label' => 'Факт. т/с',
-                    'content' => function($model) {
-                        $factTripTransport = $model->factTripTransport;
-                        if($factTripTransport != null) {
-                            $text = $factTripTransport->transport->name2;
-                        }else {
-                            $text = '';
+                    'content' => function($model) use($aFactTripTransports, $aOrderCancellationReasons, $aTransports) {
+
+                        //$factTripTransport = $model->factTripTransport;
+                        $factTripTransport = ($model->fact_trip_transport_id > 0 && isset($aFactTripTransports[$model->fact_trip_transport_id]) ? $aFactTripTransports[$model->fact_trip_transport_id] : null);
+
+                        $text = '';
+                        $transport = null;
+                        if($factTripTransport != null && isset($aTransports[$factTripTransport->transport_id])) {
+                            $transport = $aTransports[$factTripTransport->transport_id];
+                        }
+                        if($transport != null) {
+                            $text = $transport->name2;
                         }
 
-                        return $text.(!empty($model->cancellation_reason_id) ? $model->cancellationReason->name.', '.($model->has_penalty == 1 ? 'оштрафован, '.$model->penalty_comment : 'не оштрафован') : '');
+                        // return $text .(!empty($model->cancellation_reason_id) ? $model->cancellationReason->name.', '.($model->has_penalty == 1 ? 'оштрафован, '.$model->penalty_comment : 'не оштрафован') : '');
+                        return $text.
+                            (!empty($model->cancellation_reason_id) && isset($aOrderCancellationReasons[$model->cancellation_reason_id]) ? $aOrderCancellationReasons[$model->cancellation_reason_id]->name.', '.($model->has_penalty == 1 ? 'оштрафован, '.$model->penalty_comment : 'не оштрафован') : '');
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModelPastYears,
                         'fact_transport_id',
-                        ['' => 'Все'] + ArrayHelper::map(Transport::find()->orderBy(['model' => SORT_ASC])->all(), 'id', 'name2'),
+                        ['' => 'Все'] + ArrayHelper::map($transports, 'id', 'name2'),
                         ['class' => "form-control"]
                     )
                 ],
-
                 [
                     'attribute' => 'informer_office_id',
-                    'content' => function($model) {
-                        return ($model->informer_office_id > 0 && $model->informerOffice != null ? $model->informerOffice->name : '');
+                    'content' => function($model) use($aInformerOffices) {
+                        // return ($model->informer_office_id > 0 && $model->informerOffice != null ? $model->informerOffice->name : '');
+                        return ($model->informer_office_id > 0 && isset($aInformerOffices[$model->informer_office_id]) ? $aInformerOffices[$model->informer_office_id]->name : '');
                     },
                     'filter' => Html::activeDropDownList(
                         $searchModelCurYear,
                         'informer_office_id',
-                        ['' => 'Все'] + ArrayHelper::map(InformerOffice::find()->all(), 'id', 'name'),
+                        ['' => 'Все'] + ArrayHelper::map($informer_offices, 'id', 'name'),
                         ['class' => "form-control"]
                     )
                 ],
             ],
-        ]); ?>
+        ]);
+
+        ?>
     </div>
 
 

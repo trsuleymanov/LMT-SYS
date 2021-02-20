@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Call;
 use app\models\ClientServer;
 use app\models\InformerOffice;
+use app\models\OrderCancelInvestigation;
 use app\models\Passenger;
 use app\models\OrderPassenger;
 use app\models\Setting;
@@ -1631,7 +1632,6 @@ class OrderController extends Controller
 
     public function actionCancellationReasonOrders($date)
     {
-
         $searchModel = new OrderSearch();
         $queryParams = Yii::$app->request->queryParams;
         $queryParams['OrderSearch']['date'] = $date;
@@ -1639,10 +1639,80 @@ class OrderController extends Controller
 
         return $this->render('cancellation-reason-orders', [
             'date' => $date,
-            //'cancellation_reason' => $cancellation_reason,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionCancelInvestigation($id)
+    {
+        // тут нужен заказ, а не расследование
+        $order = Order::find()->where(['id' => $id])->one();
+        if($order == null) {
+            throw new ErrorException('Заказ не существует');
+        }
+
+        if($order->status_id != 2) {
+            throw new ErrorException('Заказ не отменен, расследование невозможно');
+        }
+
+        $trip = $order->trip;
+        $client = $order->client;
+        $direction = $trip->direction;
+
+        $investigation = OrderCancelInvestigation::find()->where(['order_id' => $id])->one();
+        if($investigation == null) {
+
+            $investigation = new OrderCancelInvestigation();
+
+            $investigation->order_id = $order->id;
+            $investigation->trip_id = $trip->id;
+            $investigation->client_id = $client->id;
+        }
+
+        return $this->render('investigation', [
+            'order' => $order,
+            'trip' => $trip,
+            'client' => $client,
+            'direction' => $direction,
+            'investigation' => $investigation,
+        ]);
+    }
+
+    public function actionAjaxSaveInvestigation($investigation_id = 0)
+    {
+        Yii::$app->response->format = 'json';
+
+        if($investigation_id == 0) {
+            $model = new OrderCancelInvestigation();
+        }else {
+            $model = OrderCancelInvestigation::find()->where(['id' => $investigation_id])->one();
+            if($model == null) {
+                throw new ErrorException('Расследование не найдено');
+            }
+        }
+
+        $post = Yii::$app->request->post();
+        if(isset($post['OrderCancelInvestigation']['data'])) {
+            $post['OrderCancelInvestigation']['data'] = strtotime($post['OrderCancelInvestigation']['data']);
+        }
+
+        $model->load($post);
+        if (!$model->validate()) {
+            return [
+                'errors' => $model->getErrors()
+            ];
+        }
+
+        $model->updated_at = time();
+        $model->save();
+
+
+        Yii::$app->session->setFlash('success', "Сохранено");
+
+        return [
+            'success' => true
+        ];
     }
 
 

@@ -1,18 +1,13 @@
 <?php
 
+use app\models\OrderCancelInvestigation;
 use app\models\OrderCancellationReason;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
-use kartik\date\DatePicker;
-use kartik\datetime\DateTimePicker;
-use app\models\OrderStatus;
 use yii\helpers\ArrayHelper;
 use app\models\Point;
-use app\models\Trip;
-use app\models\Order;
 use app\models\Direction;
-use app\models\Transport;
 use app\components\Helper;
 use yii\helpers\Url;
 
@@ -53,6 +48,21 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                     return '<button class="btn btn-sm btn-warning btn-penalty '.($model->has_penalty == 1 ? 'disabled' : '').'">Оштафовать</button>';
                 },
                 'filter' => false
+            ],
+            [
+                'attribute' => 'investigation',
+                'label' => '',
+                'filter' => false,
+                'content' => function ($model) {
+
+                    $investigation = OrderCancelInvestigation::find()->where(['order_id' => $model->id])->one();
+
+                    if($investigation == null) {
+                        return '<a href="/order/cancel-investigation?id='.$model->id.'" target="_blank">Расследование</a>';
+                    }else {
+                        return 'Обработано '.date('d.m.Y H:i', $investigation->updated_at);
+                    }
+                }
             ],
             [
                 'attribute' => 'direction_id',

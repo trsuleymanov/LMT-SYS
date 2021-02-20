@@ -136,9 +136,11 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
 
         <div class="col-sm-4 form-group form-group-sm">
             <?php // а может лучше так: $trips = Trip::getTrips(strtotime($order->date), $order->direction_id); ?>
-            <?= $form->field($model, 'trip_id')->dropDownList(
-                [0 => ''] + ArrayHelper::map(Trip::find()->all(), 'id', 'name')
-            ); ?>
+            <?php
+//            $form->field($model, 'trip_id')->dropDownList(
+//                [0 => ''] + ArrayHelper::map(Trip::find()->all(), 'id', 'name')
+//            );
+            ?>
         </div>
 
         <div class="col-sm-4 form-group form-group-sm">

@@ -12,6 +12,13 @@ $this->registerJsFile('js/site/order-cancel-investigation.js', ['depends'=>'app\
 <?= $direction->sh_name ?> <?= $trip->name ?>, <?= date('d/m/Y', $trip->date) ?>
 <br />
 ФИО: <?= $client->name ?>, <?= $order->places_count ?>М, <?= $order->student_count ?>С, <?= $order->child_count ?>Д
+<br />
+Мобильный телефон: <?= ($client->mobile_phone) ?>
+<br />
+Домашний телефон: <?= (!empty($client->home_phone) ? $client->home_phone : '---') ?>
+<br />
+Дополнительный телефон: <?= (!empty($client->alt_phone) ? $client->alt_phone : '---') ?>
+<br />
 <br /><br />
 ВПЗ: <?= ($order->first_writedown_click_time > 0 ? date('d.m.Y H:i', $order->first_writedown_click_time) : '') ?>
 <br />

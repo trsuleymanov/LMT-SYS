@@ -60,7 +60,7 @@ $point_list = ArrayHelper::map(Point::find()->where(['active' => 1])->orderBy(['
                     if($investigation == null) {
                         return '<a href="/order/cancel-investigation?id='.$model->id.'" target="_blank">Расследование</a>';
                     }else {
-                        return 'Обработано '.date('d.m.Y H:i', $investigation->updated_at);
+                        return '<a href="/order/cancel-investigation?id='.$model->id.'" target="_blank">Обработано '.date('d.m.Y H:i', $investigation->updated_at).'</a>';
                     }
                 }
             ],

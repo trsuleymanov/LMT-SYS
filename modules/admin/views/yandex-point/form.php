@@ -20,12 +20,6 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-sm-4 form-group form-group-sm">
-            <?= $form->field($model, 'alias')->textInput(['maxlength' => true])->label('Алиас') ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-4 form-group form-group-sm">
             <?php
 //            echo $form->field($model, 'categories_list')
 //                ->dropDownList($model->CategoryDropdown,
@@ -41,6 +35,12 @@ use yii\widgets\ActiveForm;
                 ->label("Категории");
 
             ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4 form-group form-group-sm">
+            <?= $form->field($model, 'alias')->textInput(['maxlength' => true])->label('Алиас') ?>
         </div>
     </div>
 

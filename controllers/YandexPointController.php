@@ -57,6 +57,8 @@ class YandexPointController extends Controller
             $yandex_points_query = YandexPoint::find()->where(['city_id' => $direction->city_to])->andWhere(['point_of_arrival' => true]);
         }
 
+        $yandex_points_query->andWhere(['active' => 1]);
+
         if($search != '') {
             $yandex_points_query->andWhere(['LIKE', 'name', $search]);
         }
@@ -66,7 +68,6 @@ class YandexPointController extends Controller
         $out['results'] = [];
         foreach($yandex_points as $yandex_point) {
             $out['results'][] = [
-                //'id' => $yandex_point->id,
                 'id' => $yandex_point->id.'_'.$yandex_point->lat.'_'.$yandex_point->long.'_'.$yandex_point->name,
                 'text' => $yandex_point->name,
             ];

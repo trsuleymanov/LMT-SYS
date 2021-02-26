@@ -120,7 +120,7 @@ if(!$model->isNewRecord)
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'template' => '{update} {delete}',
+                        'template' => '{update} {update2} {delete}',
                         'options' => ['style' => 'width: 50px;'],
                         'buttons' => [
                             'update' => function ($url, $model) {
@@ -139,6 +139,13 @@ if(!$model->isNewRecord)
                                     ]
                                 );
                             },
+                            'update2'  => function ($url, $model) {
+                                return Html::a(
+                                    '<span class="glyphicon glyphicon-pencil"></span>',
+                                    Url::to(['/admin/yandex-point/update', 'id' => $model->id]),
+                                    ['aria-label' => 'Редактировать',]
+                                );
+                            },
                             'delete' => function ($url, $model) {
                                 return Html::a(
                                     '<span class="glyphicon glyphicon-trash"></span>',
@@ -153,6 +160,18 @@ if(!$model->isNewRecord)
                     ],
 
                     'id',
+                    [
+                        'attribute' => 'active',
+                        'content' => function($model) {
+                            return $model->active == true ? 'да' : 'нет';
+                        },
+                        'filter' => Html::activeDropDownList(
+                            $yandexPointSearchModel,
+                            'active',
+                            ['' => 'Все', 0 => 'Нет', 1 => 'Да'],
+                            ['class' => "form-control"]
+                        )
+                    ],
                     [
                         'attribute' => 'external_use',
                         'content' => function($model) {

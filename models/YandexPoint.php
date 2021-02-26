@@ -21,6 +21,8 @@ class YandexPoint extends \yii\db\ActiveRecord
 {
     const MIN_POINTS_DISTANCE = 40; // минимальная дистанция между точками
 
+    public $categories_list;
+
     /**
      * @inheritdoc
      */
@@ -41,13 +43,14 @@ class YandexPoint extends \yii\db\ActiveRecord
                 'point_to_standart_price_diff', 'point_to_commercial_price_diff'
             ], 'integer'],
             [['lat', 'long'], 'number'],
-            [['external_use'], 'boolean'],
+            [['external_use', 'active'], 'boolean'],
             [['name', 'description'], 'string', 'max' => 255],
             [['alias'], 'string', 'max' => 10],
             [['name'], 'unique'],
             [['lat', /*'long'*/], 'checkLatLong', 'skipOnEmpty' => false],
             [['critical_point', 'point_of_arrival', 'popular_departure_point', 'popular_arrival_point'], 'boolean'],
-            [['time_to_get_together_short', 'time_to_get_together_long'], 'safe']
+            [['time_to_get_together_short', 'time_to_get_together_long',
+                'categories_list'], 'safe']
         ];
     }
 
@@ -134,6 +137,7 @@ class YandexPoint extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'active' => 'Активна',
             'external_use' => 'Внешнее использование (да/нет)',
             'name' => 'Название',
             'city_id' => 'Город',
@@ -146,8 +150,8 @@ class YandexPoint extends \yii\db\ActiveRecord
             'popular_arrival_point' => 'Популярная точка прибытия',
             'alias' => 'Доп.поле означающее принадлежность точки к чему-либо, например к аэропорту',
             'description' => 'Описание',
-            'time_to_get_together_short' => 'Относительное время от ВРПТ до конечной базовой точки рейса коротких рейсов',
-            'time_to_get_together_long' => 'Относительное время от ВРПТ до конечной базовой точки рейса длинных рейсов',
+            'time_to_get_together_short' => 'Относительное время от ВРПТ до конечной базовой точки рейса коротких рейсов, сек',
+            'time_to_get_together_long' => 'Относительное время от ВРПТ до конечной базовой точки рейса длинных рейсов, сек',
 
             'point_from_standart_price_diff' => 'СТД Наценка отправления, руб',
             'point_from_commercial_price_diff' => 'КОММ Наценка отправления, руб',
@@ -211,6 +215,40 @@ class YandexPoint extends \yii\db\ActiveRecord
     public function getUpdater() {
         return $this->hasOne(User::className(), ['id' => 'updater_id']);
     }
+
+    public function getCategoryDropdown()
+    {
+        $categories = YandexPointCategory::find()->all();
+
+        return ArrayHelper::map($categories,'id','name');
+    }
+
+    public function saveCategories($categories_list)
+    {
+//        $old_relations = YandexPointCategoryRelation::find()->where(['yandex_point_id' => $this->id])->all();
+//        if($old_relations > 0) {
+//
+//        }
+
+        //YandexPointCategoryRelation::find()->where(['yandex_point_id' => $this->id])->delete();
+
+        \Yii::$app
+            ->db
+            ->createCommand()
+            ->delete('yandex_point_category_relation', ['yandex_point_id' => $this->id])
+            ->execute();
+
+
+        if(count($categories_list) > 0) {
+            foreach ($categories_list as $category_id) {
+                $relation = new YandexPointCategoryRelation();
+                $relation->yandex_point_id = $this->id;
+                $relation->category_id = $category_id;
+                $relation->save();
+            }
+        }
+    }
+
 
     public static function recountTimeToGetTogether($p_AK, $p_KA, $max_time_short_trip_AK, $max_time_short_trip_KA) {
 

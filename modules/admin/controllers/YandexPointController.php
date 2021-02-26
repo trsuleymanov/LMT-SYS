@@ -5,8 +5,10 @@ namespace app\modules\admin\controllers;
 use app\models\City;
 use app\models\OrderSearch;
 use app\models\Setting;
+use app\models\YandexPointCategoryRelation;
 use ErrorException;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -76,6 +78,35 @@ class YandexPointController extends Controller
     }
 
 
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+
+        $model->categories_list = []; // для работы dropDownList в форме
+        $aPostCategories = [];
+        if(isset($_POST['YandexPoint']['categories_list'])) {
+            //$model->categories_list = $_POST['YandexPoint']['categories_list'];
+            $aPostCategories = $_POST['YandexPoint']['categories_list'];
+        }else {
+            $aPostCategories = [];
+
+            $cat_relations = YandexPointCategoryRelation::find()->where(['yandex_point_id' => $id])->all();
+            if(count($cat_relations) > 0) {
+                $model->categories_list = ArrayHelper::map($cat_relations, 'category_id', 'category_id');
+            }
+        }
+
+        //echo "cats:<pre>"; print_r($model->categories_list); echo "</pre>"; exit;
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->saveCategories($aPostCategories) && $model->save()) {
+            return $this->redirect(['/admin/city/update?id='.$model->city_id]);
+        } else {
+            return $this->render('form.php', [
+                'model' => $model,
+            ]);
+        }
+    }
 
     protected function findModel($id)
     {
@@ -122,6 +153,7 @@ class YandexPointController extends Controller
             'success' => true
         ];
     }
+
 
     public function actionStatistics()
     {

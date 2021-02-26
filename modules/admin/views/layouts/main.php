@@ -489,7 +489,7 @@ $cookie = Yii::$app->getRequest()->getCookies();
 
 
                 <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
-                    <li<?= (in_array($current_controller, ['tariff', 'cashback-setting', 'formula', 'day-report-transport-circle', 'do-tariff', 'transport-waybill-report', 'notaccountability-transport-report']) || in_array($current_route, ['admin/setting/loyalty-switch'])  ? ' class="active"' : '') ?>>
+                    <li<?= (in_array($current_controller, ['tariff', 'cashback-setting', 'formula', 'day-report-transport-circle', 'do-tariff', 'transport-waybill-report', 'notaccountability-transport-report', 'yandex-point-category']) || in_array($current_route, ['admin/setting/loyalty-switch'])  ? ' class="active"' : '') ?>>
                         <a href="#">
                             <i class="glyphicon glyphicon-piggy-bank"></i> <span>Финансы</span>
                             <span class="pull-right-container">
@@ -520,6 +520,9 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             </li>
                             <li<?= $current_controller == 'cashback-setting' ? ' class="active"' : '' ?>>
                                 <?= Html::a('<i class="glyphicon glyphicon-piggy-bank"></i> <span>Кэш-бэки</span>', '/admin/cashback-setting'); ?>
+                            </li>
+                            <li<?= $current_controller == 'yandex-point-category' ? ' class="active"' : '' ?>>
+                                <?= Html::a('<i class="glyphicon glyphicon-piggy-bank"></i> <span>Категории для яндекс-точек</span>', '/admin/yandex-point-category'); ?>
                             </li>
                         </ul>
                     </li>

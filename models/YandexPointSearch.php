@@ -47,7 +47,7 @@ class YandexPointSearch extends YandexPoint
         return [
             [['id', 'city_id', 'critical_point', 'external_use', 'super_tariff_used',
                 'point_from_standart_price_diff', 'point_from_commercial_price_diff',
-                'point_to_standart_price_diff', 'point_to_commercial_price_diff'
+                'point_to_standart_price_diff', 'point_to_commercial_price_diff', 'active'
             ], 'integer'],
             [['lat', 'long'], 'double'],
             [['name', 'description'], 'string', 'max' => 255],
@@ -110,6 +110,7 @@ class YandexPointSearch extends YandexPoint
             'point_from_commercial_price_diff' => $this->point_from_commercial_price_diff,
             'point_to_standart_price_diff' => $this->point_to_standart_price_diff,
             'point_to_commercial_price_diff' => $this->point_to_commercial_price_diff,
+            'active' => $this->active,
         ]);
 
         $query

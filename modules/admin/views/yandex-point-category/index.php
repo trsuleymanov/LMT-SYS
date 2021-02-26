@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="user-page" class="box box-default" >
     <div class="box-header scroller with-border">
         <div class="pull-left">
-            <?= Html::a('<i class="fa fa-plus"></i> Создать яндекс-точку', ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a('<i class="fa fa-plus"></i> Создать категорию', ['create'], ['class' => 'btn btn-success']) ?>
         </div>
 
         <div class="pull-left"></div>
@@ -33,7 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id',
                 'name',
 
-                // ['class' => 'yii\grid\ActionColumn'],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',

@@ -575,7 +575,36 @@ if(count($transports) > 0) {
                             }elseif($model->status_id == 3 && empty($trip->date_sended)) {
                                 return 'Отправлен, не завершен';
                             }elseif($model->status_id == 3 && !empty($trip->date_sended)) {
-                                return 'Отправлен, завершен';
+
+                                $liteboxes = \app\models\LiteboxOperation::find()
+                                    ->where(['order_id' => $model->id])
+                                    ->andWhere(['sell_refund_at' => NULL])
+                                    ->limit(20)
+                                    ->all();
+
+                                $str = 'Отправлен, завершен';
+
+                                if(count($liteboxes) > 0) {
+
+                                    if ($model->payment_source == 'application') {
+                                        $source = 'ILS_' . date('dmY_H:i', $model->paid_time);
+                                    } elseif ($model->payment_source == 'client_site') {
+                                        $source = 'Client_site_' . date('dmY_H:i', $model->paid_time);
+                                    } elseif ($model->payment_source == 'crm') { //
+                                        $source = 'CRM_' . date('dmY_H:i', $model->paid_time);
+                                    } else {
+                                        $source = 'неопределен_' . date('dmY_H:i', $model->paid_time);
+                                    }
+
+                                    foreach ($liteboxes as $litebox) {
+                                        if(!empty($litebox->ecr_registration_number)) {
+                                            $href = 'https://ofd.yandex.ru/vaucher/' . $litebox->ecr_registration_number . '/' . $litebox->fiscal_document_number . '/' . $litebox->fiscal_document_attribute;
+                                            $str .= '<span><a href="' . $href . '">' . $source . '</a></span><br />';
+                                        }
+                                    }
+                                }
+
+                                return $str;
                             }
                         }else {
                             return '';

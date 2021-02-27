@@ -40,9 +40,12 @@ if(count($directions) > 0) {
 $client_orders = Order::find()->where(['client_id' => $client->id])->all();
 
 $aTripsIds = [];
+$aOrdersIds = [];
 $aFactTripTransportsIds = [];
 if(count($client_orders) > 0) {
     foreach ($client_orders as $order) {
+
+        $aOrdersIds[] = $order->id;
 
         $aTripsIds[$order->trip_id] = $order->trip_id;
 
@@ -100,6 +103,18 @@ $transports = Transport::find()->orderBy(['model' => SORT_ASC])->all();
 if(count($transports) > 0) {
     foreach ($transports as $transport) {
         $aTransports[$transport->id] = $transport;
+    }
+}
+
+$aLiteboxes = [];
+$liteboxes = \app\models\LiteboxOperation::find()
+    ->where(['IN', 'order_id', $aOrdersIds])
+    ->andWhere(['sell_refund_at' => NULL])
+    ->limit(20)
+    ->all();
+if(count($liteboxes) > 0) {
+    foreach ($liteboxes as $litebox) {
+        $aLiteboxes[$litebox->order_id][] = $litebox;
     }
 }
 
@@ -563,7 +578,7 @@ if(count($transports) > 0) {
                 ],
                 [
                     'attribute' => 'status_id',
-                    'content' => function ($model) use($aTrips) {
+                    'content' => function ($model) use($aTrips, $aLiteboxes) {
 
                         $trip = (isset($aTrips[$model->trip_id]) ? $aTrips[$model->trip_id] : null);
 
@@ -576,15 +591,14 @@ if(count($transports) > 0) {
                                 return 'Отправлен, не завершен';
                             }elseif($model->status_id == 3 && !empty($trip->date_sended)) {
 
-                                $liteboxes = \app\models\LiteboxOperation::find()
-                                    ->where(['order_id' => $model->id])
-                                    ->andWhere(['sell_refund_at' => NULL])
-                                    ->limit(20)
-                                    ->all();
+
+                                $liteboxes = (isset($aLiteboxes[$model->order_id]) ? $aLiteboxes[$model->order_id] : []);
 
                                 $str = 'Отправлен, завершен';
 
                                 if(count($liteboxes) > 0) {
+
+                                    $str .= '<br />';
 
                                     if ($model->payment_source == 'application') {
                                         $source = 'ILS_' . date('dmY_H:i', $model->paid_time);

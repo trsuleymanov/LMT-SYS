@@ -110,7 +110,6 @@ $aLiteboxes = [];
 $liteboxes = \app\models\LiteboxOperation::find()
     ->where(['IN', 'order_id', $aOrdersIds])
     ->andWhere(['sell_refund_at' => NULL])
-    ->limit(20)
     ->all();
 if(count($liteboxes) > 0) {
     foreach ($liteboxes as $litebox) {

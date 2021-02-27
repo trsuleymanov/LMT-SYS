@@ -592,7 +592,7 @@ if(count($liteboxes) > 0) {
                             }elseif($model->status_id == 3 && !empty($trip->date_sended)) {
 
 
-                                $liteboxes = (isset($aLiteboxes[$model->order_id]) ? $aLiteboxes[$model->order_id] : []);
+                                $liteboxes = (isset($aLiteboxes[$model->id]) ? $aLiteboxes[$model->id] : []);
 
                                 $str = 'Отправлен, завершен';
 

@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Helper;
+use app\models\Access;
 use app\models\DayReportTransportCircle;
 use app\models\DayReportTripTransport;
 use app\models\Direction;
@@ -268,9 +269,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-27 form-group-sm">
                             <?php
-//                            echo $form->field($model, 'trip_comment', [
-//                                'errorOptions' => ['style' => 'display:none;']
-//                            ])->textInput(['maxlength' => true]);
                             echo $form->field($model, 'trip_comment')->textarea(['rows' => 2]);
                             ?>
                         </div>
@@ -290,18 +288,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-11 form-group-sm">
                             <?php
-                            //echo $form->field($model, 'pre_trip_med_check_time')->textInput()->label('Время');
-                            //                    echo $form->field($model, 'pre_trip_med_check_time',
-                            //                        [
-                            //                            //'errorOptions' => []
-                            //                        ])
-                            //                        ->widget(\yii\widgets\MaskedInput::class, [
-                            //                            'mask' => '99 : 99',
-                            //                            'clientOptions' => [
-                            //                                'placeholder' => '_'
-                            //                            ]
-                            //                        ])->label('Время прохождения');
-
                             $options = [
                                 'class' => 'form-control'
                             ];
@@ -337,7 +323,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                                 $options['disabled'] = true;
                             }
 
-                            // $form->field($model, 'pre_trip_tech_check_time')->textInput()->label('Время прохождения')
                             echo $form->field($model, 'pre_trip_tech_check_time', ['errorOptions' => []])
                                 ->widget(\yii\widgets\MaskedInput::class, [
                                     'mask' => '99 : 99',
@@ -354,17 +339,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-17 form-group-sm">
                             <?php
-                            // $form->field($model, 'departure_time')->textInput()
-                            //            echo $form->field($model, 'departure_time')->widget(DateTimePicker::classname(), [
-                            //                'options' => [
-                            //                    //'placeholder' => 'Начало...'
-                            //                ],
-                            //                'removeButton' => false,
-                            //                'pluginOptions' => [
-                            //                    'autoclose' => true,
-                            //                ]
-                            //            ]);
-
                             echo $form->field($model, 'departure_time', ['errorOptions' => []])
                                 ->widget(\yii\widgets\MaskedInput::class, [
                                     'mask' => '99 : 99',
@@ -400,57 +374,11 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                                 $model->date_of_issue = strtotime($model->date_of_issue);
                             }
 
-//                            $aDayReportTripsBaseIdName = [];
-//                            $aDayReportTripsNotBaseIdName = [];
-//                            if($model->transport_id > 0 && $model->date_of_issue > 0) {
-//
-//                                $trips = Trip::find()->where(['date' => $model->date_of_issue])->all();
-//                                $aTrips = ArrayHelper::map($trips, 'id', 'id');
-//                                $day_report_transport_circles = DayReportTransportCircle::find()
-//                                    ->where(['transport_id' => $model->transport_id])
-//                                    ->andWhere(['base_city_trip_id' => $aTrips])
-//                                    ->all();
-//
-//                                if(count($day_report_transport_circles) > 0) {
-//                                    foreach($day_report_transport_circles as $day_report_transport_circle) {
-//                                        $aDayReportTripsBaseIdName[$day_report_transport_circle->base_city_trip_id] = ($day_report_transport_circle->baseCityTrip != null ? $day_report_transport_circle->baseCityTrip->name : '');
-//                                        $aDayReportTripsNotBaseIdName[$day_report_transport_circle->notbase_city_trip_id] = ($day_report_transport_circle->notbaseCityTrip != null ? $day_report_transport_circle->notbaseCityTrip->name : '');
-//                                    }
-//                                }
-//                            }
-
-//                            echo $form
-//                                ->field($model, 'trip_transport_start', ['errorOptions' => ['style' => 'display:none;']])
-//                                ->dropDownList([0 => ''] + $aDayReportTripsBaseIdName, [])
-//                                ->label('Начало');
 
                             echo $form
                                 ->field($model, 'trip_transport_start', ['errorOptions' => ['style' => 'display:none;']])
                                 ->dropDownList([0 => 'Нет'] + $aStartTripsNames, [])
                                 ->label('Выбрать начало');
-
-//                            echo $form->field($model, 'trip_transport_start')->widget(SelectWidget::className(), [
-//                                'initValueText' => ($model->tripStart != null ? $model->tripStart->name : ''),
-//                                //'value' => ($model->tripStart != null ? $model->tripStart->name : ''),
-//                                'options' => [
-//                                    'placeholder' => 'Введите название...',
-//                                ],
-//                                'ajax' => [
-//                                    'url' => '/trip/ajax-get-trips',
-//                                    'data' => new JsExpression('function(params) {
-//
-//                                        var date = $("input[name=\"TransportWaybill[date_of_issue]\"]").val();
-//                                        if(date.length == 10) {
-//                                            return {
-//                                                date: date,
-//                                                direction_id: 1,
-//                                                search: params.search
-//                                            };
-//                                        }
-//                                    }')
-//                                ],
-//                            ])->label('Начало');
-
                             ?>
                         </div>
 
@@ -458,34 +386,10 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-17 form-group-sm">
                             <?php
-                            //echo $form->field($model, 'trip_transport_end')->textInput();
-
                             echo $form
                                 ->field($model, 'trip_transport_end', ['errorOptions' => ['style' => 'display:none;']])
                                 ->dropDownList([0 => 'Нет'] + $aEndTripsNames, [])
                                 ->label('Выбрать окончание');
-
-//                            echo $form->field($model, 'trip_transport_end')->widget(SelectWidget::className(), [
-//                                'initValueText' => ($model->tripEnd != null ? $model->tripEnd->name : ''),
-//                                //'value' => ($model->tripEnd != null ? $model->tripEnd->name : ''),
-//                                'options' => [
-//                                    'placeholder' => 'Введите название...',
-//                                ],
-//                                'ajax' => [
-//                                    'url' => '/trip/ajax-get-trips',
-//                                    'data' => new JsExpression('function(params) {
-//
-//                                        var date = $("input[name=\"TransportWaybill[date_of_issue]\"]").val();
-//                                        if(date.length == 10) {
-//                                            return {
-//                                                date: date,
-//                                                direction_id: 2,
-//                                                search: params.search
-//                                            };
-//                                        }
-//                                    }')
-//                                ],
-//                            ])->label('Окончание');
                             ?>
                         </div>
                     </div>
@@ -504,18 +408,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-11 form-group-sm">
                             <?php
-                            //echo $form->field($model, 'after_trip_med_check_time')->textInput()->label('Время');
-                            //                    echo $form->field($model, 'after_trip_med_check_time',
-                            //                        [
-                            //                            //'errorOptions' => []
-                            //                        ])
-                            //                        ->widget(\yii\widgets\MaskedInput::class, [
-                            //                            'mask' => '99 : 99',
-                            //                            'clientOptions' => [
-                            //                                'placeholder' => '_'
-                            //                            ]
-                            //                        ])->label('Время прохождения');
-
                             $options = [
                                 'class' => 'form-control'
                             ];
@@ -542,8 +434,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-11 form-group-sm">
                             <?php
-                            // $form->field($model, 'after_trip_tech_check_time')->textInput()->label('Время прохождения')
-
                             $options = [
                                 'class' => 'form-control'
                             ];
@@ -565,17 +455,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                         <div class="col-v-17 form-group-sm">
                             <?php
-                            // $form->field($model, 'departure_time')->textInput()
-                            //            echo $form->field($model, 'departure_time')->widget(DateTimePicker::classname(), [
-                            //                'options' => [
-                            //                    //'placeholder' => 'Начало...'
-                            //                ],
-                            //                'removeButton' => false,
-                            //                'pluginOptions' => [
-                            //                    'autoclose' => true,
-                            //                ]
-                            //            ]);
-
                             echo $form->field($model, 'return_time', ['errorOptions' => []])
                                 ->widget(\yii\widgets\MaskedInput::class, [
                                     'mask' => '99 : 99',
@@ -664,15 +543,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С1</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event1_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event1_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event1_id > 0 ? $model->tripEvent1->name : ''),
                                 'options' => [
@@ -692,15 +562,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С5</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event5_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event5_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event5_id > 0 ? $model->tripEvent5->name.'sdf' : ''),
                                 'options' => [
@@ -722,15 +583,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С2</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event2_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event2_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event2_id > 0 ? $model->tripEvent2->name : ''),
                                 'options' => [
@@ -750,15 +602,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С6</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event6_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event6_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event6_id > 0 ? $model->tripEvent6->name : ''),
                                 'options' => [
@@ -779,15 +622,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С3</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event3_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event3_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event3_id > 0 ? $model->tripEvent3->name : ''),
                                 'options' => [
@@ -807,15 +641,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С7</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event7_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event7_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event7_id > 0 ? $model->tripEvent7->name : ''),
                                 'options' => [
@@ -836,15 +661,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С4</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event4_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event4_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event4_id > 0 ? $model->tripEvent4->name : ''),
                                 'options' => [
@@ -864,15 +680,6 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                         <div class="col-v-2 waybill-vertical-title">С8</div>
                         <div class="col-v-17 form-group-sm">
                             <?php
-//                            echo $form
-//                                ->field($model, 'trip_event8_id', [
-//                                    'errorOptions' => ['style' => 'display:none;'],
-//                                ])
-//                                ->dropDownList(
-//                                    [0 => 'Нет'] + ArrayHelper::map(TransportWaybillTripEvents::find()->all(), 'id', 'name'),
-//                                    []
-//                                )->label(false);
-
                             echo $form->field($model, 'trip_event8_id')->widget(SelectWidget::className(), [
                                 'initValueText' => ($model->trip_event8_id > 0 ? $model->tripEvent8->name : ''),
                                 'options' => [
@@ -895,205 +702,20 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
             <br />
             <div class="waybill-block">
+
                 <div class="waybill-title waybill-block-toogle">Учет расходов <span class="waybill-arrow"><i class="glyphicon glyphicon-menu-down"></i></span></div>
                 <div class="waybill-body">
 
-                    <?php /*
-                    <p><b>Типовые расходы из выручки:</b></p>
-                    <div class="transport-expenses-table-cover-outer">
-
-                        <table class="transport-expenses-table-fixed">
-                            <tr style="background-color: #E6FFE6; height: 34px;">
-                                <td class="expenses_seller_type_id_col allotted" style="background-color: #E6FFE6;">За что</td>
-                            </tr>
-
-                            <?php
-                            $num = 1;
-                            foreach($aTrExpensesTypical as $tr_expenses) {
-
-                                $first_col_style = ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : ''); ?>
-                                <tr class="transport-expenses" transport-expenses-id="<?= $tr_expenses->id ?>"  style="height: 86px; <?= ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : '') ?>">
-                                    <td style="<?= $first_col_style ?>">
-                                        <?php
-
-
-                                        //if(in_array($tr_expenses->sellerType->name, ['АЗС', 'Мойка', 'Стоянка', 'Прочие'])) {
-                                        if(in_array($tr_expenses->view_group, ['typical_expenses', ])) {
-                                            //echo '<span class="expenses_seller_type_id_col">'.$tr_expenses->sellerType->name.'</span>';
-                                            echo $tr_expenses->sellerType->name;
-                                        }else {
-
-                                            $seller_types = TransportExpensesSellerType::find()->all();
-
-                                            echo SelectWidget::widget([
-                                                'model' => $tr_expenses,
-                                                'attribute' => 'expenses_seller_type_id',
-                                                'id' => 'transportexpenses-expenses_seller_type_id-'.$tr_expenses->id,
-                                                'name' => 'TransportExpenses['.$tr_expenses->id.'][expenses_seller_type_id]',
-                                                'initValueText' => ($tr_expenses->expenses_seller_type_id > 0 && $tr_expenses->sellerType != null ? $tr_expenses->sellerType->name : ''),
-                                                'options' => [
-                                                    'placeholder' => 'Введите название...',
-                                                    'class' => 'transportexpenses-expenses_seller_type_id',
-                                                ],
-                                                'ajax' => [
-                                                    'url' => '/waybill/transport-waybill/ajax-get-sellers-types',
-                                                    'data' => new JsExpression('function(params, obj) {
-                                                        return {
-                                                            search: params.search,
-                                                        };
-                                                    }'),
-                                                ],
-                                                'add_new_value_url' => new JsExpression('function(params, $obj) {
-                                                    addNewSellerType($obj);
-                                                }'),
-                                                'using_delete_button' => false,
-                                            ]);
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php
-                            } ?>
-                        </table>
-                        <div class="transport-expenses-table-cover-inner">
-                            <table class="transport-expenses-table">
-                                <tr style="background-color: #E6FFE6; height: 34px;">
-                                    <td class="expenses_seller_id_col">Продавец</td>
-                                    <td class="count_col">К-во</td>
-                                    <td class="price_col">Сумма</td>
-                                    <td class="points_col">Баллы</td>
-                                    <td class="expenses_doc_type_id_col allotted">Вид ДО</td>
-                                    <td class="expenses_type_id_col allotted">ДО</td>
-                                    <td class="doc_number_col allotted">№ ДО</td>
-                                    <td class="need_pay_date_col allotted">Дата ДО</td>
-                                    <td class="check_attached_col">Чек</td>
-                                    <td class="expenses_is_taken_col">?РП</td>
-                                    <td class="expenses_is_taken_comment_col">КРП</td>
-                                    <td class="payment_date_col green-allotted">Дата оплаты</td>
-                                    <td class="payment_method_id_col green-allotted">Способ</td>
-                                    <td class="transport_expenses_paymenter_id_col green-allotted">Кто оплатил</td>
-                                    <td class="payment_comment_col green-allotted">КО</td>
-                                    <td></td>
-                                </tr>
-
-                                <?php
-                                $num = 1;
-                                foreach($aTrExpensesTypical as $tr_expenses) {
-                                    echo $this->render('transport_expenses_row', [
-                                        'tr_expenses' => $tr_expenses,
-                                        'form' => $form,
-                                        'delete_row' => true,
-                                        'num' => $num,
-                                    ]);
-                                    $num++;
-                                }
-                                ?>
-                            </table>
-                        </div>
-                    </div>
-                    */ ?>
-
+                <?php if(Access::hasUserAccess('access_to_delivery_of_proceeds', 'page_part'))
+                { ?>
                     <p><b>Типовые расходы из выручки:</b></p>
                     <div class="expenses-table-over">
                         <div class="expenses-table-inner">
                             <table class="transport-expenses-table">
                                 <tr style="background-color: #E6FFE6;">
-                                    <td class="expenses_seller_type_id_col allotted" style="background-color: #E6FFE6;">За что</td>
-                                    <td class="expenses_seller_id_col">Продавец</td>
-                                    <td class="count_col">К-во</td>
-                                    <td class="price_col">Сумма</td>
-                                    <td class="points_col">Баллы</td>
-                                    <td class="expenses_doc_type_id_col allotted">Вид ДО</td>
-                                    <td class="expenses_type_id_col allotted">ДО</td>
-                                    <td class="doc_number_col allotted">№ ДО</td>
-                                    <td class="need_pay_date_col allotted">Дата ДО</td>
-                                    <td class="check_attached_col">Чек</td>
-                                    <td class="expenses_is_taken_col">?РП</td>
-                                    <td class="expenses_is_taken_comment_col">КРП</td>
-                                    <td class="payment_date_col green-allotted">Дата оплаты</td>
-                                    <td class="payment_method_id_col green-allotted">Способ</td>
-                                    <td class="transport_expenses_paymenter_id_col green-allotted">Кто оплатил</td>
-                                    <td class="payment_comment_col green-allotted">КО</td>
-                                    <td></td>
-                                </tr>
-
-                                <?php
-                                $num = 1;
-                                foreach($aTrExpensesTypical as $tr_expenses) {
-                                    echo $this->render('transport_expenses_row', [
-                                        'tr_expenses' => $tr_expenses,
-                                        'form' => $form,
-                                        'delete_row' => true,
-                                        'num' => $num,
-                                    ]);
-                                    $num++;
-                                }
-                                ?>
-                            </table>
-                        </div>
-                    </div>
-
-
-
-                    <?php /*
-                    <br /><br />
-                    <p><b>Прочие расходы из выручки:</b></p>
-                    <div class="transport-expenses-table-cover-outer">
-
-                        <table class="transport-expenses-table-fixed">
-                            <tr style="background-color: #FFF9B4; height: 34px;">
-                                <td class="expenses_seller_type_id_col allotted" style="background-color: #FFF9B4;">За что</td>
-                            </tr>
-
-                            <?php
-                            $num = 1;
-                            foreach($aTrExpensesOther as $tr_expenses) {
-
-                                $first_col_style = ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : ''); ?>
-                                <tr class="transport-expenses" transport-expenses-id="<?= $tr_expenses->id ?>"  style="height: 86px; <?= ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : '') ?>">
-                                    <td style="<?= $first_col_style ?>">
-                                        <?php
-                                        //if(in_array($tr_expenses->sellerType->name, ['АЗС', 'Мойка', 'Стоянка', 'Прочие'])) {
-                                        if(in_array($tr_expenses->view_group, ['typical_expenses', ])) {
-                                            //echo '<span class="expenses_seller_type_id_col">'.$tr_expenses->sellerType->name.'</span>';
-                                            echo $tr_expenses->sellerType->name;
-                                        }else {
-
-                                            $seller_types = TransportExpensesSellerType::find()->all();
-
-                                            echo SelectWidget::widget([
-                                                'model' => $tr_expenses,
-                                                'attribute' => 'expenses_seller_type_id',
-                                                'id' => 'transportexpenses-expenses_seller_type_id-'.$tr_expenses->id,
-                                                'name' => 'TransportExpenses['.$tr_expenses->id.'][expenses_seller_type_id]',
-                                                'initValueText' => ($tr_expenses->expenses_seller_type_id > 0 && $tr_expenses->sellerType != null ? $tr_expenses->sellerType->name : ''),
-                                                'options' => [
-                                                    'placeholder' => 'Введите название...',
-                                                    'class' => 'transportexpenses-expenses_seller_type_id',
-                                                ],
-                                                'ajax' => [
-                                                    'url' => '/waybill/transport-waybill/ajax-get-sellers-types',
-                                                    'data' => new JsExpression('function(params, obj) {
-                                                        return {
-                                                            search: params.search,
-                                                        };
-                                                    }'),
-                                                ],
-                                                'add_new_value_url' => new JsExpression('function(params, $obj) {
-                                                    addNewSellerType($obj);
-                                                }'),
-                                                'using_delete_button' => false,
-                                            ]);
-                                        }
-                                        ?>
+                                    <td class="expenses_seller_type_id_col allotted" style="background-color: #E6FFE6;">
+                                        За что
                                     </td>
-                                </tr>
-                                <?php
-                            } ?>
-                        </table>
-                        <div class="transport-expenses-table-cover-inner">
-                            <table class="transport-expenses-table">
-                                <tr style="background-color: #FFF9B4; height: 34px;">
                                     <td class="expenses_seller_id_col">Продавец</td>
                                     <td class="count_col">К-во</td>
                                     <td class="price_col">Сумма</td>
@@ -1114,7 +736,7 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                                 <?php
                                 $num = 1;
-                                foreach($aTrExpensesOther as $tr_expenses) {
+                                foreach ($aTrExpensesTypical as $tr_expenses) {
                                     echo $this->render('transport_expenses_row', [
                                         'tr_expenses' => $tr_expenses,
                                         'form' => $form,
@@ -1127,16 +749,17 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                             </table>
                         </div>
                     </div>
-                    <?= Html::a('<i class="glyphicon glyphicon-plus"></i>', [''], ['class' => 'btn btn-success add-transport-expenses', 'table-type' => 'other']) ?>
-                    */ ?>
 
-                    <br /><br />
+
+                    <br/><br/>
                     <p><b>Прочие расходы из выручки:</b></p>
                     <div class="expenses-table-over">
                         <div class="expenses-table-inner">
                             <table class="transport-expenses-table">
                                 <tr style="background-color: #FFF9B4;">
-                                    <td class="expenses_seller_type_id_col allotted" style="background-color: #FFF9B4;">За что</td>
+                                    <td class="expenses_seller_type_id_col allotted" style="background-color: #FFF9B4;">
+                                        За что
+                                    </td>
                                     <td class="expenses_seller_id_col">Продавец</td>
                                     <td class="count_col">К-во</td>
                                     <td class="price_col">Сумма</td>
@@ -1157,7 +780,7 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
 
                                 <?php
                                 $num = 1;
-                                foreach($aTrExpensesOther as $tr_expenses) {
+                                foreach ($aTrExpensesOther as $tr_expenses) {
                                     echo $this->render('transport_expenses_row', [
                                         'tr_expenses' => $tr_expenses,
                                         'form' => $form,
@@ -1173,111 +796,15 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                     <?= Html::a('<i class="glyphicon glyphicon-plus"></i>', [''], ['class' => 'btn btn-success add-transport-expenses', 'table-type' => 'other']) ?>
 
 
-
-                    <?php /*
-                    <br /><br />
-                    <p><b>Входящие требования оплаты:</b></p>
-                    <div class="transport-expenses-table-cover-outer">
-
-                        <table class="transport-expenses-table-fixed">
-                            <tr style="background-color: #F2F2F2; height: 34px;">
-                                <td class="expenses_seller_type_id_col allotted" style="background-color: #F2F2F2;">За что</td>
-                            </tr>
-
-                            <?php
-                            $num = 1;
-                            foreach($aTrExpensesOther as $tr_expenses) {
-
-                                $first_col_style = ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : ''); ?>
-                                <tr class="transport-expenses" transport-expenses-id="<?= $tr_expenses->id ?>"  style="height: 86px; <?= ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : '') ?>">
-                                    <td style="<?= $first_col_style ?>">
-                                        <?php
-
-
-                                        //if(in_array($tr_expenses->sellerType->name, ['АЗС', 'Мойка', 'Стоянка', 'Прочие'])) {
-                                        if(in_array($tr_expenses->view_group, ['typical_expenses', ])) {
-                                            //echo '<span class="expenses_seller_type_id_col">'.$tr_expenses->sellerType->name.'</span>';
-                                            echo $tr_expenses->sellerType->name;
-                                        }else {
-
-                                            $seller_types = TransportExpensesSellerType::find()->all();
-
-                                            echo SelectWidget::widget([
-                                                'model' => $tr_expenses,
-                                                'attribute' => 'expenses_seller_type_id',
-                                                'id' => 'transportexpenses-expenses_seller_type_id-'.$tr_expenses->id,
-                                                'name' => 'TransportExpenses['.$tr_expenses->id.'][expenses_seller_type_id]',
-                                                'initValueText' => ($tr_expenses->expenses_seller_type_id > 0 && $tr_expenses->sellerType != null ? $tr_expenses->sellerType->name : ''),
-                                                'options' => [
-                                                    'placeholder' => 'Введите название...',
-                                                    'class' => 'transportexpenses-expenses_seller_type_id',
-                                                ],
-                                                'ajax' => [
-                                                    'url' => '/waybill/transport-waybill/ajax-get-sellers-types',
-                                                    'data' => new JsExpression('function(params, obj) {
-                                                        return {
-                                                            search: params.search,
-                                                        };
-                                                    }'),
-                                                ],
-                                                'add_new_value_url' => new JsExpression('function(params, $obj) {
-                                                    addNewSellerType($obj);
-                                                }'),
-                                                'using_delete_button' => false,
-                                            ]);
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <?php
-                            } ?>
-                        </table>
-                        <div class="transport-expenses-table-cover-inner">
-                            <table class="transport-expenses-table">
-                                <tr style="background-color: #F2F2F2; height: 34px;">
-                                    <td class="expenses_seller_id_col">Продавец</td>
-                                    <td class="count_col">К-во</td>
-                                    <td class="price_col">Сумма</td>
-                                    <td class="points_col">Баллы</td>
-                                    <td class="expenses_doc_type_id_col allotted">Вид ДО</td>
-                                    <td class="expenses_type_id_col allotted">ДО</td>
-                                    <td class="doc_number_col allotted">№ ДО</td>
-                                    <td class="need_pay_date_col allotted">Дата ДО</td>
-                                    <td class="check_attached_col">Чек</td>
-                                    <td class="expenses_is_taken_col">?РП</td>
-                                    <td class="expenses_is_taken_comment_col">КРП</td>
-                                    <td class="payment_date_col green-allotted">Дата оплаты</td>
-                                    <td class="payment_method_id_col green-allotted">Способ</td>
-                                    <td class="transport_expenses_paymenter_id_col green-allotted">Кто оплатил</td>
-                                    <td class="payment_comment_col green-allotted">КО</td>
-                                    <td></td>
-                                </tr>
-
-                                <?php
-                                $num = 1;
-                                foreach($aTrExpensesOther as $tr_expenses) {
-                                    echo $this->render('transport_expenses_row', [
-                                        'tr_expenses' => $tr_expenses,
-                                        'form' => $form,
-                                        'delete_row' => true,
-                                        'num' => $num,
-                                    ]);
-                                    $num++;
-                                }
-                                ?>
-                            </table>
-                        </div>
-                    </div>
-                    <?= Html::a('<i class="glyphicon glyphicon-plus"></i>', [''], ['class' => 'btn btn-success add-transport-expenses', 'table-type' => 'incoming-payment-requests']) ?>
-                    */ ?>
-
-                    <br /><br />
+                    <br/><br/>
                     <p><b>Входящие требования оплаты:</b></p>
                     <div class="expenses-table-over">
                         <div class="expenses-table-inner">
                             <table class="transport-expenses-table">
                                 <tr style="background-color: #F2F2F2;">
-                                    <td class="expenses_seller_type_id_col allotted" style="background-color: #F2F2F2;">За что</td>
+                                    <td class="expenses_seller_type_id_col allotted" style="background-color: #F2F2F2;">
+                                        За что
+                                    </td>
                                     <td class="expenses_seller_id_col">Продавец</td>
                                     <td class="count_col">К-во</td>
                                     <td class="price_col">Сумма</td>
@@ -1299,7 +826,7 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                                 <?php
                                 $num = 1;
                                 //echo "aTrExpensesIncomingPaymentRequests:<pre>"; print_r($aTrExpensesIncomingPaymentRequests); echo "</pre>";
-                                foreach($aTrExpensesIncomingPaymentRequests as $tr_expenses) {
+                                foreach ($aTrExpensesIncomingPaymentRequests as $tr_expenses) {
                                     echo $this->render('transport_expenses_row', [
                                         'tr_expenses' => $tr_expenses,
                                         'form' => $form,
@@ -1314,6 +841,12 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                     </div>
                     <?= Html::a('<i class="glyphicon glyphicon-plus"></i>', [''], ['class' => 'btn btn-success add-transport-expenses', 'table-type' => 'incoming-payment-requests']) ?>
                 </div>
+
+                <?php
+                }else {
+                    echo 'Нет доступа <br />';
+                }
+                ?>
             </div>
 
             <div id="preliminary-results-block">
@@ -1337,17 +870,7 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                 ]) ?>
             </div>
 
-            <?php /*
-            <br />
-            <br />
-            <div class="col-v-40" style="padding: 0;">
-                <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
-            </div>*/ ?>
-
         </div>
-
-
-
 
 
     </div>

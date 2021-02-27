@@ -1,10 +1,15 @@
 <?php
+
+use app\models\Access;
 use kartik\date\DatePicker;
 
 ?>
 <div class="waybill-block">
     <div class="waybill-title waybill-block-toogle">Корректировка <span class="waybill-arrow"><i class="glyphicon glyphicon-menu-down"></i></span></div>
     <div class="waybill-body">
+
+        <?php if(Access::hasUserAccess('access_to_delivery_of_proceeds', 'page_part'))
+        { ?>
         <div class="row">
             <div class="col-v-45">
                 <div class="row form-group-sm">
@@ -194,5 +199,9 @@ use kartik\date\DatePicker;
                 </div>
             </div>
         </div>
+        <?php
+        }else {
+            echo 'Нет доступа <br />';
+        } ?>
     </div>
 </div>

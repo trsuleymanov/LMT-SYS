@@ -3,7 +3,10 @@
  * Заказы на рейсе + данные рейса и выбранной машины
  */
 
+use app\models\Access;
 use app\models\Setting;
+use app\models\TransportWaybill;
+use app\models\TripTransport;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
@@ -105,6 +108,22 @@ if(empty($trip->date_sended)) {
 }elseif(!empty($trip->date_sended) && $user_role_alias == 'root') {
     $show_reis = true;
 }
+
+// найдем путевой лист (если он есть и если есть доступ к путевым листам)
+$transport_waybill = null;
+if(Access::hasUserAccess('waybill', 'module')) {
+
+    $trip_transports = $trip->tripTransports;
+    if(count($trip_transports) > 0) {
+
+        $aTripTransportsIds = ArrayHelper::map($trip_transports, 'id', 'id');
+
+        $transport_waybill = TransportWaybill::find()
+            ->where(['IN', 'trip_transport_start', $aTripTransportsIds])
+            ->orWhere(['IN', 'trip_transport_end', $aTripTransportsIds])
+            ->one();
+    }
+}
 ?>
 
 <?php if($show_reis == true) { ?>
@@ -116,7 +135,6 @@ if(empty($trip->date_sended)) {
 
 
 <?php
-//if(empty($trip->date_sended)) {
 if(empty($trip->date_issued_by_operator) && empty($trip->date_sended)) {
 ?>
     <div id="reis-panel-left">
@@ -124,7 +142,11 @@ if(empty($trip->date_issued_by_operator) && empty($trip->date_sended)) {
 
         <?= Html::a('Карта', '#', ['id' => 'trip-yandex-map', 'class' => 'btn btn-sm btn-primary']); ?>
 
-        <span id="trip-price">ОСР - <?= $trip_price ?></span>
+        <?php if($transport_waybill != null) { ?>
+            <a id="trip-price" href="/waybill/transport-waybill/update?id=<?= $transport_waybill->id ?>" target="_blank">ОСР - <?= $trip_price ?></a>
+        <?php }else { ?>
+            <span id="trip-price">ОСР - <?= $trip_price ?></span>
+        <?php } ?>
 
         <?php if(Yii::$app->session->get('role_alias') != 'manager' && $trip->is_reserv == false) { ?>
             <?= Html::a('Добавить ТС', '#', ['id' => 'add-trip-transport-car', 'class' => 'btn btn-sm btn-primary pull-right_', 'trip-id' => $trip->id]); ?>
@@ -189,13 +211,11 @@ if($trip->is_reserv == false) {
             'label' => '',
             'content' => function ($model) use ($trip) {
 
-                //if(empty($trip->date_sended) && !empty($trip->date_issued_by_operator)) {
                 if ($model->used_places_count < $model->total_places_count) {
                     return '<a class="btn btn-success btn-sm add-order" href="#" date="' . $trip->date . '" trip-id="' . $trip->id . '" trip-transport-id="' . $model->id . '">Записать сюда</a>';
                 } else {
                     return '';
                 }
-                //}
             }
         ];
     }
@@ -233,15 +253,21 @@ if($trip->is_reserv == false) {
     $columns[] = [
         'attribute' => 'driver_id',
         'label' => 'Водитель',
-        'content' => function ($model) {
+        'content' => function ($model) use($transport_waybill) {
             $driver = $model->driver;
-            return ($driver == null ? '' : $driver->fio);
+
+            $text = ($driver == null ? '' : trim($driver->fio));
+
+            if($transport_waybill != null) {
+                $text .='<br /><a href="/waybill/transport-waybill/update?id='.$transport_waybill->id.'" target="_blank">ПЛ №'.$transport_waybill->number.' от '.date('d.m.Y', $transport_waybill->date_of_issue).'</a>';
+            }
+
+            return $text;
         }
     ];
     $columns[] = [
         'attribute' => 'transport_orders_places_count',
         'headerOptions' => ['style' => 'white-space: normal; width: 190px;'],
-        //'label' => $trip->use_mobile_app == 1 ? 'В машине сидит / Отправлено на посадку' : 'В машине сидит',
         'label' => 'В машине сидит / Отправлено на посадку',
         'content' => function ($model) use ($trip) {
 
@@ -261,8 +287,15 @@ if($trip->is_reserv == false) {
     $columns[] = [
         'attribute' => 'osr',
         'label' => 'ОСР',
-        'content' => function ($model) use ($aTripTransportsTotalPrices) {
-            return (isset($aTripTransportsTotalPrices[$model->id]) ? $aTripTransportsTotalPrices[$model->id] : 0);
+        'content' => function ($model) use ($aTripTransportsTotalPrices, $transport_waybill) {
+
+            $text = (isset($aTripTransportsTotalPrices[$model->id]) ? $aTripTransportsTotalPrices[$model->id] : 0);
+
+            if($transport_waybill != null) {
+                return '<a href="/waybill/transport-waybill/update?id='.$transport_waybill->id.'" target="_blank">'.$text.'</a>';
+            }else {
+                return $text;
+            }
         }
     ];
 

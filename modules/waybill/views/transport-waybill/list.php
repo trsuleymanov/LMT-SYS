@@ -3,6 +3,7 @@
 use app\models\TransportExpensesDetailing;
 use app\models\TransportExpensesSellerType;
 use app\models\TransportWaybill;
+use kartik\date\DatePicker;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\helpers\table\PageSizeHelper;
@@ -1107,7 +1108,11 @@ if(!in_array(Yii::$app->session->get('role_alias'), ['warehouse_turnover'])) { /
         'attribute' => 'hand_over_b1',
         'label' => 'Сдано В1',
         'content' => function ($model) {
-            return $model->hand_over_b1;
+            //return $model->hand_over_b1;
+            if(empty($model->hand_over_b1)) {
+                $model->hand_over_b1 = 0;
+            }
+            return '<input type="text" value="'.$model->hand_over_b1.'" class="form-control" field="hand_over_b1" />';
         }
     ];
     $exportColumns[] = $column;
@@ -1118,7 +1123,25 @@ if(!in_array(Yii::$app->session->get('role_alias'), ['warehouse_turnover'])) { /
         'attribute' => 'hand_over_b1_data',
         'label' => 'Дата В1',
         'content' => function ($model) {
-            return ($model->hand_over_b1_data > 0 ? date('d.m.Y', $model->hand_over_b1_data) : '');
+
+            //return ($model->hand_over_b1_data > 0 ? date('d.m.Y', $model->hand_over_b1_data) : '');
+            if($model->hand_over_b1_data > 0 && !preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/i', $model->hand_over_b1_data)) {
+                $model->hand_over_b1_data = date("d.m.Y", $model->hand_over_b1_data);
+            }
+            return DatePicker::widget([
+                'model' => $model,
+                'attribute' => 'hand_over_b1_data',
+                'type' => DatePicker::TYPE_INPUT,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd.mm.yyyy',
+                ],
+                'options' => [
+                    'id' => 'hand_over_b1_data_'.$model->id,
+                    'expense-id' => $model->id,
+                    'field' => 'hand_over_b1_data'
+                ]
+            ]);
         }
     ];
     $exportColumns[] = $column;
@@ -1129,7 +1152,12 @@ if(!in_array(Yii::$app->session->get('role_alias'), ['warehouse_turnover'])) { /
         'attribute' => 'hand_over_b2',
         'label' => 'Сдано В2',
         'content' => function ($model) {
-            return $model->hand_over_b2;
+            // return $model->hand_over_b2;
+
+            if(empty($model->hand_over_b2)) {
+                $model->hand_over_b2 = 0;
+            }
+            return '<input type="text" value="'.$model->hand_over_b2.'" class="form-control" field="hand_over_b2" />';
         }
     ];
     $exportColumns[] = $column;
@@ -1140,7 +1168,25 @@ if(!in_array(Yii::$app->session->get('role_alias'), ['warehouse_turnover'])) { /
         'attribute' => 'hand_over_b2_data',
         'label' => 'Дата В2',
         'content' => function ($model) {
-            return ($model->hand_over_b2_data > 0 ? date('d.m.Y', $model->hand_over_b2_data) : '');
+            // return ($model->hand_over_b2_data > 0 ? date('d.m.Y', $model->hand_over_b2_data) : '');
+
+            if($model->hand_over_b2_data > 0 && !preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/i', $model->hand_over_b2_data)) {
+                $model->hand_over_b2_data = date("d.m.Y", $model->hand_over_b2_data);
+            }
+            return DatePicker::widget([
+                'model' => $model,
+                'attribute' => 'hand_over_b2_data',
+                'type' => DatePicker::TYPE_INPUT,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd.mm.yyyy',
+                ],
+                'options' => [
+                    'id' => 'hand_over_b2_data_'.$model->id,
+                    'expense-id' => $model->id,
+                    'field' => 'hand_over_b2_data'
+                ]
+            ]);
         }
     ];
     $exportColumns[] = $column;
@@ -1348,6 +1394,21 @@ if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) {
             'columns' => $gridColumns,
             'showFooter' => true,
         ]);
+        ?>
+
+
+        <?php
+        echo Html::a('Сохранить изменения', ['#'], ['id' => 'save-transport-waybill-table', 'class' => 'btn btn-success']);
+        ?>
+        <br /><br />
+        <?php
+        if( Yii::$app->session->hasFlash('success') ) { ?>
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <?php echo Yii::$app->session->getFlash('success'); ?>
+            </div>
+        <?php
+        }
         ?>
     </div>
 </div>

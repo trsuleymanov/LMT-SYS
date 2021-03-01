@@ -37,7 +37,7 @@
                             ?>
                             <tr>
                                 <td><?= $start_trip->direction->sh_name ?></td>
-                                <td><?= $start_trip->name ?></td>
+                                <td><a href="/trip/trip-orders?trip_id=<?= $start_trip->id ?>" target="_blank"><?= $start_trip->name ?></a></td>
                                 <td><?= $start_day_report_trip_transport->places_count_sent ?></td>
                                 <td><?= $start_day_report_trip_transport->child_count_sent ?></td>
                                 <td><?= $start_day_report_trip_transport->student_count_sent ?></td>
@@ -59,7 +59,7 @@
                             ?>
                             <tr>
                                 <td><?= $end_trip->direction->sh_name ?></td>
-                                <td><?= $end_trip->name ?></td>
+                                <td><a href="/trip/trip-orders?trip_id=<?= $end_trip->id ?>" target="_blank"><?= $end_trip->name ?></a></td>
                                 <td><?= $end_day_report_trip_transport->places_count_sent ?></td>
                                 <td><?= $end_day_report_trip_transport->child_count_sent ?></td>
                                 <td><?= $end_day_report_trip_transport->student_count_sent ?></td>

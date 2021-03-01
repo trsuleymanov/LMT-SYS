@@ -551,13 +551,17 @@ class TransportWaybillController extends Controller
         $form_data = Yii::$app->request->post('form_data');
         $aWaybillsData = [];
         foreach($form_data as $waybill_data) {
-            //echo "<pre>"; print_r($waybill); echo "</pre>";
             $aWaybillsData[$waybill_data['id']] = $waybill_data;
         }
 
         $waybills = TransportWaybill::find()->where(['id' => array_keys($aWaybillsData)])->all();
         foreach($waybills as $waybill) {
             foreach($aWaybillsData[$waybill->id] as $field => $value) {
+
+                if(in_array($field, ['hand_over_b1_data', 'hand_over_b2_data']) && preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/i', $value)) {
+                    $value = strtotime($value);   // convent '07.11.2016' to unixtime
+                }
+
                 $waybill->$field = $value;
             }
             if(!$waybill->save(false)) {
@@ -566,6 +570,8 @@ class TransportWaybillController extends Controller
 
             $waybill->updateResultFields();// пересчитываем некоторые поля Путевого листа
         }
+
+        Yii::$app->session->setFlash('success', "Сохранено");
 
         return [
             'success' => true

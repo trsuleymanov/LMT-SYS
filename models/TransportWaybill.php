@@ -210,10 +210,14 @@ class TransportWaybill extends \yii\db\ActiveRecord
             $this->trip_transport_end = $field_value;
         }
 
+        // возникали ошибки, что в поле transport_waybill.trips_summ не всегда сохранялись почему-то
+        // актуальные сумму по рейсам взятые из отчета дня.
+        // поэтому в это поле больше не будет сохраняться сумма. А везде где в расчетах используется
+        // trips_summ будут на месте браться значения из отчета дня.
+        // этот код пока оставлю как есть
         switch($field_name) {
             case 'trip_transport_start':
             case 'trip_transport_end':
-                // trips_summ
 
                 $trips_summ = 0;
                 if($this->trip_transport_start > 0) {
@@ -241,12 +245,9 @@ class TransportWaybill extends \yii\db\ActiveRecord
                 }
 
                 if($trips_summ != $this->trips_summ) {
-                    // exit('записываем в ПЛ trips_summ='.$trips_summ);
                     $this->setField('trips_summ', $trips_summ);
                 }
-                // else {
-                //    exit('записывать в ПЛ нечего $this->trips_summ='.$this->trips_summ.' trip_transport_start=' + $this->trip_transport_start);
-                // }
+
                 break;
         }
 
@@ -559,6 +560,41 @@ class TransportWaybill extends \yii\db\ActiveRecord
     }
 
 
+    public function getCurrentTripsSumm() {
+
+        $trips_summ = 0;
+        if($this->trip_transport_start > 0) {
+            $start_day_report_trip_transport = null;
+            $start_trip_transport = $this->tripTransportStart;
+            if($start_trip_transport != null) {
+                $start_day_report_trip_transport = $start_trip_transport->dayReportTripTransport;
+            }
+            if($start_day_report_trip_transport != null) {
+                $trips_summ = $start_day_report_trip_transport->proceeds;
+            }
+
+        }
+        if($this->trip_transport_end > 0) {
+
+            $end_day_report_trip_transport = null;
+            $end_trip_transport = $this->tripTransportEnd;
+            if($end_trip_transport != null) {
+                $end_day_report_trip_transport = $end_trip_transport->dayReportTripTransport;
+            }
+
+            if($end_day_report_trip_transport != null) {
+                $trips_summ += $end_day_report_trip_transport->proceeds;
+            }
+        }
+
+//        if($trips_summ != $this->trips_summ) {
+//            $this->setField('trips_summ', $trips_summ);
+//        }
+
+        return $trips_summ;
+    }
+
+
     /*
      * Пересчитываем некоторые поля Путевого листа
      */
@@ -618,6 +654,13 @@ class TransportWaybill extends \yii\db\ActiveRecord
             if($tr_expense->expenses_is_taken == true) {
                 $this->accepted_expenses_all_types += doubleval($tr_expense->price);
             }
+        }
+
+        // пересчитаем
+        $trips_summ = $this->getCurrentTripsSumm();
+        if($trips_summ != $this->trips_summ) {
+            $this->setField('trips_summ', $trips_summ);
+            $this->trips_summ = $trips_summ;
         }
 
         // total_net_profit = accepted_expenses_all_types - camera_no_record - accruals_to_issue_for_trip

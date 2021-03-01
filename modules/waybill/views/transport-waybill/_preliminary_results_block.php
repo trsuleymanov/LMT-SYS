@@ -35,6 +35,7 @@
                             $start_trip = $start_trip_transport->trip;
                             $start_day_report_trip_transport = $start_trip_transport->dayReportTripTransport;
                             ?>
+                            <?php if($start_day_report_trip_transport != null) { ?>
                             <tr>
                                 <td><?= $start_trip->direction->sh_name ?></td>
                                 <td><a href="/trip/trip-orders?trip_id=<?= $start_trip->id ?>" target="_blank"><?= $start_trip->name ?></a></td>
@@ -48,6 +49,7 @@
                                 <td><?= $start_day_report_trip_transport->proceeds ?></td>
                                 <td style="color: red;"><?= intval($start_day_report_trip_transport->no_record) ?></td>
                             </tr>
+                            <?php } ?>
                         <?php } ?>
 
 

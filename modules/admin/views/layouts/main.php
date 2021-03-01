@@ -655,7 +655,7 @@ $cookie = Yii::$app->getRequest()->getCookies();
 
                 <?php
                 if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin', ])) { ?>
-                    <li<?= ($current_module == 'admin' && in_array($current_controller, ['transport-expenses-doc-type', 'transport-expenses-types', 'transport-expenses-seller-type', 'transport-expenses-seller', 'transport-payment-methods', 'transport-waybill-trip-events']) ? ' class="active"' : '') ?>>
+                    <li<?= ($current_module == 'admin' && in_array($current_controller, ['transport-expenses-doc-type', 'transport-expenses-types', 'transport-expenses-seller-type', 'transport-expenses-seller', 'transport-payment-methods', 'transport-waybill-trip-events', 'transport-waybill-type']) ? ' class="active"' : '') ?>>
                         <a href="#">
                             <i class="glyphicon glyphicon-list-alt"></i> <span>Путевой лист</span>
                             <span class="pull-right-container">
@@ -691,6 +691,11 @@ $cookie = Yii::$app->getRequest()->getCookies();
                             <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
                                 <li<?= $current_controller == 'transport-waybill-trip-events' ? ' class="active"' : '' ?>>
                                     <?= Html::a('<i class="glyphicon glyphicon-bell"></i> <span>События</span>', '/admin/transport-waybill-trip-events'); ?>
+                                </li>
+                            <?php } ?>
+                            <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
+                                <li<?= $current_controller == 'transport-waybill-type' ? ' class="active"' : '' ?>>
+                                    <?= Html::a('<i class="fa fa-tasks"></i> <span>Типы ПЛ</span>', '/admin/transport-waybill-type'); ?>
                                 </li>
                             <?php } ?>
                         </ul>

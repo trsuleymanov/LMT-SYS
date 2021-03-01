@@ -44,12 +44,9 @@ $first_col_style = ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #F
 
 <tr class="transport-expenses" transport-expenses-id="<?= $tr_expenses->id ?>" style="height: 86px; <?= ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #FFDBDB;' : '') ?>">
 
-    <?php /* */ ?>
     <td style="height: 86px; <?= $first_col_style ?>">
         <?php
-        //if(in_array($tr_expenses->sellerType->name, ['АЗС', 'Мойка', 'Стоянка', 'Прочие'])) {
         if(in_array($tr_expenses->view_group, ['typical_expenses', ]) && $tr_expenses->price > 0) {
-            //echo '<span class="expenses_seller_type_id_col">'.$tr_expenses->sellerType->name.'</span>';
             echo $tr_expenses->sellerType->name.
                 (in_array(Yii::$app->session->get('role_alias'), ['root', 'admin']) ? '&nbsp;&nbsp;&nbsp;<a class="move-expense-to-another-pl" expense-id="'.$tr_expenses->id.'" href="" title="Перенести расход в другой путевой лист"><i class="glyphicon glyphicon-share-alt"></i></a>' : '');
         }else {
@@ -85,22 +82,8 @@ $first_col_style = ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #F
         }
         ?>
     </td>
-    <?php /**/ ?>
     <td>
         <?php
-//        echo $form
-//            ->field($tr_expenses, 'expenses_seller_id', [
-//                'errorOptions' => ['style' => 'display:none;'],
-//            ])
-//            ->dropDownList(
-//                ArrayHelper::map(TransportExpensesSeller::find()->all(), 'id', 'name'),
-//                [
-//                    'id' => 'transportexpenses-expenses_seller_id-'.$tr_expenses->id,
-//                    'name' => 'TransportExpenses['.$tr_expenses->id.'][expenses_seller_id]',
-//                    'class' => 'transportexpenses-expenses_seller_id form-control',
-//                    'style' => 'width: 70px;'
-//                ]
-//            )->label(false);
 
         echo SelectWidget::widget([
             'model' => $tr_expenses,
@@ -162,7 +145,7 @@ $first_col_style = ($tr_expenses->expenses_is_taken != 1 ? 'background-color: #F
         echo $form->field($tr_expenses, 'price', [
             'errorOptions' => ['style' => 'display:none;'],
         ])
-            ->textInput([
+        ->textInput([
             'maxlength' => true,
             'name' => 'TransportExpenses['.$tr_expenses->id.'][price]',
             'id' => 'transportexpenses-price-'.$tr_expenses->id,

@@ -37,7 +37,9 @@ class TransportWaybill extends \yii\db\ActiveRecord
                 'trip_event1_id', 'trip_event2_id', 'trip_event3_id', 'trip_event4_id',
                 'trip_event5_id', 'trip_event6_id', 'trip_event7_id', 'trip_event8_id',
                 'camera_val', 'camera_driver_val', 'is_visible',
-                'set_hand_over_b1_operator_id', 'set_hand_over_b1_time', 'set_hand_over_b2_operator_id', 'set_hand_over_b2_time',
+                'set_hand_over_b1_operator_id', 'set_hand_over_b1_time',
+                'set_hand_over_b2_operator_id', 'set_hand_over_b2_time',
+                'transport_waybill_type_id'
             ], 'integer'],
             [['number'], 'string', 'max' => 10],
             [['changes_history', 'trip_comment', 'klpto_comment',
@@ -57,7 +59,8 @@ class TransportWaybill extends \yii\db\ActiveRecord
                 //'after_trip_tech_check_time',
                 //'trip_transport_start', 'trip_transport_end',
                 'departure_time', 'mileage_before_departure',
-                'return_time', 'mileage_after_departure'], 'required', ],
+                'return_time', 'mileage_after_departure',
+                'transport_waybill_type_id'], 'required', ],
 
             [['pre_trip_med_check_time'], 'preTripMedCheckTime', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['pre_trip_tech_check_time'], 'preTripTechCheckTime', 'skipOnEmpty' => false, 'skipOnError' => false],
@@ -365,6 +368,7 @@ class TransportWaybill extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'is_visible' => 'Видимость ПЛ',
+            'transport_waybill_type_id' => 'Тип путевого листа',
             'number' => 'Номер',
             'date_of_issue' => 'Дата выдачи',
             'transport_id' => 'Т/с',
@@ -462,6 +466,7 @@ class TransportWaybill extends \yii\db\ActiveRecord
             'date_of_issue',
             'transport_id',
             'driver_id',
+            'transport_waybill_type_id',
         ];
 
         $scenarios['update_result_fields'] = [
@@ -546,6 +551,11 @@ class TransportWaybill extends \yii\db\ActiveRecord
     }
     public function getHandOverB2Operator() {
         return $this->hasOne(User::className(), ['id' => 'set_hand_over_b2_operator_id']);
+    }
+
+    public function getTransportWaybillType()
+    {
+        return $this->hasOne(TransportWaybillType::className(), ['id' => 'transport_waybill_type_id']);
     }
 
 

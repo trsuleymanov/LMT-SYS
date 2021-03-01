@@ -134,6 +134,7 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
         'id' => 'waybill-form',
         'options' => [
             'transport-waybill-id' => $model->id,
+            'allow-minus-opearation' => ($model->transportWaybillType != null ? $model->transportWaybillType->allow_minus_opearation : 0)
         ],
     ]); ?>
 
@@ -151,6 +152,15 @@ if($model->transport_id > 0 && $model->date_of_issue > 0) {
                 </div>
 
             </div>
+
+            <br />
+            <div class="row">
+                <div class="col-sm-9 form-group-sm">
+                    Тип ПЛ: <?= ($model->transportWaybillType != null ? $model->transportWaybillType->name : '-') ?>
+                </div>
+            </div>
+
+
             <?php if(in_array(Yii::$app->session->get('role_alias'), ['root', 'admin'])) { ?>
                 <br />
                 <div class="row">

@@ -104,6 +104,7 @@ $(document).on('click', '.open-transport-expenses-detailing', function() {
 
     //var transport_waybill_id = $('#waybill-form').attr('transport-waybill');
     var transport_expenses_id = $(this).parent('td').parent('tr').attr('transport-expenses-id');
+    var allow_minus_opearation = $('#waybill-form').attr('allow-minus-opearation');
 
     $.ajax({
         url: '/waybill/transport-expenses-detailing/ajax-get-form?transport_expenses_id=' + transport_expenses_id,
@@ -130,7 +131,7 @@ $(document).on('click', '.open-transport-expenses-detailing', function() {
                     document.getElementById(id),
                     {
                         mask: Number,
-                        min: 0,
+                        min: (allow_minus_opearation === "1" ? -10000000 : 0),
                         max: 10000000,
                         thousandsSeparator: ' '
                     });
@@ -167,6 +168,7 @@ $(document).on('click', '.add-transport-expenses-detailing', function() {
     var $block = $(this).parents('.detailings-block');
     var block_type = $block.attr('block-type');
     var $table = $block.find('.transport-expenses-detailing-table');
+    var allow_minus_opearation = $('#waybill-form').attr('allow-minus-opearation');
 
 
     $.ajax({
@@ -187,7 +189,7 @@ $(document).on('click', '.add-transport-expenses-detailing', function() {
                 document.getElementById(id),
                 {
                     mask: Number,
-                    min: 0,
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0),
                     max: 10000000,
                     thousandsSeparator: ' '
                 });
@@ -443,6 +445,8 @@ $(document).on('change',
         var field_value = $(this).val();
         //console.log('change name='+name);
 
+        var allow_minus_opearation = $('#waybill-form').attr('allow-minus-opearation');
+
         if(
             field_name.indexOf('[is_visible]') > -1
             || field_name.indexOf('[pre_trip_med_check]') > -1
@@ -475,12 +479,12 @@ $(document).on('change',
                     if(response.accruals_html != undefined && response.accruals_html != '') {
                         $('#accruals-block').html(response.accruals_html);
 
-                        updateAccrualsBlockJS();
+                        updateAccrualsBlockJS(allow_minus_opearation);
                     }
                     if(response.correct_html != undefined && response.correct_html != '') {
                         $('#correct-block').html(response.correct_html);
 
-                        updateCorrectBlockJS();
+                        updateCorrectBlockJS(allow_minus_opearation);
                     }
 
 
@@ -550,6 +554,9 @@ $(document).on('change',
     function() {
 
         var $obj = $(this);
+
+        var allow_minus_opearation = $('#waybill-form').attr('allow-minus-opearation');
+
         var transport_expenses_id = $(this).parents('.transport-expenses').attr('transport-expenses-id');
         var is_form_detailing_form = false;
         if(transport_expenses_id == undefined) {
@@ -603,12 +610,12 @@ $(document).on('change',
                     if(response.accruals_html != undefined && response.accruals_html != '') {
                         $('#accruals-block').html(response.accruals_html);
 
-                        updateAccrualsBlockJS();
+                        updateAccrualsBlockJS(allow_minus_opearation);
                     }
                     if(response.correct_html != undefined && response.correct_html != '') {
                         $('#correct-block').html(response.correct_html);
 
-                        updateCorrectBlockJS();
+                        updateCorrectBlockJS(allow_minus_opearation);
                     }
 
                     if(is_form_detailing_form == true) {
@@ -658,7 +665,7 @@ $(document).on('change',
     });
 
 
-function updateCorrectBlockJS() {
+function updateCorrectBlockJS(allow_minus_opearation) {
 
     $('#transportwaybill-hand_over_b1_data').datepicker();
     $('#transportwaybill-hand_over_b2_data').datepicker();
@@ -668,7 +675,7 @@ function updateCorrectBlockJS() {
         document.getElementById('transportwaybill-camera_val'),
         {
             mask: Number,
-            min: 0,
+            min: (allow_minus_opearation === "1" ? -10000000 : 0),
             max: 10000000,
             thousandsSeparator: ''
         });
@@ -677,7 +684,7 @@ function updateCorrectBlockJS() {
         document.getElementById('transportwaybill-camera_driver_val'),
         {
             mask: Number,
-            min: 0,
+            min: (allow_minus_opearation === "1" ? -10000000 : 0),
             max: 10000000,
             thousandsSeparator: ''
         });
@@ -690,7 +697,8 @@ function updateCorrectBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -703,7 +711,8 @@ function updateCorrectBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -716,7 +725,8 @@ function updateCorrectBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -729,13 +739,14 @@ function updateCorrectBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
 }
 
-function updateAccrualsBlockJS() {
+function updateAccrualsBlockJS(allow_minus_opearation) {
 
     // К выдаче на рейс
     var currencyMask = new IMask(
@@ -746,7 +757,8 @@ function updateAccrualsBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -759,7 +771,8 @@ function updateAccrualsBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -772,7 +785,8 @@ function updateAccrualsBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -785,7 +799,8 @@ function updateAccrualsBlockJS() {
                 num: {
                     // nested masks are available!
                     mask: Number,
-                    thousandsSeparator: ' '
+                    thousandsSeparator: ' ',
+                    min: (allow_minus_opearation === "1" ? -10000000 : 0)
                 }
             }
         });
@@ -793,6 +808,7 @@ function updateAccrualsBlockJS() {
 
 $(document).ready(function() {
 
+    var allow_minus_opearation = $('#waybill-form').attr('allow-minus-opearation');
 
     $('.transportexpenses-price').each(function() {
 
@@ -806,7 +822,8 @@ $(document).ready(function() {
                     num: {
                         // nested masks are available!
                         mask: Number,
-                        thousandsSeparator: ' '
+                        thousandsSeparator: ' ',
+                        min: (allow_minus_opearation === "1" ? -10000000 : 0)
                     }
                 }
             });
@@ -864,9 +881,11 @@ $(document).ready(function() {
             thousandsSeparator: ' '
         });
 
-    updateCorrectBlockJS();
-    updateAccrualsBlockJS();
+    updateCorrectBlockJS(allow_minus_opearation);
+    updateAccrualsBlockJS(allow_minus_opearation);
 });
+
+// min: (allow_minus_opearation === "1" ? -10000000 : 0)
 
 
 function addNewSeller($obj) {

@@ -10,6 +10,7 @@ use app\models\TransportExpensesTypes;
 use app\models\TransportPaymentMethods;
 use app\models\TransportWaybill;
 use app\models\TransportWaybillTripEvents;
+use app\models\TransportWaybillType;
 use app\widgets\SelectWidget;
 use kartik\date\DatePicker;
 use kartik\datetime\DateTimePicker;
@@ -146,6 +147,15 @@ $this->registerJsFile('js/site/waybill-create.js', ['depends'=>'app\assets\AppAs
                     ]);
                     ?>
                 </div>
+
+                <div class="col-v-14 form-group-sm">
+                    <?php
+                    echo $form->field($model, 'transport_waybill_type_id')
+                        ->dropDownList(['' => ''] + ArrayHelper::map(TransportWaybillType::find()->all(), 'id', 'name'));
+                    ?>
+                </div>
+
+
                 <div class="col-v-2">&nbsp;</div>
                 <div class="col-v-20 form-group-sm" style="margin-top: 22px;">
                     <?= Html::submitButton('Зафиксировать ПЛ', ['class' => 'btn btn-primary']) ?>
